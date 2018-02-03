@@ -1,0 +1,91 @@
+# Language setting
+language: java
+
+# Set language version. This is only required if you use the default Shippable image for your build
+jdk:
+  - oraclejdk8
+
+# Specify which services you need. This is only valid if you use the default Shippable image for your build
+#services:
+
+#env:
+
+#matrix:
+
+# The build configuration
+build:
+  # commands in this section run on your build machine and not inside your CI container.
+  pre_ci:
+    - mkdir -p shippable/testresults
+    - mkdir -p shippable/codecoverage
+    #- aws ecr get-login --region eu-west-1
+    - echo "this is master branch"
+    
+  pre_ci_boot:
+    image_name: 791079558361.dkr.ecr.eu-west-1.amazonaws.com/jpl/u16jav
+    image_tag: '1.0'
+    pull: true
+    options: '--privileged=false --net=bridge -e FOO=true -e BOO=false'
+
+  # commands in this section run inside your CI container. In addition, any commands such as ls, 
+  # in this section can be used to skip default processing for CI.
+  ci:
+    #- aws ecr get-login --region eu-west-1 | grep -oP '\-p\ .\S*' 
+    - echo "========== Building the Java application ==========="
+    - gradle assemble
+    - gradle test
+    #- gradle sonarqube
+    - echo "============ Building the Docker image ============="
+    - gradle buildDockerFile
+
+  post_ci:
+    - echo "=== Tag and push the Docker image to the repository ==="
+    #- gradle pushDockerImage
+    #- docker push 791079558361.dkr.ecr.eu-west-1.amazonaws.com/jpl/demo-application:1.1
+  
+  on_success:
+    - bash <(curl -s https://codecov.io/bash) -f shippable/codecoverage/coverage.xml
+    - echo "Build succeeded"
+    
+  on_failure:
+    - echo "Build failed"
+    
+  cache: false
+  
+  # Commands in this section run on your build machine and not inside your CI container.
+  #push:
+  #  - echo "TODO: skip push -> (Artifactory through Gradle I presume)"
+  #  - echo "TODO: Or perhaps use this for deployment (what about pipeline?)"
+
+integrations:
+# If you are using integrations, you'll need to set it up in two places. Subscription settings & here in this section of the yml.
+#    notifications:
+#        - integrationName:
+#          type:
+#          recipients:
+#          branches:
+#          on_start:
+#          on_success
+#          on_failure:
+#          on_changed:   
+    notifications:
+        - integrationName: Slack
+          type: slack
+          recipients:
+            - "#shippable"
+          branches:
+            only:
+                - master
+                - dev
+          on_success: always
+          on_failure: always
+          on_pull_request: always
+          on_start: always
+
+    hub:
+        - integrationName: AWS-ECR
+          type: ecr
+          region: eu-west-1
+#          agent_only:
+#          branches:
+          

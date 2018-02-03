@@ -1,0 +1,36 @@
+# Pipeline Jobs
+jobs:
+  - name: jdemo-manifest
+    type: manifest
+    steps:
+      - IN: jdemo
+      - IN: demo-dockerOptions
+      - IN: demo-replicas   # replicas
+    on_start:
+      - NOTIFY: Slack
+    on_success:
+      - NOTIFY: Slack
+    on_failure:
+      - NOTIFY: Slack
+      
+  - name: deploy-jdemo-to-test
+    type: deploy
+    steps: 
+      - IN: jdemo-manifest   # manifest
+      - IN: demo-cluster                # cluster
+      - IN: ELB-DemoApp                 #loadbalancer
+        applyTo:
+          - manifest: jdemo-manifest
+            image: jdemo
+            port: 8080
+      #- TASK: managed
+      #  deployMethod: blue-green
+    on_start:
+      - NOTIFY: Slack
+    on_success:
+      - NOTIFY: Slack
+    on_failure:
+      - NOTIFY: Slack
+      
+
+      
