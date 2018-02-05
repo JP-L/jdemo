@@ -1,0 +1,42 @@
+/*
+ * Test configuration
+ */
+
+/* Apply plugins */
+apply plugin: "net.saliman.cobertura"
+apply plugin: 'com.bmuschko.docker-remote-api'
+
+/* ===== Static Code Analysis ===== */
+sonarqube {
+  properties {
+    property "sonar.projectName", "${name}"
+    property "sonar.projectKey", "org.sonarqube:jdemo"
+    property "sonar.cobertura.reportPath","${projectDir}/shippable/codecoverage/coverage.xml"
+    property "sonar.junit.reportsPath","${projectDir}/shippable/testresults"
+  }
+}
+/* ===== Unit testing ===== */
+test {
+    reports.junitXml.destination = "${projectDir}/shippable/testresults"  
+    reports.html.destination = "${projectDir}/shippable/testresults"
+}
+// ===== Code Coverage Analysis =====
+cobertura {
+    coverageFormats = ['html', 'xml']				
+    coverageReportDir = file("${projectDir}/shippable/codecoverage")	
+}
+test.finalizedBy(project.tasks.cobertura)
+
+/*
+ * In this section declare the dependencies for production and test code
+ */
+dependencies {
+    // Declare the dependency for a test framework to use in the tests.
+    // TestNG is also supported by the Gradle Test task. Just change the
+    // testCompile dependency to testCompile 'org.testng:testng:6.8.1' and add
+    // 'test.useTestNG()' to your build script.
+    testCompile group: 'junit', name: 'junit', version: '4.+'
+    testCompile 'org.hamcrest:hamcrest-junit:2.0.0.0'
+    testCompile group: 'info.cukes', name: 'cucumber-java', version: '1.2.+'
+    testCompile group: 'info.cukes', name: 'cucumber-junit', version: '1.2.+'	    
+}

@@ -1,0 +1,10 @@
+/*
+ * Repositories configuration
+ */
+    
+/* ===== Repositories ===== */    
+repositories {
+    jcenter()
+}
+
+//Add Artifactory, Nexus or anything here

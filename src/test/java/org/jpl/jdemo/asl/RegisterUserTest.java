@@ -48,7 +48,7 @@ public class RegisterUserTest {
 	
 	@After
 	public final void emptyTheDatabase() throws Exception {
-		prevayler.execute(new RemoveAllUser(null));
+		prevayler.execute(new RemoveAllUsers(null));
 	}
 	
     /**

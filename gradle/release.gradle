@@ -1,0 +1,66 @@
+/*
+ * Release configuration
+ */
+    
+/* Apply plugins */
+apply plugin: "com.bmuschko.docker-java-application"
+apply plugin: "com.bmuschko.docker-remote-api"
+
+/* ===== Docker configuration ===== */
+import com.bmuschko.gradle.docker.tasks.image.*
+import com.bmuschko.gradle.docker.tasks.container.*
+
+//def dockerRepo = "${awsRegistryUrl}/${name}"
+def dockerRepo = "${artifactoryRegistryUrl}/${name}"
+
+docker {
+    if (System.env.DOCKER_HOST) {
+        url = "$System.env.DOCKER_HOST".replace("tcp","https")
+        
+        if (System.env.DOCKER_CERT_PATH) {
+            certPath = new File(System.env.DOCKER_CERT_PATH)
+        }
+    }
+    else {
+        url = 'unix:///var/run/docker.sock'
+    }
+    																	       
+    //registryCredentials {
+    //    url = "${awsRegistryUrl}"
+    //    username = "${awsRegistryCredentialsUsername}"
+    //    password = "${awsRegistryCredentialsPassword}"
+    //    //aws ecr get-login --region eu-west-1
+    //    email = "${awsRegistryCredentialsEmail}"
+    //}
+    registryCredentials {
+        url = "${artifactoryRegistryUrl}"
+        username = "${artifactoryRegistryCredentialsUsername}"
+        password = "${artifactoryRegistryCredentialsPassword}"
+        email = "${artifactoryRegistryCredentialsEmail}"
+    }
+}
+task copyFiles(type: Copy) {
+    from        "${getProject().getBuildDir()}/libs/"
+    from        "./src/main/docker/Dockerfile"
+    from				"./src/main/resources/docker/setenv.sh"
+    into        "${getProject().getBuildDir()}/docker"
+}
+/*
+task buildDockerFile(type: DockerBuildImage) {
+    dependsOn   'copyFiles'
+    inputDir = file("${getProject().getBuildDir()}/docker")
+    tag = "${dockerRepo}" //tag was:  "jpl/demo-application"
+}
+task tagDockerImage(type: DockerTagImage) {
+    //dependsOn buildDockerFile
+    force = true
+    imageId = buildDockerFile.getTag() // imageId was: targetImageId { buildDockerFile.getImageId() }
+    repository = "${dockerRepo}"
+    tag = version  
+}
+task pushDockerImage(type: DockerPushImage) {
+    dependsOn tagDockerImage
+    imageName = "${dockerRepo}"
+    tag = version 
+}
+*/

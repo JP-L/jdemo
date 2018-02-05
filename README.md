@@ -9,8 +9,8 @@ A Demo application running on Tomcat (including JSF libraries) within a Docker c
 [![Coverage Badge](https://api.shippable.com/projects/57c090ab6682410e00b33829/coverageBadge?branch=master)](https://app.shippable.com/projects/57c090ab6682410e00b33829)
 
 ###Code Quality Status
-[![BCH compliancy](https://bettercodehub.com/edge/badge/JP-L/java-gradle-demo)](https://bettercodehub.com)
-[![codecov](https://codecov.io/gh/JP-L/java-gradle-demo/branch/master/graph/badge.svg?token=RcB4Q6zzbl)](https://codecov.io/gh/JP-L/java-gradle-demo)
+[![BCH compliancy](https://bettercodehub.com/edge/badge/JP-L/jdemo)](https://bettercodehub.com)
+[![codecov](https://codecov.io/gh/JP-L/jdemo/branch/master/graph/badge.svg?token=RcB4Q6zzbl)](https://codecov.io/gh/JP-L/jdemo)
 
 ## Quick Start
 

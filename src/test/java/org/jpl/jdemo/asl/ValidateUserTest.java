@@ -53,7 +53,7 @@ public class ValidateUserTest {
 	
 	@After
 	public final void emptyDatabase() throws Exception {
-		prevayler.execute(new RemoveAllUser(null));
+		prevayler.execute(new RemoveAllUsers(null));
 	}
 	
 	/**
