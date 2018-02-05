@@ -1,169 +1,248 @@
---- 
-branches: 
-  only: 
+# Language setting
+language: java
+
+# Set language version. This is only required if you use the default Shippable image for your build
+jdk:
+  - oraclejdk8
+
+# use this to control what branches get built.
+# http://docs.shippable.com/ci/advancedOptions/branches/
+branches:
+  only:
     - master
     - release
     - development
-build: 
-  cache: false
-  ci: 
-    - "echo \"============ Prepare Gradle environment =============\""
-    - "mkdir -p $HOME/.gradle"
-    - "printenv | grep SONARQUBE_PROP | cut -d'=' -f 2- >> $HOME/.gradle/gradle.properties"
-    - "echo \"========== Building the Java application ===========\""
-    - "gradle assemble"
-    - "echo \"========== Test and Quality control for the Java application ===========\""
-    - "gradle test"
-    - "gradle sonarqube"
-  on_failure: 
-    - "echo \"Build failed\""
-  on_success: 
-    - "echo \"Build succeeded\""
-  post_ci: 
-    - "bash <(curl -s https://codecov.io/bash) -f shippable/codecoverage/coverage.xml"
-  pre_ci: 
-    - "echo \"============ Prepare environment =============\""
-    - "mkdir -p $TEST_RESULTS_DIR && mkdir -p $CODE_COVERAGE_DIR"
-    - "pushd $TESTS_LOC_DIR"
-    - "if [ \"$BRANCH\" == \"development\" ]; then echo \"this is development branch\"; fi"
-    - "if [ \"$BRANCH\" == \"release\" ]; then echo \"this is release branch\"; fi"
-    - "if [ \"$BRANCH\" == \"master\" ]; then echo \"this is master branch\"; fi"
-  pre_ci_boot: 
-    image_name: 791079558361.dkr.ecr.eu-west-1.amazonaws.com/jpl/u16jav
-    image_tag: "1.0"
-    options: "--privileged=false --net=bridge -e FOO=true -e BOO=false"
-    pull: true
-env: 
-  global: 
+
+# Specify which services you need. This is only valid if you use the default Shippable image for your build
+#services:
+
+env:
+  # Sonar props
+  global:
     - TEST_RESULTS_DIR=$SHIPPABLE_REPO_DIR/shippable/testresults
     - CODE_COVERAGE_DIR=$SHIPPABLE_REPO_DIR/shippable/codecoverage
     - TESTS_LOC_DIR=$SHIPPABLE_REPO_DIR/tests
     - MOD_LOC=$SHIPPABLE_REPO_DIR/node_modules/.bin/
-    - 
-      secure: fWbSEfoReUNWBBHoiu5KbwNUxKxk/AZcPxooPXtApaTLWOKDXUVboSNUHY2OO7PsjZMiNRggSm8VFQZi5perVjB9zUWPYEPrWUIpdaYAuemqYIKm8uRHLT6p8FRTEYY0YqsnasA1AZXRVhj9++Kgj9Sy9SRQ5G189uXHpYDUsvP+XbfEyI9lgIXWXuhCbQdkb0fglfzGnGNX1mE2QT7uXpio9Lpv0cCUzABeOAPd4Ea3qp8k6AmnAOGKzKc0+LlIiFG+mAvTdFy0e0RWQy5CP40ae8mfissUcUEr6hPbxOF2zedCr0BhXmYOvoSWlLY9NjU6CHGQL7t03HQQq4BL/Q==
-integrations: 
-  hub: 
-    - 
-      integrationName: AWS-ECR
-      region: eu-west-1
-      type: ecr
-  notifications: 
-    - 
-      branches: 
-        only: 
-          - master
-          - release
-          - development
-      integrationName: Slack
-      on_failure: always
-      on_pull_request: always
-      on_start: always
-      on_success: always
-      recipients: 
-        - "#jdemo"
-      type: slack
-jdk: 
-  - oraclejdk8
-jobs: 
-  - 
-    dependencyMode: immediate
-    flags: 
-      - jdemo
-    name: development_runCI
-    steps: 
-      - 
-        OUT: jdemo-dev-image
-    type: runCI
-  - 
-    dependencyMode: chrono
-    flags: 
-      - jdemo
-    name: release_runCI
-    steps: 
-      - 
-        IN: develop_runCI
-      - 
-        OUT: jdemo-release-image
-    type: runCI
-  - 
-    dependencyMode: strict
-    name: master_runCI
-    steps: 
-      - 
-        IN: release_runCI
-      - 
-        OUT: jdemo-image
-    type: runCI
-language: java
-resources: 
-  - 
-    flags: 
-      - jdemo
-    integration: "??? AWS, Artifactory, Nexus Pro??"
-    name: jdemo-dev-image
-    pointer: 
-      sourceName: ""
-    seed: 
-      versionName: latest-dev
+    - secure: Qk6NKicUfeWMIPcA5HGJebxUzVUV4SPTV6Oq47G2GgC1TjrFMcwrrZTzrHGJ1q2jP1el+M0OmcuTmQjgUIHGXWZACkvw/y6F3Y0yOLUGJhAHRIN2JHsj5c3PjMoz4U/wYM2eKOiZwiaFsI2sm455wU2jHo6+9cgCJdEfMPX2rBM6w9Uy9VpWbZ/FUzBRxuDakVoErtJ63frGKEcQ0nbNrbqETARQJfsrLw/zY65tNW6+EOpEunQOMTaZfpQ5yY6CEFMDxN2AsdBfmTpfD4x5houhSOvWXSm1zyDmavYlO+aXjq/WzuZymCmfGhjDUfDj0CMAw/E1hMpMrJ5f8zWdEg==
+
+#matrix:
+
+# The build configuration
+build:
+  # commands in this section run on your build machine and not inside your CI container.
+  pre_ci:
+    - echo "============ Prepare environment ============="
+    - mkdir -p $TEST_RESULTS_DIR && mkdir -p $CODE_COVERAGE_DIR
+    - pushd $TESTS_LOC_DIR
+    - if [ "$BRANCH" == "development" ]; then echo "this is development branch"; fi
+    - if [ "$BRANCH" == "release" ]; then echo "this is release branch"; fi
+    - if [ "$BRANCH" == "master" ]; then echo "this is master branch"; fi
+    
+  pre_ci_boot:
+    image_name: 791079558361.dkr.ecr.eu-west-1.amazonaws.com/jpl/u16jav
+    image_tag: '1.0'
+    pull: true
+    options: '--privileged=false --net=bridge -e FOO=true -e BOO=false'
+
+  # commands in this section run inside your CI container. In addition, any commands such as ls, 
+  # in this section can be used to skip default processing for CI.
+  ci:
+    - echo "============ Prepare Gradle environment ============="
+    - mkdir -p $HOME/.gradle
+    - printenv | grep SONARQUBE_PROP | cut -d'=' -f 2- | tr '|' '\n' >> $HOME/.gradle/gradle.properties
+    #- printenv | grep BINREPO_PROP | cut -d'=' -f 2- >> $HOME/.gradle/gradle.properties
+    - echo "========== Building the Java application ==========="
+    - gradle assemble
+    - echo "========== Test and Quality control for the Java application ==========="   
+    - gradle test
+    - gradle sonarqube
+    
+  post_ci:
+    - bash <(curl -s https://codecov.io/bash) -f shippable/codecoverage/coverage.xml
+    #- if [ "$BRANCH" == "development" ]; then echo "=== Build, Tag and Push the Docker image to the dev repository ===" && gradle buildDockerFile && gradle pushDockerImage; fi
+    #- if [ "$BRANCH" == "release" ]; then echo "=== Build, Tag and Push the Docker image to the test repository ===" && gradle buildDockerFile && gradle pushDockerImage; fi
+    #- if [ "$BRANCH" == "master" ]; then echo "=== Build, Tag and Push the Docker image to the release repository ===" && gradle buildDockerFile && gradle pushDockerImage; fi
+
+  on_success:
+    - echo "Build succeeded"
+    
+  on_failure:
+    - echo "Build failed"
+    
+  cache: false
+  
+  # Commands in this section run on your build machine and not inside your CI container.
+  #push:
+  #  - echo "TODO: skip push -> (Artifactory through Gradle I presume)"
+  #  - echo "TODO: Or perhaps use this for deployment (what about pipeline?)"
+
+integrations:
+# If you are using integrations, you'll need to set it up in two places. Subscription settings & here in this section of the yml.
+#    notifications:
+#        - integrationName:
+#          type:
+#          recipients:
+#          branches:
+#          on_start:
+#          on_success
+#          on_failure:
+#          on_changed:   
+    notifications:
+        - integrationName: Slack
+          type: slack
+          recipients:
+            - "#jdemo"
+          branches:
+            only:
+                - master
+                - release
+                - development
+          on_success: always
+          on_failure: always
+          on_pull_request: always
+          on_start: always
+
+    hub:
+        - integrationName: AWS-ECR
+          type: ecr
+          region: eu-west-1
+#          agent_only:
+#          branches:
+
+# Pipeline Resources
+resources:
+  - name: jdemo-dev-image
     type: image
-  - 
-    flags: 
+    flags:
       - jdemo
-    integration: "??? AWS, Artifactory, Nexus Pro??"
-    name: jdemo-release-image
-    pointer: 
-      sourceName: ""
-    seed: 
-      versionName: latest-release
+    integration: ??? AWS, Artifactory, Nexus Pro??
+    pointer:
+      sourceName: "" #"679404489841.dkr.ecr.us-east-1.amazonaws.com/deploy-ecs-basic"
+    seed:
+      versionName: "latest-dev"
+
+  - name: jdemo-release-image
     type: image
-  - 
-    flags: 
+    flags:
+      - jdemo
+    integration: ??? AWS, Artifactory, Nexus Pro??
+    pointer:
+      sourceName: "" #"679404489841.dkr.ecr.us-east-1.amazonaws.com/deploy-ecs-basic"
+    seed:
+      versionName: "latest-release"
+  
+  - name: jdemo-image
+    type: image
+    flags:
       - jdemo
     integration: Docker
-    name: jdemo-image
-    pointer: 
-      sourceName: ""
-    seed: 
-      versionName: latest
-    type: image
-  - 
-    flags: 
-      - jdemo
-    name: jdemo-params
+    pointer:
+      sourceName: "" #"679404489841.dkr.ecr.us-east-1.amazonaws.com/deploy-ecs-basic"
+    seed:
+      versionName: "latest"
+          
+  - name: jdemo-params
     type: params
-    version: 
-      params: 
-        ENVIRONMENT: dev
-        PORT: 8080
-  - 
-    flags: 
-      - deploy-ecs-basic
-    name: jdemo-dockerOptions
-    type: dockerOptions
-    version: 
-      cpuShares: 10
-      logConfig: 
-        options: 
-          awslogs-group: jdemo
-          awslogs-region: eu-west-1
-        type: awslogs
-      memory: 1024
-      portMappings: 
-        - "8080:8080"
-      privileged: false
-  - 
-    flags: 
+    flags:
       - jdemo
-    name: jdemo-replicas
+    version:
+      params:
+        PORT: 8080
+        ENVIRONMENT: "dev"
+
+  # Docker options
+  - name: jdemo-dockerOptions
+    type: dockerOptions
+    flags:
+      - deploy-ecs-basic
+    version:
+      memory: 1024                        #in MiB
+      cpuShares: 10
+      portMappings:
+          - "8080:8080"
+      #links:                                    #containerName:alias
+      #   - <container name>:<alias>
+      #   - <container name>:<alias>
+      #volumes:
+      #  - "<source>:<container path>:<options>"
+      #  - "<source>:<container path>:<options>
+      logConfig:
+          type: awslogs
+          options:
+            awslogs-group: jdemo
+            awslogs-region: eu-west-1
+      #entryPoint:
+      #  - <string>
+      #  - <string>
+      #cmd:
+      #  - <string>
+      #  - <string>
+      #workingDir: <path to working dir>
+      privileged: false                     # May be true or false
+      #labels:
+      #  <key1>: <value1>
+      #  <key2>: <value2>
+      #volumesFrom:
+      #  - "<container name>:<options>"
+      #  - "<container name>:<options>"
+      #ulimits:
+      #  - name: <name of limit>                 # e.g. cpu
+      #    soft: <number>                        # soft Limit
+      #    hard: <number>                        # hard Limit
+      #  - name: <name of limit>                 # e.g. nofile
+      #    soft: <number>                        # soft Limit, e.g. 50
+      #    hard: <number>                        # hard Limit, e.g. 100
+      #dnsServers:
+      #  - "<ip address>"
+      #dnsSearch:
+      #  - "<ip address>"
+      #user: <string>                            # For GKE, this should be the UID (a number)
+
+  - name: jdemo-replicas
     type: replicas
-    version: 
+    flags:
+      - jdemo
+    version:
       count: 1
-  - 
-    flags: 
+
+  - name: deploy-ecs-cluster
+    type: cluster
+    flags:
       - jdemo
     integration: Provider-AWS
-    name: deploy-ecs-cluster
-    pointer: 
-      region: eu-west-1
-      sourceName: aws-ecs-cluser
-    type: cluster
+    pointer:
+      sourceName : "aws-ecs-cluser" #name of the cluster to which we are deploying
+      region: "eu-west-1"
+              
+jobs:
+  - name: development_runCI
+    type: runCI
+    dependencyMode: immediate   # optional
+    flags:
+      - jdemo
+    steps:
+      - OUT: jdemo-dev-image
+
+  - name: release_runCI
+    type: runCI
+    dependencyMode: chrono   # optional
+    flags:
+      - jdemo
+    steps:
+      - IN: develop_runCI
+      - OUT: jdemo-release-image
+
+  - name: master_runCI
+    type: runCI
+    dependencyMode: strict #<chrono/strict/immediate>   # optional
+    steps:
+      #- IN: <resource>
+      #  switch: off
+      - IN: release_runCI
+      #- IN: <resource>
+      #  versionName: <name of the version you want to pin>
+      #- IN: <resource>
+      #  versionNumber: <number of the version you want to pin>        
+      - OUT: jdemo-image
+      #- OUT: <resource>
+      #  replicate: <resource>
