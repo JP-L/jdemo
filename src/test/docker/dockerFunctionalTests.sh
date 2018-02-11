@@ -1,3 +1,4 @@
+#!/bin/bash
 #/*
 # * Copyright (c) 2018 JP-L, https://www.jp-l.org/
 # *
@@ -20,32 +21,23 @@
 # * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #*/
-FROM tomcat:9.0.4
-MAINTAINER JP-L
+# 
+# Start two tomcat containers.
+#
 
-LABEL Description="JDemo is a simple Java Web application using prevayler for persistency. It's running on Tomcat (including JSF libraries) within a Docker container."\
-      Vendor="JP-L"\
-      Version="0.1"
+HOST=http://localhost
+CONTEXT_PATH=jdemo
+CONTAINER_PORT_1=8080
 
-ENV CATALINA_HOME /usr/local/tomcat
-ENV TOMCATPATH /usr/local/tomcat/webapps/
-ENV CONTEXTPATH /var/cache/webapps/jdemo
-ENV TOMCATUSER root
-ENV TOMCATGROUP staff
+# sleep a couple of seconds to let the second container start
+sleep 30
 
-# Enable remote monitoring
-COPY ["setenv.sh","$CATALINA_HOME/bin"]
-RUN chmod 740 $CATALINA_HOME/bin/setenv.sh
+# Verify if the application deployed correctly
+echo "URL TO TEST: " $HOST:$CONTAINER_PORT_1/$CONTEXT_PATH/
+if wget $HOST:$CONTAINER_PORT_1/$CONTEXT_PATH/ --timeout 30 -O - 2>/dev/null; then
+        echo "1- TEST SUCCEEDED";
+else
+        echo "1- TEST FAILED";
+fi
 
-# Create directories to store application files and logging
-RUN mkdir -p $CONTEXTPATH
-# Set the owner of the directories
-RUN chown $TOMCATUSER:$TOMCATGROUP $CONTEXTPATH
-# Set Tomcat data and log directories in a data volume
-VOLUME ["$CONTEXTPATH"]
-
-COPY ["*.war","$TOMCATPATH"]
-
-# Expose default ports
-EXPOSE 8080 9012 62911
-
+exit 0;

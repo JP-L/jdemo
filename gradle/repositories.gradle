@@ -1,10 +1,51 @@
 /*
  * Repositories configuration
  */
+
+/* ==== Apply plugins ==== */
+apply plugin: 'maven'
     
 /* ===== Repositories ===== */    
-repositories {
-    jcenter()
+artifactory {
+    contextUrl = "${binrepo_url}"   //The base Artifactory URL if not overridden by the publisher/resolver
+    publish {
+        repository {
+            repoKey = 'gradle-dev-local'
+            username = "${binrepo_user}"
+            password = "${binrepo_password}"
+            maven = true
+            
+        }
+    }
+    resolve {
+    	repository {
+      		repoKey = 'jcenter' // The Artifactory (preferably virtual) repository key to resolve from
+      		username = "${binrepo_user}" // Optional resolver user name (leave out to use anonymous resolution)
+      		password = "${binrepo_password}" // The resolver password
+      		maven = true     
+    	}
+  	}
 }
 
-//Add Artifactory, Nexus or anything here
+//repositories {
+//    maven {
+//        url "${binrepo_url}/repository/jcenter/"
+//        credentials {
+//        	username "${binrepo_user}"
+//        	password "${binrepo_password}"
+//        }
+//    }
+//}
+
+//uploadArchives {
+//    repositories {
+//        mavenDeployer {
+//            repository(url: "${binrepo_url}/repository/maven-releases/") {
+//                authentication(userName: "${binrepo_user}", password: "${binrepo_password}")
+//            }
+//            snapshotRepository(url: "${binrepo_url}/repository/maven-snapshots") {
+//                authentication(userName: "${binrepo_user}", password: "${binrepo_password}")
+//            }
+//        }
+//    }
+//}

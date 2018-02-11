@@ -1,0 +1,95 @@
+/*
+ * Docker configuration
+ */
+buildscript {
+    repositories {
+        maven {
+	        url "${binrepo_url}/jcenter/"
+	        //url "${binrepo_url}" https://binaryrepository.jfrog.io/binaryrepository/jcenter/
+	        credentials {
+	       		username "${binrepo_user}"
+	       		password "${binrepo_password}"
+	    	}
+	    }
+    }
+    dependencies {
+        classpath "com.bmuschko:gradle-docker-plugin:3.2.3"
+    }
+} 
+   
+/* ==== Apply plugins ==== */
+
+// use fully qualified class name
+apply plugin: com.bmuschko.gradle.docker.DockerRemoteApiPlugin
+//apply plugin: 'com.bmuschko.docker-remote-api'
+
+import com.bmuschko.gradle.docker.tasks.image.*
+import com.bmuschko.gradle.docker.tasks.container.*
+
+/* ===== Docker configuration ===== */
+def dockerRepo = "${binrepo_registryUrl}"
+
+docker {
+    if (System.env.DOCKER_HOST) {
+        url = "$System.env.DOCKER_HOST".replace("tcp","https")
+        
+        if (System.env.DOCKER_CERT_PATH) {
+            certPath = new File(System.env.DOCKER_CERT_PATH)
+        }
+    }
+    else {
+        url = 'unix:///var/run/docker.sock'
+    }
+    																	       
+    registryCredentials {
+        url = "${binrepo_registryUrl}"
+        username = "${binrepo_user}"
+        password = "${binrepo_password}"
+        email = "${binrepo_email}"
+    }
+}
+
+task copyFiles(type: Copy) {
+    from        "${getProject().getBuildDir()}/libs/"
+    from        "${projectDir}/src/main/docker/Dockerfile"
+    from		"${projectDir}/src/main/resources/docker/setenv.sh"
+    into        "${getProject().getBuildDir()}/docker"
+}
+/* ===== Docker Image tasks ==== */
+task createDockerImage(type: DockerBuildImage) {
+    dependsOn   'copyFiles'
+    inputDir = file("${getProject().getBuildDir()}/docker")
+    //tags = ['jpl/'+"${getProject().getName()}".toString()]
+    tags = ["${dockerRepo}".toString() + '/' + "${getProject().getName()}".toString() + ':' + "${getProject().getVersion()}".toString()]
+    //tags = ['jpl/' + "${getProject().getName()}".toString() + ':' + "${getProject().getVersion()}".toString()]
+}
+task tagDockerImage(type: DockerTagImage) {
+    dependsOn createDockerImage
+    force = true
+    targetImageId { createDockerImage.getImageId() }
+    //imageId = createDockerImage.getImageId()
+    repository = "${dockerRepo}"
+    //tag = "${getProject().getName()}:${getProject().getVersion()}"
+    tag = "${getProject().getVersion()}"
+}
+task pushDockerImage(type: DockerPushImage) {
+    dependsOn createDockerImage
+    //imageName = "jpl" + "/" + "${getProject().getName()}"
+    imageName = "${dockerRepo}/${getProject().getName()}"
+    tag = "${getProject().getVersion()}"
+  	//registry = new DockerRegistry(url: "${binrepo_registryUrl}", username: "${binrepo_user}", password: "${binrepo_password}", email: "${binrepo_email}")
+}
+
+/* ===== Docker Container tasks ==== */
+task createDockerContainer(type: DockerCreateContainer) {
+    dependsOn createDockerImage
+    targetImageId { createDockerImage.getImageId() }
+    portBindings = ['8080:8080']
+}
+task startDockerContainer(type: DockerStartContainer) {
+    dependsOn createDockerContainer
+    targetContainerId { createDockerContainer.getContainerId() }
+}
+task stopDockerContainer(type: DockerStopContainer) {
+    targetContainerId { createDockerContainer.getContainerId() }
+}

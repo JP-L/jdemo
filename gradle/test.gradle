@@ -2,19 +2,10 @@
  * Test configuration
  */
 
-/* Apply plugins */
+/* ==== Apply plugins ==== */
 apply plugin: "net.saliman.cobertura"
-apply plugin: 'com.bmuschko.docker-remote-api'
+apply plugin: "org.sonarqube"
 
-/* ===== Static Code Analysis ===== */
-sonarqube {
-  properties {
-    property "sonar.projectName", "${name}"
-    property "sonar.projectKey", "org.sonarqube:jdemo"
-    property "sonar.cobertura.reportPath","${projectDir}/shippable/codecoverage/coverage.xml"
-    property "sonar.junit.reportsPath","${projectDir}/shippable/testresults"
-  }
-}
 /* ===== Unit testing ===== */
 test {
     reports.junitXml.destination = "${projectDir}/shippable/testresults"  
@@ -26,6 +17,36 @@ cobertura {
     coverageReportDir = file("${projectDir}/shippable/codecoverage")	
 }
 test.finalizedBy(project.tasks.cobertura)
+
+/* ===== Static Code Analysis ===== */
+sonarqube {
+  properties {
+    property "sonar.projectName", "${name}"
+    property "sonar.projectKey", "org.sonarqube:jdemo"
+    property "sonar.cobertura.reportPath","${projectDir}/shippable/codecoverage/coverage.xml"
+    property "sonar.junit.reportsPath","${projectDir}/shippable/testresults"
+  }
+}
+
+/* ===== CodeCoverage.io ===== */
+task codeCovIO(type: Exec) {
+    commandLine "/bin/bash", "-c", "bash <(curl -s https://codecov.io/bash) -f ./shippable/codecoverage/coverage.xml"
+    ignoreExitValue true
+}
+
+task inspectQuality(type: GradleBuild) {
+    tasks = ['test', 'cobertura', 'sonarqube', 'codeCovIO']
+}
+
+task runFunctionalAndIntegrationTests(type: Test) {
+    dependsOn startDockerContainer
+    exec {
+    	executable "/bin/bash"
+    	args "-c", "${projectDir}/src/test/docker/dockerFunctionalTests.sh"
+    	ignoreExitValue true
+    }
+    finalizedBy stopDockerContainer
+}
 
 /*
  * In this section declare the dependencies for production and test code
