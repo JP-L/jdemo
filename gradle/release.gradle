@@ -4,16 +4,87 @@
 
 /* ==== Apply plugins ==== */
 //apply plugin: "maven"
-    
+
 scmVersion {
-    useHighestVersion = true
-    repository {
-        customUsername = ""//TODO:get from shippable environment
+	repository {
+		type = 'git' // type of repository
+        directory = project.rootProject.file('./') // repository location
+        remote = 'origin' // remote name
+
+        // Authorization
+        //customUsername = ""//TODO:get from shippable environment
+        //customKey = 'AAasaDDSSD...' //or project.file('myKey') // custom authorization key (file or String)
+        //customKeyPassword = 'secret' // key password
     }
+    
+    tag {
+        prefix = "release"
+        //initialVersion = { tag: '1.0.0' } // returns initial version if none found, 0.1.0 by default
+    }
+    
+	// Dry run & local only release
+    localOnly = true // never connect to remote
+    // Uncommitted changes
+    ignoreUncommittedChanges = true // should uncommitted changes force version bump
+    // :doc`use_highest_version`
+    useHighestVersion = true // Defaults as false, setting to true will find the highest visible version in the commit tree
+    // Sanitization
+    sanitizeVersion = true // should created version be sanitized, true by default
+    
+    versionCreator 'versionWithBranch'
+    
     branchVersionIncrementer = [
         'development/.*' : 'simple',
         'release/.*' : 'incrementPrerelease',
         'bugfix/.*' : { c -> c.currentVersion.incrementPatchVersion() },
         'master/.*' : 'incrementMinor '
     ]
+    
+    // Release hooks
+    createReleaseCommit true // should create empty commit to annotate release in commit history, false by default
+    //releaseCommitMessage { version, position -> ... } // custom commit message if commits are created
+
+    // Pre-release checks
+    checks {
+        uncommittedChanges = false // permanently disable uncommitted changes check
+        aheadOfRemote = false // permanently disable ahead of remote check
+    }
+    
+    hooks {
+        pre 'fileUpdate', [file: 'README.md', pattern: {v,p -> /(version.) $v/}, replacement: {v, p -> "\$1 $v"}]
+        pre 'commit'
+    }
+}
+
+def merge(def branchFrom, def branchTo, def stage) {
+		StackTraceElement[] stackTraceElements = Thread.currentThread().getStackTrace()
+    	println "called by " + stackTraceElements[2].getMethodName()
+    return tasks.create("merge${stage}") {
+	    // Check if the release branch exists
+    	if ( grgit.branch.list().find{it.name == "${branchTo}"} != null ) {
+    		grgit.merge(head: "${branchTo}", mode: "only-ff", message: "Merged ${branchTo} branch into ${branchFrom} branch")
+    		grgit.checkout(branch: "${branchTo}")
+    	} else {
+    		grgit.checkout(branch: "${branchTo}", createBranch: true)
+    	}
+    	//assuming the merge was successful we can now merge branchFrom into branchTo
+		grgit.merge(head: "${branchFrom}", mode: "default", message: "Merged ${branchFrom} branch into ${branchTo} branch")
+		//Push the changes upstream
+		grgit.push(dryRun: "${release_dryrun}")
+    }
+}
+
+task releaseDevelopment {
+    description "Merge development branch into release branch in two steps"
+	merge("development","releases", "Development").execute()
+}
+task releaseNext {
+    // Tag releases branch [release-x.x.x-rc] and Merge/push release branch to master branch. 
+	//dependsOn .... Acceptance and smote tests. These depend on releaseCI
+	description "Merge releases branch into master branch in two steps"
+    merge("releases","master", "dev-stage-1").execute()
+}
+task publish {
+    // Tag master branch [release-x.x.x], push docker image to DockerHub and deploy to production. 
+	//dependsOn .... masterCI and test. When deploy to production a healthcheck is included.
 }

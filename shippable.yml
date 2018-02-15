@@ -31,12 +31,12 @@ env:
 build:
   # commands in this section run on your build machine and not inside your CI container.
   pre_ci:
-    - echo "============ Prepare environment ============="
+    - echo "==== Prepare environment ===="
     - mkdir -p $TEST_RESULTS_DIR && mkdir -p $CODE_COVERAGE_DIR
     - pushd $TESTS_LOC_DIR
-    - if [ "$BRANCH" == "development" ]; then echo "this is development branch"; fi
-    - if [ "$BRANCH" == "release" ]; then echo "this is release branch"; fi
-    - if [ "$BRANCH" == "master" ]; then echo "this is master branch"; fi
+    - if [ "$BRANCH" == "development" ]; then echo "==== Development branch ===="; fi
+    - if [ "$BRANCH" == "release" ]; then echo "==== Release branch ===="; fi
+    - if [ "$BRANCH" == "master" ]; then echo "==== Master branch ===="; fi
     
   pre_ci_boot:
     image_name: 791079558361.dkr.ecr.eu-west-1.amazonaws.com/jpl/u16jav
@@ -47,24 +47,34 @@ build:
   # commands in this section run inside your CI container. In addition, any commands such as ls, 
   # in this section can be used to skip default processing for CI.
   ci:
-    - echo "============ Prepare Gradle environment ============="
+    - echo "==== Prepare Gradle environment ===="
     - mkdir -p $HOME/.gradle
     - printenv | grep SONARQUBE_PROP | cut -d'=' -f 2- | tr '|' '\n' >> $HOME/.gradle/gradle.properties
-    #- printenv | grep BINREPO_PROP | cut -d'=' -f 2- >> $HOME/.gradle/gradle.properties
-    - echo "========== Building the Java application ==========="
+    - printenv | grep BINREPO_PROP | cut -d'=' -f 2- >> $HOME/.gradle/gradle.properties
+    - echo "==== Building the Java application ===="
     - gradle assemble
-    - echo "========== Test and Quality control for the Java application ==========="   
-    - gradle test
-    - gradle sonarqube
-    
+    - if [ "$BRANCH" != "master" ]; then \
+           echo "==== Tests and Quality control for the Java application ====" && \   
+           gradle inspectQuality && \
+           gradle runFunctionalAndIntegrationTests
+    - if [ "$BRANCH" == "master" ]; then \
+           echo "==== Tests for the Java application ====" && \   
+           gradle test && \
+           gradle runFunctionalAndIntegrationTests
+           
   post_ci:
-    - bash <(curl -s https://codecov.io/bash) -f shippable/codecoverage/coverage.xml
-    #- if [ "$BRANCH" == "development" ]; then echo "=== Build, Tag and Push the Docker image to the dev repository ===" && gradle buildDockerFile && gradle pushDockerImage; fi
-    #- if [ "$BRANCH" == "release" ]; then echo "=== Build, Tag and Push the Docker image to the test repository ===" && gradle buildDockerFile && gradle pushDockerImage; fi
-    #- if [ "$BRANCH" == "master" ]; then echo "=== Build, Tag and Push the Docker image to the release repository ===" && gradle buildDockerFile && gradle pushDockerImage; fi
-
+    - echo "==== Post CI tasks==== "
+    
   on_success:
-    - echo "Build succeeded"
+    - if [ "$BRANCH" == "development" ]; then \
+           echo "==== Release the code for Acceptance and Smoke testing ====" && \   
+           gradle releaseDevelopment
+    - if [ "$BRANCH" == "release" ]; then \
+           echo "==== Release the code for the next Release ====" && \   
+           gradle releaseNext
+    - if [ "$BRANCH" == "master" ]; then \
+           echo "==== Publish the next Release ====" && \   
+           gradle publish
     
   on_failure:
     - echo "Build failed"

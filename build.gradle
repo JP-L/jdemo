@@ -6,6 +6,7 @@ plugins {
     id "org.sonarqube" version "2.6"
     id "net.saliman.cobertura" version "2.3.2"
     id "pl.allegro.tech.build.axion-release" version "1.8.3"
+    id "org.ajoberstar.grgit" version "2.1.0"
 }
 
 /* project version */
