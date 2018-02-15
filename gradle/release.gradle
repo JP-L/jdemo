@@ -69,11 +69,12 @@ def merge(def branchFrom, def branchTo, def stage) {
     	}
     	//assuming the merge was successful we can now merge branchFrom into branchTo
 		grgit.merge(head: "${branchFrom}", mode: "default", message: "Merged ${branchFrom} branch into ${branchTo} branch")
-		//Push the changes upstream
+		// Push the changes upstream
 		grgit.push(dryRun: "${release_dryrun}")
+		// Checkout original branch
+		grgit.checkout(branch: "${branchFrom}")
     }
 }
-
 task releaseDevelopment {
     description "Merge development branch into release branch in two steps"
 	merge("development","releases", "Development").execute()
