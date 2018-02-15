@@ -77,13 +77,17 @@ def merge(def branchFrom, def branchTo, def stage) {
 }
 task releaseDevelopment {
     description "Merge development branch into release branch in two steps"
-	merge("development","releases", "Development").execute()
+    doLast {
+		merge("development","releases", "Development").execute()
+	}
 }
 task releaseNext {
     // Tag releases branch [release-x.x.x-rc] and Merge/push release branch to master branch. 
 	//dependsOn .... Acceptance and smote tests. These depend on releaseCI
 	description "Merge releases branch into master branch in two steps"
-    merge("releases","master", "dev-stage-1").execute()
+	doLast {
+    	merge("releases","master", "dev-stage-1").execute()
+    }
 }
 task publish {
     // Tag master branch [release-x.x.x], push docker image to DockerHub and deploy to production. 
