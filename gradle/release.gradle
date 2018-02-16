@@ -78,7 +78,7 @@ def merge(def branchFrom, def branchTo, def stage) {
 		grgit.merge(head: "${branchFrom}", mode: "default", message: "Merged ${branchFrom} branch into ${branchTo} branch")
 		// Push the changes upstream
 		println "push upstream"
-		grgit.push(remote: "origin", refsOrSpecs: "HEAD:refs/heads/${branchTo}", dryRun: "${release_dryrun}")
+		grgit.push(remote: "origin", refsOrSpecs: ["HEAD:refs/heads/${branchTo}"], dryRun: "${release_dryrun}")
 		// Checkout original branch
 		println "checkout starting branch"
 		grgit.checkout(branch: "${branchFrom}")
