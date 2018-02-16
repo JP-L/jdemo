@@ -65,23 +65,25 @@ def merge(def branchFrom, def branchTo, def stage) {
 		StackTraceElement[] stackTraceElements = Thread.currentThread().getStackTrace()
     	println "called by " + stackTraceElements[2].getMethodName()
     return tasks.create("merge${stage}") {
-	    // Check if the release branch exists
-	    println "checkout branch ${branchTo}"
-    	if ( grgit.branch.list().find{it.name == "${branchTo}"} != null ) {
-    		grgit.merge(head: "${branchTo}", mode: "only-ff", message: "Merged ${branchTo} branch into ${branchFrom} branch")
-    		grgit.checkout(branch: "${branchTo}")
-    	} else {
-    		grgit.checkout(branch: "${branchTo}", createBranch: true)
-    	}
-    	//assuming the merge was successful we can now merge branchFrom into branchTo
-    	println "merge branch ${branchFrom} into ${branchTo}"
-		grgit.merge(head: "${branchFrom}", mode: "default", message: "Merged ${branchFrom} branch into ${branchTo} branch")
-		// Push the changes upstream
-		println "push upstream"
-		grgit.push(remote: "origin", refsOrSpecs: ["+${branchTo}"], force: true, dryRun: "${release_dryrun}")
-		// Checkout original branch
-		println "checkout starting branch"
-		grgit.checkout(branch: "${branchFrom}")
+    	doLast {
+		    // Check if the release branch exists
+		    println "checkout branch ${branchTo}"
+	    	if ( grgit.branch.list().find{it.name == "${branchTo}"} != null ) {
+	    		grgit.merge(head: "${branchTo}", mode: "only-ff", message: "Merged ${branchTo} branch into ${branchFrom} branch")
+	    		grgit.checkout(branch: "${branchTo}")
+	    	} else {
+	    		grgit.checkout(branch: "${branchTo}", createBranch: true)
+	    	}
+	    	//assuming the merge was successful we can now merge branchFrom into branchTo
+	    	println "merge branch ${branchFrom} into ${branchTo}"
+			grgit.merge(head: "${branchFrom}", mode: "default", message: "Merged ${branchFrom} branch into ${branchTo} branch")
+			// Push the changes upstream
+			println "push upstream"
+			grgit.push(remote: "origin", refsOrSpecs: ["+${branchTo}"], force: true, dryRun: "${release_dryrun}")
+			// Checkout original branch
+			println "checkout starting branch"
+			grgit.checkout(branch: "${branchFrom}")
+		}
     }
 }
 task releaseDevelopment {
