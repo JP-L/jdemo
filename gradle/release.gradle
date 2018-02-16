@@ -82,7 +82,7 @@ def merge(def branchFrom, def branchTo, def stage) {
 			// Push the changes upstream
 			println "push upstream"
 			//grgit.push(remote: "origin", refsOrSpecs: ["+${branchTo}"], force: true, dryRun: "${release_dryrun}")
-			grgit.push(remote: "origin", refsOrSpecs: ["refs/heads/${branchTo}:refs/heads/${branchTo}"], dryRun: "${release_dryrun}")
+			grgit.push(remote: "origin", refsOrSpecs: ["refs/heads/${branchTo}:refs/heads/${branchTo}"], force: true, dryRun: "${release_dryrun}")
 			// Checkout original branch
 			println "checkout starting branch"
 			grgit.checkout(branch: "${branchFrom}")
