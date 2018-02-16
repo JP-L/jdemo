@@ -29,22 +29,30 @@ sonarqube {
 }
 
 /* ===== CodeCoverage.io ===== */
-task codeCovIO(type: Exec) << {
+task codeCovIO(type: Exec) {
     commandLine "/bin/bash", "-c", "bash <(curl -s https://codecov.io/bash) -f ./shippable/codecoverage/coverage.xml"
     ignoreExitValue true
+    doLast {
+    	def msg = (execResult == 0) ? "SUCCESS: Upload to codeCovIO" : "FAILED: Upload to codeCovIO"
+        println "${msg}"
+    }
 }
 
 task inspectQuality(type: GradleBuild) {
     tasks = ['test', 'cobertura', 'sonarqube', 'codeCovIO']
 }
 
-task runFunctionalAndIntegrationTests(type: Exec) << {
+task runFunctionalAndIntegrationTests(type: Exec) {
     dependsOn startDockerContainer
     exec {
 	   	executable "/bin/bash"
 	   	args "-c", "${projectDir}/src/test/docker/dockerFunctionalTests.sh"
 	   	ignoreExitValue true
 	}
+	doLast {
+    	def msg = (execResult == 0) ? "SUCCESS: Functional tests" : "FAILED: Functional tests"
+        println "${msg}"
+    }
     finalizedBy stopDockerContainer
 }
 task runAcceptanceAndSmokeTests(type: Exec) << {
