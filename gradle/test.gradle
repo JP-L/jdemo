@@ -44,16 +44,18 @@ task inspectQuality(type: GradleBuild) {
 
 task runFunctionalAndIntegrationTests(type: Exec) {
     dependsOn startDockerContainer
-    exec {
-	   	executable "/bin/bash"
-	   	args "-c", "${projectDir}/src/test/docker/dockerFunctionalTests.sh"
-	   	ignoreExitValue true
-	}
+    finalizedBy stopDockerContainer
+    commandLine "/bin/bash", "-c", "${projectDir}/src/test/docker/dockerFunctionalTests.sh"
+    //exec {
+	//   	executable "/bin/bash"
+	//   	args "-c", "${projectDir}/src/test/docker/dockerFunctionalTests.sh"
+	//   	ignoreExitValue true
+	//}
+	ignoreExitValue true
 	doLast {
     	def msg = (execResult == 0) ? "SUCCESS: Functional tests" : "FAILED: Functional tests"
         println "${msg}"
     }
-    finalizedBy stopDockerContainer
 }
 task runAcceptanceAndSmokeTests(type: Exec) << {
 	//dependsOn .... releaseCI -> probably this becomes a shippable Job
