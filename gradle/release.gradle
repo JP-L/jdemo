@@ -65,6 +65,7 @@ def merge(def branchFrom, def branchTo, def stage) {
 		StackTraceElement[] stackTraceElements = Thread.currentThread().getStackTrace()
     	println "called by " + stackTraceElements[2].getMethodName()
     return tasks.create("merge${stage}") {
+        outputs.upToDateWhen { false } // Make sure this tasks always run
     	doLast {
 		    // Check if the release branch exists
 	    	if ( grgit.branch.list().find{it.name == "${branchTo}"} != null ) {
@@ -77,10 +78,11 @@ def merge(def branchFrom, def branchTo, def stage) {
 	    	}
 	    	//assuming the merge was successful we can now merge branchFrom into branchTo
 	    	println "merge branch ${branchFrom} into ${branchTo}"
-			grgit.merge(head: "${branchFrom}", mode: "default", message: "Merged ${branchFrom} branch into ${branchTo} branch")
+			grgit.merge(head: "${branchFrom}", mode: "create-commit", message: "Merged ${branchFrom} branch into ${branchTo} branch")
 			// Push the changes upstream
 			println "push upstream"
-			grgit.push(remote: "origin", refsOrSpecs: ["+${branchTo}"], force: true, dryRun: "${release_dryrun}")
+			//grgit.push(remote: "origin", refsOrSpecs: ["+${branchTo}"], force: true, dryRun: "${release_dryrun}")
+			grgit.push(remote: "origin", refsOrSpecs: ["refs/heads/${branchTo}:refs/heads/${branchTo}"], dryRun: "${release_dryrun}")
 			// Checkout original branch
 			println "checkout starting branch"
 			grgit.checkout(branch: "${branchFrom}")
@@ -89,6 +91,7 @@ def merge(def branchFrom, def branchTo, def stage) {
 }
 task releaseDevelopment {
     description "Merge development branch into release branch"
+    outputs.upToDateWhen { false } //Make sure this task always runs
     doLast {
 		merge("development","releases", "Development").execute()
 	}
