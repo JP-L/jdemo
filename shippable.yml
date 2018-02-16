@@ -1,3 +1,7 @@
+#
+# Continuous Integration
+#
+ 
 # Language setting
 language: java
 
@@ -57,7 +61,7 @@ build:
   ci:
     - echo "==== Prepare Gradle environment ===="
     - mkdir -p $HOME/.gradle
-    - cp $HOME/src/main/resources/gradle/gradle.properties $HOME/.gradle/
+    - cp $SHIPPABLE_REPO_DIR/src/main/resources/gradle/gradle.properties $HOME/.gradle/
     - printenv | grep SONARQUBE_PROP | cut -d'=' -f 2- | tr '|' '\n' >> $HOME/.gradle/gradle.properties
     - printenv | grep BINREPO_PROP | cut -d'=' -f 2- | tr '|' '\n' >> $HOME/.gradle/gradle.properties
     - echo "==== Building the Java application ===="
@@ -71,7 +75,7 @@ build:
            gradle test &&
            gradle runFunctionalAndIntegrationTests;
       else
-           echo ""==== Unknown branch ====""
+           echo "==== Unknown branch ===="
       fi
            
   post_ci:
@@ -88,30 +92,31 @@ build:
            echo "==== Publish the next Release ====" &&   
            gradle releaseVersion;
       else
-           echo ""==== Unknown branch ====""
+           echo "==== Unknown branch ===="
       fi
     
   on_failure:
-    - echo "Build failed"
+    - echo "==== Build failed ===="
     
   cache: false
   
-  # Commands in this section run on your build machine and not inside your CI container.
-  #push:
-  #  - echo "TODO: skip push -> (Artifactory through Gradle I presume)"
-  #  - echo "TODO: Or perhaps use this for deployment (what about pipeline?)"
+ #
+ # Assembly line jobs
+ #
+jobs:
+  - name: jdemo
+    type: runCI
+    dependencyMode: immediate   # optional
+    flags:
+      - jdemo
+    steps:
+      - OUT: jdemo-dev-image
 
+ #
+ # Integrations
+ #
 integrations:
 # If you are using integrations, you'll need to set it up in two places. Subscription settings & here in this section of the yml.
-#    notifications:
-#        - integrationName:
-#          type:
-#          recipients:
-#          branches:
-#          on_start:
-#          on_success
-#          on_failure:
-#          on_changed:   
     notifications:
         - integrationName: Slack
           type: slack
@@ -133,141 +138,3 @@ integrations:
           region: eu-west-1
 #          agent_only:
 #          branches:
-
-# Pipeline Resources
-resources:
-  - name: jdemo-dev-image
-    type: image
-    flags:
-      - jdemo
-    integration: ??? AWS, Artifactory, Nexus Pro??
-    pointer:
-      sourceName: "" #"679404489841.dkr.ecr.us-east-1.amazonaws.com/deploy-ecs-basic"
-    seed:
-      versionName: "latest-dev"
-
-  - name: jdemo-release-image
-    type: image
-    flags:
-      - jdemo
-    integration: ??? AWS, Artifactory, Nexus Pro??
-    pointer:
-      sourceName: "" #"679404489841.dkr.ecr.us-east-1.amazonaws.com/deploy-ecs-basic"
-    seed:
-      versionName: "latest-release"
-  
-  - name: jdemo-image
-    type: image
-    flags:
-      - jdemo
-    integration: Docker
-    pointer:
-      sourceName: "" #"679404489841.dkr.ecr.us-east-1.amazonaws.com/deploy-ecs-basic"
-    seed:
-      versionName: "latest"
-          
-  - name: jdemo-params
-    type: params
-    flags:
-      - jdemo
-    version:
-      params:
-        PORT: 8080
-        ENVIRONMENT: "dev"
-
-  # Docker options
-  - name: jdemo-dockerOptions
-    type: dockerOptions
-    flags:
-      - deploy-ecs-basic
-    version:
-      memory: 1024                        #in MiB
-      cpuShares: 10
-      portMappings:
-          - "8080:8080"
-      #links:                                    #containerName:alias
-      #   - <container name>:<alias>
-      #   - <container name>:<alias>
-      #volumes:
-      #  - "<source>:<container path>:<options>"
-      #  - "<source>:<container path>:<options>
-      logConfig:
-          type: awslogs
-          options:
-            awslogs-group: jdemo
-            awslogs-region: eu-west-1
-      #entryPoint:
-      #  - <string>
-      #  - <string>
-      #cmd:
-      #  - <string>
-      #  - <string>
-      #workingDir: <path to working dir>
-      privileged: false                     # May be true or false
-      #labels:
-      #  <key1>: <value1>
-      #  <key2>: <value2>
-      #volumesFrom:
-      #  - "<container name>:<options>"
-      #  - "<container name>:<options>"
-      #ulimits:
-      #  - name: <name of limit>                 # e.g. cpu
-      #    soft: <number>                        # soft Limit
-      #    hard: <number>                        # hard Limit
-      #  - name: <name of limit>                 # e.g. nofile
-      #    soft: <number>                        # soft Limit, e.g. 50
-      #    hard: <number>                        # hard Limit, e.g. 100
-      #dnsServers:
-      #  - "<ip address>"
-      #dnsSearch:
-      #  - "<ip address>"
-      #user: <string>                            # For GKE, this should be the UID (a number)
-
-  - name: jdemo-replicas
-    type: replicas
-    flags:
-      - jdemo
-    version:
-      count: 1
-
-  - name: deploy-ecs-cluster
-    type: cluster
-    flags:
-      - jdemo
-    integration: Provider-AWS
-    pointer:
-      sourceName : "aws-ecs-cluser" #name of the cluster to which we are deploying
-      region: "eu-west-1"
-              
-jobs:
-  - name: development_runCI
-    type: runCI
-    dependencyMode: immediate   # optional
-    flags:
-      - jdemo
-    steps:
-      - OUT: jdemo-dev-image
-
-  - name: release_runCI
-    type: runCI
-    dependencyMode: chrono   # optional
-    flags:
-      - jdemo
-    steps:
-      - IN: develop_runCI
-      - OUT: jdemo-release-image
-
-  - name: master_runCI
-    type: runCI
-    dependencyMode: strict #<chrono/strict/immediate>   # optional
-    steps:
-      #- IN: <resource>
-      #  switch: off
-      - IN: release_runCI
-      #- IN: <resource>
-      #  versionName: <name of the version you want to pin>
-      #- IN: <resource>
-      #  versionNumber: <number of the version you want to pin>        
-      - OUT: jdemo-image
-      #- OUT: <resource>
-      #  replicate: <resource>
