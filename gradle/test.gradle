@@ -30,8 +30,10 @@ sonarqube {
 
 /* ===== CodeCoverage.io ===== */
 task codeCovIO(type: Exec) {
-    commandLine "/bin/bash", "-c", "bash <(curl -s https://codecov.io/bash) -f ./shippable/codecoverage/coverage.xml"
-    ignoreExitValue true
+    doLast {
+    	commandLine "/bin/bash", "-c", "bash <(curl -s https://codecov.io/bash) -f ./shippable/codecoverage/coverage.xml"
+    	ignoreExitValue true
+    }
 }
 
 task inspectQuality(type: GradleBuild) {
@@ -40,11 +42,13 @@ task inspectQuality(type: GradleBuild) {
 
 task runFunctionalAndIntegrationTests(type: Test) {
     dependsOn startDockerContainer
-    exec {
-    	executable "/bin/bash"
-    	args "-c", "${projectDir}/src/test/docker/dockerFunctionalTests.sh"
-    	ignoreExitValue true
-    }
+    doLast {
+	    exec {
+	    	executable "/bin/bash"
+	    	args "-c", "${projectDir}/src/test/docker/dockerFunctionalTests.sh"
+	    	ignoreExitValue true
+	    }
+	}
     finalizedBy stopDockerContainer
 }
 task runAcceptanceAndSmokeTests(type: Test) {

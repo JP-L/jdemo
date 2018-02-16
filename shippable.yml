@@ -77,7 +77,8 @@ build:
       else
            echo "==== Unknown branch ===="
       fi
-           
+    - echo "==== CI completed. Move to post CI ===="
+
   post_ci:
     - echo "==== Post CI tasks==== "
     
@@ -94,7 +95,7 @@ build:
       else
            echo "==== Unknown branch ===="
       fi
-    
+
   on_failure:
     - echo "==== Build failed ===="
     
