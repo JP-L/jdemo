@@ -14,7 +14,7 @@ jdk:
 branches:
   only:
     - master
-    - release
+    - releases
     - development
 
 # Specify which services you need. This is only valid if you use the default Shippable image for your build
