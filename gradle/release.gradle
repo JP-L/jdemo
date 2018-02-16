@@ -66,6 +66,7 @@ def merge(def branchFrom, def branchTo, def stage) {
     	println "called by " + stackTraceElements[2].getMethodName()
     return tasks.create("merge${stage}") {
 	    // Check if the release branch exists
+	    println "checkout branch ${branchTo}"
     	if ( grgit.branch.list().find{it.name == "${branchTo}"} != null ) {
     		grgit.merge(head: "${branchTo}", mode: "only-ff", message: "Merged ${branchTo} branch into ${branchFrom} branch")
     		grgit.checkout(branch: "${branchTo}")
@@ -73,10 +74,13 @@ def merge(def branchFrom, def branchTo, def stage) {
     		grgit.checkout(branch: "${branchTo}", createBranch: true)
     	}
     	//assuming the merge was successful we can now merge branchFrom into branchTo
+    	println "merge branch ${branchFrom} into ${branchTo}"
 		grgit.merge(head: "${branchFrom}", mode: "default", message: "Merged ${branchFrom} branch into ${branchTo} branch")
 		// Push the changes upstream
+		println "push upstream"
 		grgit.push(dryRun: "${release_dryrun}")
 		// Checkout original branch
+		println "checkout starting branch"
 		grgit.checkout(branch: "${branchFrom}")
     }
 }
