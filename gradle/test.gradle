@@ -47,6 +47,9 @@ task runFunctionalAndIntegrationTests(type: Test) {
     }
     finalizedBy stopDockerContainer
 }
+task runAcceptanceAndSmokeTests(type: Test) {
+	//dependsOn .... releaseCI -> probably this becomes a shippable Job
+}
 
 /*
  * In this section declare the dependencies for production and test code

@@ -23,7 +23,7 @@ scmVersion {
     }
     
 	// Dry run & local only release
-    localOnly = true // never connect to remote
+    localOnly = "${release_dryrun}" // never connect to remote when true
     // Uncommitted changes
     ignoreUncommittedChanges = true // should uncommitted changes force version bump
     // :doc`use_highest_version`
@@ -31,13 +31,18 @@ scmVersion {
     // Sanitization
     sanitizeVersion = true // should created version be sanitized, true by default
     
-    versionCreator 'versionWithBranch'
+    branchVersionCreator = [
+    	'development/.*' : 'simple',
+        'releases/.*' : 'incrementPrerelease',
+        'bugfix/.*' : 'simple',
+        'master/.*' : 'simple'        
+    ]
     
     branchVersionIncrementer = [
         'development/.*' : 'simple',
-        'release/.*' : 'incrementPrerelease',
+        'releases/.*' : 'incrementPrerelease',
         'bugfix/.*' : { c -> c.currentVersion.incrementPatchVersion() },
-        'master/.*' : 'incrementMinor '
+        'master/.*' : 'incrementMinor'
     ]
     
     // Release hooks
@@ -76,20 +81,25 @@ def merge(def branchFrom, def branchTo, def stage) {
     }
 }
 task releaseDevelopment {
-    description "Merge development branch into release branch in two steps"
+    description "Merge development branch into release branch"
     doLast {
 		merge("development","releases", "Development").execute()
 	}
 }
-task releaseNext {
-    // Tag releases branch [release-x.x.x-rc] and Merge/push release branch to master branch. 
-	//dependsOn .... Acceptance and smote tests. These depend on releaseCI
-	description "Merge releases branch into master branch in two steps"
+task releaseMilestone {
+	description "Tag releases branch with a milestone version"
 	doLast {
-    	merge("releases","master", "dev-stage-1").execute()
+    	// Tag releases branch [release-x.x.x-milestone.y]
     }
 }
-task publish {
+task releaseCandidate {
+	description "Merge releases branch into master branch"
+	doLast {
+    	merge("releases","master", "dev-stage-1").execute()
+    	// Tag releases branch [release-x.x.x-rc.y]
+    }
+}
+task releaseVersion {
     // Tag master branch [release-x.x.x], push docker image to DockerHub and deploy to production. 
 	//dependsOn .... masterCI and test. When deploy to production a healthcheck is included.
 }

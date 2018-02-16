@@ -59,22 +59,17 @@ task copyFiles(type: Copy) {
 task createDockerImage(type: DockerBuildImage) {
     dependsOn   'copyFiles'
     inputDir = file("${getProject().getBuildDir()}/docker")
-    //tags = ['jpl/'+"${getProject().getName()}".toString()]
-    tags = ["${dockerRepo}".toString() + '/' + "${getProject().getName()}".toString() + ':' + "${getProject().getVersion()}".toString()]
-    //tags = ['jpl/' + "${getProject().getName()}".toString() + ':' + "${getProject().getVersion()}".toString()]
+    tags = ["${dockerRepo}".toString() + '/' + "${getProject().getName()}".toString() + ':latest']
 }
 task tagDockerImage(type: DockerTagImage) {
     dependsOn createDockerImage
     force = true
     targetImageId { createDockerImage.getImageId() }
-    //imageId = createDockerImage.getImageId()
     repository = "${dockerRepo}"
-    //tag = "${getProject().getName()}:${getProject().getVersion()}"
     tag = "${getProject().getVersion()}"
 }
 task pushDockerImage(type: DockerPushImage) {
     dependsOn createDockerImage
-    //imageName = "jpl" + "/" + "${getProject().getName()}"
     imageName = "${dockerRepo}/${getProject().getName()}"
     tag = "${getProject().getVersion()}"
   	//registry = new DockerRegistry(url: "${binrepo_registryUrl}", username: "${binrepo_user}", password: "${binrepo_password}", email: "${binrepo_email}")

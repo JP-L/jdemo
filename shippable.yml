@@ -24,6 +24,7 @@ env:
     - TESTS_LOC_DIR=$SHIPPABLE_REPO_DIR/src/test
     - MOD_LOC=$SHIPPABLE_REPO_DIR/node_modules/.bin/
     - secure: Qk6NKicUfeWMIPcA5HGJebxUzVUV4SPTV6Oq47G2GgC1TjrFMcwrrZTzrHGJ1q2jP1el+M0OmcuTmQjgUIHGXWZACkvw/y6F3Y0yOLUGJhAHRIN2JHsj5c3PjMoz4U/wYM2eKOiZwiaFsI2sm455wU2jHo6+9cgCJdEfMPX2rBM6w9Uy9VpWbZ/FUzBRxuDakVoErtJ63frGKEcQ0nbNrbqETARQJfsrLw/zY65tNW6+EOpEunQOMTaZfpQ5yY6CEFMDxN2AsdBfmTpfD4x5houhSOvWXSm1zyDmavYlO+aXjq/WzuZymCmfGhjDUfDj0CMAw/E1hMpMrJ5f8zWdEg==
+    - secure: pdNfpgDQgmz0oLT89pK0oZfizQ670co/o6jEZlEqnLt1DIkmQwKFwX/o2xEiN0v2R6PmAJcQN+H0ynYJqeYW4Bk9ZfWa0hzcYXK31LvEisQ0VXEo8RiHkifwECkBXAx7rp6iHvSK+ocTepoo4p3nH3AZCZbBbzZCH5ygKPxve7r4IGHVhwmq1yCz7esr/AtdsZgRSkF0r81DZuAyZhZKurGd+YzyzRsqSIFsmw3zDlKql/+GWjvxyu1eNyrdjVxkHkvfMxTzdC4aBElM6YszgK0s25CR+/vKUJuyVV16xvz+GaVwqlp96CQeIkCWN8Vqq3OS1F2agNUpzt6C1zJkoQQIBHDVnWiFyxgXHcebVYMH59ORGvcMPSABm0KoyFDccu72AUdm70dYwMm3ISvt5uwFtREpIPwK7DdqhMaj9lY3av2PelpKVn5S5VXZX4C0mGH/BntuTxP6SgTqfl84KPK0z8KTIIxLFzK4YxtVZeFbyuJrqQgFbOT5jMJt3H+WLEFOn81EIgxYPkkxNvhPxgLB8Q6lBJQiy/fCTIEOyurPT1C6TErv7znduF88xaJnZWvvuNJMDYgpX5iUDKjNLsZ2fJp6ZpMW8GUTfvMOfxJzRrcK5bqGaWT8OqHkEJhrzblBL0/KLghGVs5MY0n8qFQSlRmWeuYRU7Y0Maa0MoU=
 
 #matrix:
 
@@ -34,9 +35,16 @@ build:
     - echo "==== Prepare environment ===="
     - mkdir -p $TEST_RESULTS_DIR && mkdir -p $CODE_COVERAGE_DIR
     - pushd $TESTS_LOC_DIR
-    - if [ "$BRANCH" == "development" ]; then echo "==== Development branch ===="; fi
-    - if [ "$BRANCH" == "release" ]; then echo "==== Release branch ===="; fi
-    - if [ "$BRANCH" == "master" ]; then echo "==== Master branch ===="; fi
+    - if [ "$BRANCH" == "development" ]; then \
+           echo "==== Development branch ===="; \
+      elif [ "$BRANCH" == "release" ]; then \
+           echo "==== Release branch ===="; \
+      elif [ "$BRANCH" == "master" ]; then \
+           echo "==== Master branch ===="; \
+      else
+           echo "==== Unknown branch ===="; \
+      fi
+    - echo "==== List all environment variables ====" && printenv
     
   pre_ci_boot:
     image_name: 791079558361.dkr.ecr.eu-west-1.amazonaws.com/jpl/u16jav
@@ -49,18 +57,21 @@ build:
   ci:
     - echo "==== Prepare Gradle environment ===="
     - mkdir -p $HOME/.gradle
+    - cp $HOME/src/main/resources/gradle/gradle.properties $HOME/.gradle/
     - printenv | grep SONARQUBE_PROP | cut -d'=' -f 2- | tr '|' '\n' >> $HOME/.gradle/gradle.properties
-    - printenv | grep BINREPO_PROP | cut -d'=' -f 2- >> $HOME/.gradle/gradle.properties
+    - printenv | grep BINREPO_PROP | cut -d'=' -f 2- | tr '|' '\n' >> $HOME/.gradle/gradle.properties
     - echo "==== Building the Java application ===="
     - gradle assemble
     - if [ "$BRANCH" != "master" ]; then \
            echo "==== Tests and Quality control for the Java application ====" && \   
            gradle inspectQuality && \
-           gradle runFunctionalAndIntegrationTests
+           gradle runFunctionalAndIntegrationTests; \
+      fi
     - if [ "$BRANCH" == "master" ]; then \
            echo "==== Tests for the Java application ====" && \   
            gradle test && \
-           gradle runFunctionalAndIntegrationTests
+           gradle runFunctionalAndIntegrationTests; \
+      fi
            
   post_ci:
     - echo "==== Post CI tasks==== "
@@ -70,11 +81,11 @@ build:
            echo "==== Release the code for Acceptance and Smoke testing ====" && \   
            gradle releaseDevelopment
     - if [ "$BRANCH" == "release" ]; then \
-           echo "==== Release the code for the next Release ====" && \   
-           gradle releaseNext
+           echo "==== Tag as milestone ====" && \   
+           gradle releaseMilestone
     - if [ "$BRANCH" == "master" ]; then \
            echo "==== Publish the next Release ====" && \   
-           gradle publish
+           gradle releaseVersion
     
   on_failure:
     - echo "Build failed"

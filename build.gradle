@@ -7,10 +7,10 @@ plugins {
     id "net.saliman.cobertura" version "2.3.2"
     id "pl.allegro.tech.build.axion-release" version "1.8.3"
     id "org.ajoberstar.grgit" version "2.1.0"
+    //id 'org.ajoberstar.reckon' version "0.3.0"
 }
 
 /* project version */
-//version = file('version.txt').text.trim()
 version = scmVersion.version
 
 /* Load Gradle files */
