@@ -75,7 +75,7 @@ build:
            gradle test;
            gradle runFunctionalAndIntegrationTests;
       else
-           echo "==== Unknown branch ===="
+           echo "==== Unknown branch ====";
       fi
     - echo "==== CI completed. Move to post CI ===="
 
@@ -84,16 +84,16 @@ build:
     
   on_success:
     - if [ "$BRANCH" == "development" ]; then
-           echo "==== Release the code for Acceptance and Smoke testing ====" &&
+           echo "==== Release the code for Acceptance and Smoke testing ====";
            gradle releaseDevelopment;
       elif [ "$BRANCH" == "release" ]; then
-           echo "==== Tag as milestone ====" &&
+           echo "==== Tag as milestone ====";
            gradle releaseMilestone;
       elif [ "$BRANCH" == "master" ]; then
-           echo "==== Publish the next Release ====" &&   
+           echo "==== Publish the next Release ====";   
            gradle releaseVersion;
       else
-           echo "==== Unknown branch ===="
+           echo "==== Unknown branch ====";
       fi
 
   on_failure:
