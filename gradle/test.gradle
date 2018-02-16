@@ -29,29 +29,25 @@ sonarqube {
 }
 
 /* ===== CodeCoverage.io ===== */
-task codeCovIO(type: Exec) {
-    doLast {
-    	commandLine "/bin/bash", "-c", "bash <(curl -s https://codecov.io/bash) -f ./shippable/codecoverage/coverage.xml"
-    	ignoreExitValue true
-    }
+task codeCovIO(type: Exec) << {
+    commandLine "/bin/bash", "-c", "bash <(curl -s https://codecov.io/bash) -f ./shippable/codecoverage/coverage.xml"
+    ignoreExitValue true
 }
 
 task inspectQuality(type: GradleBuild) {
     tasks = ['test', 'cobertura', 'sonarqube', 'codeCovIO']
 }
 
-task runFunctionalAndIntegrationTests(type: Test) {
+task runFunctionalAndIntegrationTests(type: Exec) << {
     dependsOn startDockerContainer
-    doLast {
-	    exec {
-	    	executable "/bin/bash"
-	    	args "-c", "${projectDir}/src/test/docker/dockerFunctionalTests.sh"
-	    	ignoreExitValue true
-	    }
+    exec {
+	   	executable "/bin/bash"
+	   	args "-c", "${projectDir}/src/test/docker/dockerFunctionalTests.sh"
+	   	ignoreExitValue true
 	}
     finalizedBy stopDockerContainer
 }
-task runAcceptanceAndSmokeTests(type: Test) {
+task runAcceptanceAndSmokeTests(type: Exec) << {
 	//dependsOn .... releaseCI -> probably this becomes a shippable Job
 }
 
