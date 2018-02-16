@@ -65,12 +65,9 @@ def merge(def branchFrom, def branchTo, def stage) {
 		StackTraceElement[] stackTraceElements = Thread.currentThread().getStackTrace()
     	println "called by " + stackTraceElements[2].getMethodName()
     return tasks.create("merge${stage}") {
-        outputs.upToDateWhen { false } // Make sure this tasks always run
     	doLast {
 		    // Check if the release branch exists
 	    	if ( grgit.branch.list().find{it.name == "${branchTo}"} != null ) {
-	    		//println "Merge any changes in ${branchTo} into ${branchFrom} and then checkout branch ${branchTo}"
-	    		//grgit.merge(head: "${branchTo}", mode: "default", message: "Merged ${branchTo} branch into ${branchFrom} branch")
 	    		println "Checkout branch ${branchTo}"
 	    		grgit.checkout(branch: "${branchTo}")
 	    	} else {
@@ -82,8 +79,11 @@ def merge(def branchFrom, def branchTo, def stage) {
 			grgit.merge(head: "${branchFrom}", mode: "create-commit", message: "Merged ${branchFrom} branch into ${branchTo} branch")
 			// Push the changes upstream
 			println "push upstream"
-			//grgit.push(remote: "origin", refsOrSpecs: ["+${branchTo}"], force: true, dryRun: "${release_dryrun}")
-			grgit.push(remote: "origin", refsOrSpecs: ["refs/heads/${branchTo}:refs/heads/${branchTo}"], force: true, dryRun: "${release_dryrun}")
+			if ("${release_dryrun}" == true) {
+				grgit.push(remote: "origin", refsOrSpecs: ["+${branchTo}"], force: true, dryRun: true)
+			} else {
+				grgit.push(remote: "origin", refsOrSpecs: ["${branchTo}"], force: true)
+			}
 			// Checkout original branch
 			println "checkout starting branch"
 			grgit.checkout(branch: "${branchFrom}")
@@ -92,7 +92,6 @@ def merge(def branchFrom, def branchTo, def stage) {
 }
 task releaseDevelopment {
     description "Merge development branch into release branch"
-    outputs.upToDateWhen { false } //Make sure this task always runs
     doLast {
 		merge("development","releases", "Development").execute()
 	}
