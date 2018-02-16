@@ -35,14 +35,14 @@ build:
     - echo "==== Prepare environment ===="
     - mkdir -p $TEST_RESULTS_DIR && mkdir -p $CODE_COVERAGE_DIR
     - pushd $TESTS_LOC_DIR
-    - if [ "$BRANCH" == "development" ]; then \
-           echo "==== Development branch ===="; \
-      elif [ "$BRANCH" == "release" ]; then \
-           echo "==== Release branch ===="; \
-      elif [ "$BRANCH" == "master" ]; then \
-           echo "==== Master branch ===="; \
+    - if [ "$BRANCH" == "development" ]; then
+           echo "==== Development branch ====";
+      elif [ "$BRANCH" == "release" ]; then
+           echo "==== Release branch ====";
+      elif [ "$BRANCH" == "master" ]; then
+           echo "==== Master branch ====";
       else
-           echo "==== Unknown branch ===="; \
+           echo "==== Unknown branch ====";
       fi
     - echo "==== List all environment variables ====" && printenv
     
@@ -62,30 +62,34 @@ build:
     - printenv | grep BINREPO_PROP | cut -d'=' -f 2- | tr '|' '\n' >> $HOME/.gradle/gradle.properties
     - echo "==== Building the Java application ===="
     - gradle assemble
-    - if [ "$BRANCH" != "master" ]; then \
-           echo "==== Tests and Quality control for the Java application ====" && \   
-           gradle inspectQuality && \
-           gradle runFunctionalAndIntegrationTests; \
-      fi
-    - if [ "$BRANCH" == "master" ]; then \
-           echo "==== Tests for the Java application ====" && \   
-           gradle test && \
-           gradle runFunctionalAndIntegrationTests; \
+    - if [ "$BRANCH" != "master" ]; then
+           echo "==== Tests and Quality control for the Java application ====" &&  
+           gradle inspectQuality &&
+           gradle runFunctionalAndIntegrationTests;
+      elif [ "$BRANCH" == "master" ]; then
+           echo "==== Tests for the Java application ====" &&  
+           gradle test &&
+           gradle runFunctionalAndIntegrationTests;
+      else
+           echo ""==== Unknown branch ====""
       fi
            
   post_ci:
     - echo "==== Post CI tasks==== "
     
   on_success:
-    - if [ "$BRANCH" == "development" ]; then \
-           echo "==== Release the code for Acceptance and Smoke testing ====" && \   
-           gradle releaseDevelopment
-    - if [ "$BRANCH" == "release" ]; then \
-           echo "==== Tag as milestone ====" && \   
-           gradle releaseMilestone
-    - if [ "$BRANCH" == "master" ]; then \
-           echo "==== Publish the next Release ====" && \   
-           gradle releaseVersion
+    - if [ "$BRANCH" == "development" ]; then
+           echo "==== Release the code for Acceptance and Smoke testing ====" &&
+           gradle releaseDevelopment;
+      elif [ "$BRANCH" == "release" ]; then
+           echo "==== Tag as milestone ====" &&
+           gradle releaseMilestone;
+      elif [ "$BRANCH" == "master" ]; then
+           echo "==== Publish the next Release ====" &&   
+           gradle releaseVersion;
+      else
+           echo ""==== Unknown branch ====""
+      fi
     
   on_failure:
     - echo "Build failed"
