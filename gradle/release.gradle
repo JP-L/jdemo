@@ -67,12 +67,13 @@ def merge(def branchFrom, def branchTo, def stage) {
     return tasks.create("merge${stage}") {
     	doLast {
 		    // Check if the release branch exists
-		    println "checkout branch ${branchTo}"
 	    	if ( grgit.branch.list().find{it.name == "${branchTo}"} != null ) {
+	    		println "Merge any changes in ${branchTo} into ${branchFrom} and then checkout branch ${branchTo}"
 	    		grgit.merge(head: "${branchTo}", mode: "only-ff", message: "Merged ${branchTo} branch into ${branchFrom} branch")
 	    		grgit.checkout(branch: "${branchTo}")
 	    	} else {
-	    		grgit.checkout(branch: "${branchTo}", createBranch: true)
+	    		println "Checkout new branch ${branchTo} based on ${branchFrom}"
+	    		grgit.checkout(branch: "${branchTo}", createBranch: true, startPoint: "${branchFrom}")
 	    	}
 	    	//assuming the merge was successful we can now merge branchFrom into branchTo
 	    	println "merge branch ${branchFrom} into ${branchTo}"
