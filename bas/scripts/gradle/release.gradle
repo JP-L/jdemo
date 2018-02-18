@@ -104,24 +104,35 @@ def merge(def branchFrom, def branchTo, def stage) {
 task releaseDevelopment {
     description "Merge development branch into release branch"
     doLast {
+        project.release.version="1.0.0-milestone"
+     	markNextVersion
+     	release
 		merge("development","releases", "Development").execute()
 	}
 }
-task releaseMilestone {
-	description "Tag releases branch with a milestone version"
+task releaseAlpha {
+	description "Tag releases branch with a alpha version"
 	doLast {
-    	// Tag releases branch [release-x.x.x-milestone.y]
-    	// gradle release on releases [just calling release is enough]. Steer through next version marker if possible
-    	//markNextVersion release-1.0.0-milestone (or release-1.0.0-alpha)
+	    project.release.version="1.0.0-alpha"
+     	markNextVersion
+     	release
+    }
+}
+task releaseBeta {
+	description "Tag releases branch with a Beta version"
+	doLast {
+	    project.release.version="1.0.0-Beta"
+     	markNextVersion
+     	release
     }
 }
 task releaseCandidate {
 	description "Merge releases branch into master branch"
 	doLast {
+	    project.release.version="1.0.0-RC1"
+     	markNextVersion
+     	release
     	merge("releases","master", "dev-stage-1").execute()
-    	// Tag releases branch [release-x.x.x-rc.y]
-    	// gradle release on releases [just calling release is enough]. Steer through next version marker if possible
-    	//release -Prelease.version=1.0.0-rc1
     }
 }
 task releaseVersion {
