@@ -6,6 +6,15 @@
 //apply plugin: "maven"
 
 scmVersion {
+	// Dry run & local only release
+    localOnly = "${release_dryrun}" // never connect to remote when true
+    // Uncommitted changes
+    ignoreUncommittedChanges = true // should uncommitted changes force version bump
+    // :doc`use_highest_version`
+    useHighestVersion = true // Defaults as false, setting to true will find the highest visible version in the commit tree
+    // Sanitization
+    sanitizeVersion = true // should created version be sanitized, true by default
+
 	repository {
 		type = 'git' // type of repository
         directory = project.rootProject.file('./') // repository location
@@ -18,18 +27,20 @@ scmVersion {
     }
     
     tag {
-        prefix = "release"
-        //initialVersion = { tag: '1.0.0' } // returns initial version if none found, 0.1.0 by default
+    	prefix = ''
+        //initialVersion(prefix: "", separator: "-", tag: "1.0.0")
     }
-    
-	// Dry run & local only release
-    localOnly = "${release_dryrun}" // never connect to remote when true
-    // Uncommitted changes
-    ignoreUncommittedChanges = true // should uncommitted changes force version bump
-    // :doc`use_highest_version`
-    useHighestVersion = true // Defaults as false, setting to true will find the highest visible version in the commit tree
-    // Sanitization
-    sanitizeVersion = true // should created version be sanitized, true by default
+        
+    nextVersion {
+    	suffix = 'milestone'
+    	//branchSuffix = [
+        //    'development/.*' : 'milestone',
+        //	'releases/.*' : 'alpha',
+        //	'bugfix/.*' : '',
+        //	'master/.*' : ''
+        //]
+        separator = '-'
+    }
     
     branchVersionCreator = [
     	'development/.*' : 'simple',
@@ -100,6 +111,8 @@ task releaseMilestone {
 	description "Tag releases branch with a milestone version"
 	doLast {
     	// Tag releases branch [release-x.x.x-milestone.y]
+    	// gradle release on releases [just calling release is enough]. Steer through next version marker if possible
+    	//markNextVersion release-1.0.0-milestone (or release-1.0.0-alpha)
     }
 }
 task releaseCandidate {
@@ -107,9 +120,13 @@ task releaseCandidate {
 	doLast {
     	merge("releases","master", "dev-stage-1").execute()
     	// Tag releases branch [release-x.x.x-rc.y]
+    	// gradle release on releases [just calling release is enough]. Steer through next version marker if possible
+    	//release -Prelease.version=1.0.0-rc1
     }
 }
 task releaseVersion {
     // Tag master branch [release-x.x.x], push docker image to DockerHub and deploy to production. 
 	//dependsOn .... masterCI and test. When deploy to production a healthcheck is included.
+	// gradle release on master [just calling release is enough]. Steer through next version marker if possible
+	//release -Prelease.version=1.0.0
 }
