@@ -4,6 +4,24 @@
 
 /* ==== Apply plugins ==== */
 //apply plugin: "maven"
+buildscript {
+    repositories {
+        maven {
+	        url "${binrepo_url}/jcenter/"
+	        //url "${binrepo_url}" https://binaryrepository.jfrog.io/binaryrepository/jcenter/
+	        credentials {
+	       		username "${binrepo_user}"
+	       		password "${binrepo_password}"
+	    	}
+	    }
+    }
+    dependencies {
+        classpath "pl.allegro.tech.build:axion-release-plugin:1.8.3"
+    }
+}
+
+import pl.allegro.tech.build.axion.release.domain.VersionConfig
+import pl.allegro.tech.build.axion.release.infrastructure.di.GradleAwareContext
 
 scmVersion {
 	// Dry run & local only release
@@ -31,16 +49,16 @@ scmVersion {
         //initialVersion(prefix: "", separator: "-", tag: "1.0.0")
     }
         
-    nextVersion {
-    	suffix = 'milestone'
+    //nextVersion {
+    	//suffix = 'milestone'
     	//branchSuffix = [
         //    'development/.*' : 'milestone',
         //	'releases/.*' : 'alpha',
         //	'bugfix/.*' : '',
         //	'master/.*' : ''
         //]
-        separator = '-'
-    }
+        //separator = '-'
+    //}
     
     branchVersionCreator = [
     	'development/.*' : 'simple',
@@ -50,7 +68,7 @@ scmVersion {
     ]
     
     branchVersionIncrementer = [
-        'development/.*' : 'simple',
+        'development/.*' : 'incrementPatch',
         'releases/.*' : 'incrementPrerelease',
         'bugfix/.*' : { c -> c.currentVersion.incrementPatchVersion() },
         'master/.*' : 'incrementMinor'
@@ -101,43 +119,131 @@ def merge(def branchFrom, def branchTo, def stage) {
 		}
     }
 }
+def setVersion(def phaseLCM, def successfulTest) {
+	// If a branch has no tags yet version defaults to SNAPSHOT.
+	// We like to change that behavior and set it to:
+	// - on development branch set to: milestone
+	// - on release branch set to:     alpha
+	// - on master branch set to:      version (fx 1.0.0)
+	// If a new version is configured in gradle.properties (major number increased) we
+	// like to change behavior to:
+	// - on development branch set to: incrementMajor
+	// - on release branch set to:     incrementMajor + -alpha
+	// - on master branch set to:      incrementMajor
+	// If the development branch integration and functional testing is successful
+	// we set version to incrementPatch (still using milestone). So:
+	// - on development branch set to: incrementPatch (fx 1.0.1-milestone)
+	// If the release branch is feature complete and acceptance testing is successful
+	// we like to set the version to beta. So:
+	// - on release branch set to:     beta           (fx 1.0.0-beta)
+	// - otherwise we tag as alpha:    incrementPatch (fx 1.0.1-alpha)
+	// If the release branch is feature complete, acceptance testing and smoke testing are successful
+	// we like to set the version to RC. So:
+	// - on release branch set to:     RC			 (fx 1.0.0-rc2)
+	// - otherwise we tag as beta:    incrementPatch (fx 1.0.1-beta)
+	// If the release branch is feature complete, acceptance testing and smoke testing are successful,
+	// but failed the manual tests we stay on RC, and all patches combined become the next rc. So:
+	// - on release branch set to:     incrementPrerelease (fx 1.0.0-rc2)
+	// If the master branch verification tests are successful
+	// we like to set the version to next version. So:
+	// - on master branch set to:      incrementMajor
+	switch(phaseLCM){
+		case "development":
+			if ( "${scmVersion.version}".contains("SNAPSHOT") || "${scmVersion.version}".take(5) < "${release_version}" ) {
+				project.ext."release.version" = "${release_version}-milestone"
+			} else {
+				project.ext."release.version" = "incrementPatch"
+        		markNextVersion.execute()
+			}
+			break
+		case "release":
+			switch(scmVersion.version) {
+				case { ~/.*SNAPSHOT.*/  || it.take(5) < "${release_version}" }:
+					project.ext."release.version" = "${release_version}-alpha"
+					break
+				case ~/.*alpha.*/:
+					project.ext."release.version" = "incrementPatch"
+        			markNextVersion.execute()
+					break
+				case ~/.*beta.*/:
+					if (successfulTests) {
+						project.ext."release.version" = "${release_version}-beta"
+					} else {
+						project.ext."release.version" = "incrementPatch"
+        				markNextVersion.execute()
+					}
+					break
+				case ~/.*RC.*/:
+					if (successfulTests) {
+						project.ext."release.version" = "${release_version}-RC1" //incrementPrerelease??
+					} else {
+						project.ext."release.version" = "incrementPrerelease"
+        				markNextVersion.execute()
+					}
+					break
+			}
+			break
+		case "master":
+			if ( "${scmVersion.version}".contains("SNAPSHOT") ) {
+				project.ext."release.version" = "${release_version}"
+			} else {
+				project.ext."release.version" = "incrementMajor"
+        		markNextVersion.execute()
+			}
+			break
+	}
+    release.execute()
+}
+
 task releaseDevelopment {
     description "Merge development branch into release branch"
     doLast {
-        project.release.version="1.0.0-milestone"
-     	markNextVersion
-     	release
-		merge("development","releases", "Development").execute()
+        setVersion("development", null)
+		//merge("development","releases", "Development").execute()
 	}
 }
 task releaseAlpha {
 	description "Tag releases branch with a alpha version"
 	doLast {
-	    project.release.version="1.0.0-alpha"
-     	markNextVersion
-     	release
+	    setVersion("release", null)
+		merge("development","releases", "alpha").execute()
     }
 }
-task releaseBeta {
+task releaseBeta1 {
 	description "Tag releases branch with a Beta version"
 	doLast {
-	    project.release.version="1.0.0-Beta"
-     	markNextVersion
-     	release
+	    setVersion("release", true)
+		merge("development","releases", "beta").execute()
     }
 }
-task releaseCandidate {
+task releaseBeta2 {
+	description "Tag releases branch with a Beta version"
+	doLast {
+	    setVersion("release", false)
+		merge("development","releases", "beta").execute()
+    }
+}
+task releaseCandidate1 {
 	description "Merge releases branch into master branch"
 	doLast {
-	    project.release.version="1.0.0-RC1"
-     	markNextVersion
-     	release
-    	merge("releases","master", "dev-stage-1").execute()
+	    setVersion("release", true)
+    	//merge("releases","master", "RC").execute()
+    }
+}
+task releaseCandidate2 {
+	description "Merge releases branch into master branch"
+	doLast {
+	    setVersion("release", false)
+    	//merge("releases","master", "RC").execute()
     }
 }
 task releaseVersion {
-    // Tag master branch [release-x.x.x], push docker image to DockerHub and deploy to production. 
-	//dependsOn .... masterCI and test. When deploy to production a healthcheck is included.
-	// gradle release on master [just calling release is enough]. Steer through next version marker if possible
-	//release -Prelease.version=1.0.0
+	description "Tag master branch and publish"
+	doLast {
+	    setVersion("master", null)
+	    // push to dockerHub
+	    //TODO
+	    // deploy into production and run a healthcheck
+	    //TODO
+    }
 }

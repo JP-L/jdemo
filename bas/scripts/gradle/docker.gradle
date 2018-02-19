@@ -15,13 +15,12 @@ buildscript {
     dependencies {
         classpath "com.bmuschko:gradle-docker-plugin:3.2.3"
     }
-} 
+}
    
 /* ==== Apply plugins ==== */
 
 // use fully qualified class name
 apply plugin: com.bmuschko.gradle.docker.DockerRemoteApiPlugin
-//apply plugin: 'com.bmuschko.docker-remote-api'
 
 import com.bmuschko.gradle.docker.tasks.image.*
 import com.bmuschko.gradle.docker.tasks.container.*
