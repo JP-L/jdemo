@@ -49,16 +49,9 @@ scmVersion {
         //initialVersion(prefix: "", separator: "-", tag: "1.0.0")
     }
         
-    //nextVersion {
-    	//suffix = 'milestone'
-    	//branchSuffix = [
-        //    'development/.*' : 'milestone',
-        //	'releases/.*' : 'alpha',
-        //	'bugfix/.*' : '',
-        //	'master/.*' : ''
-        //]
-        //separator = '-'
-    //}
+    nextVersion {
+    	suffix = ''
+    }
     
     branchVersionCreator = [
     	'development/.*' : 'simple',
@@ -152,33 +145,32 @@ def setVersion(def phaseLCM, def successfulTest) {
 			if ( "${scmVersion.version}".contains("SNAPSHOT") || "${scmVersion.version}".take(5) < "${release_version}" ) {
 				project.ext."release.version" = "${release_version}-milestone"
 			} else {
-				project.ext."release.version" = "incrementPatch"
-        		markNextVersion.execute()
+				project.ext."release.versionIncrementer" = "incrementPatch"
 			}
 			break
 		case "release":
 			switch(scmVersion.version) {
 				case { ~/.*SNAPSHOT.*/  || it.take(5) < "${release_version}" }:
 					project.ext."release.version" = "${release_version}-alpha"
+					markNextVersion.execute()
 					break
 				case ~/.*alpha.*/:
 					project.ext."release.version" = "incrementPatch"
-        			markNextVersion.execute()
 					break
 				case ~/.*beta.*/:
 					if (successfulTests) {
 						project.ext."release.version" = "${release_version}-beta"
+						markNextVersion.execute()
 					} else {
 						project.ext."release.version" = "incrementPatch"
-        				markNextVersion.execute()
 					}
 					break
 				case ~/.*RC.*/:
 					if (successfulTests) {
 						project.ext."release.version" = "${release_version}-RC1" //incrementPrerelease??
+						markNextVersion.execute()
 					} else {
 						project.ext."release.version" = "incrementPrerelease"
-        				markNextVersion.execute()
 					}
 					break
 			}
@@ -187,8 +179,7 @@ def setVersion(def phaseLCM, def successfulTest) {
 			if ( "${scmVersion.version}".contains("SNAPSHOT") ) {
 				project.ext."release.version" = "${release_version}"
 			} else {
-				project.ext."release.version" = "incrementMajor"
-        		markNextVersion.execute()
+				project.ext."release.versionIncrementer" = "incrementMajor"
 			}
 			break
 	}
