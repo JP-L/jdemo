@@ -32,6 +32,8 @@ scmVersion {
     useHighestVersion = true // Defaults as false, setting to true will find the highest visible version in the commit tree
     // Sanitization
     sanitizeVersion = true // should created version be sanitized, true by default
+    // default Version incrementer
+    versionIncrementer 'incrementPatch'
 
 	repository {
 		type = 'git' // type of repository
@@ -142,10 +144,10 @@ def setVersion(def phaseLCM, def successfulTest) {
 	// - on master branch set to:      incrementMajor
 	switch(phaseLCM){
 		case "development":
-			if ( "${scmVersion.version}".contains("SNAPSHOT") || "${scmVersion.version}".take(5) < "${release_version}" ) {
+			if ( "${scmVersion.version}".contains("SNAPSHOT") ) { // || "${scmVersion.version}".take(5) < "${release_version}" ) {
+				println "1"
+				currentVersion.execute()
 				project.ext."release.version" = "${release_version}-milestone"
-			} else {
-				project.ext."release.versionIncrementer" = "incrementPatch"
 			}
 			break
 		case "release":
@@ -183,6 +185,7 @@ def setVersion(def phaseLCM, def successfulTest) {
 			}
 			break
 	}
+	project.ext."release.dryrun" = "${release_dryrun}"
     release.execute()
 }
 
