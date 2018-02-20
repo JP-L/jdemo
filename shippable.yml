@@ -223,7 +223,8 @@ jobs:
       flags:
         - jdemo
       steps:
-        #- IN: jdemoImg
+        - IN: jdemo_runCI
+        - IN: jdemoImg
         - IN: dockerOptions
         - IN: replicas 
       
@@ -233,8 +234,7 @@ jobs:
        - jdemo
       steps: 
         - IN: jdemoManifest             # manifest
-        - IN: genericStagingEnvironment
-          switch: off
+        - IN: genericSetupStagingEnvironment
           applyTo:
             - manifest: jdemoManifest
               image: jdemo
