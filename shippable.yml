@@ -131,13 +131,13 @@ integrations:
 
 #### RESOURCES CONFIG (GLOBAL ACROSS SUBSCRIPTION)
 resources:
-    - name: jdemo
-      type: image
-      integration: Artifactory-CR
-      pointer:
-        sourceName: "TODO"
-      seed:
-        versionName: "latest"
+    #- name: jdemoImg
+    #  type: image
+    #  integration: Artifactory-CR
+    #  pointer:
+    #    sourceName: "TODO"
+    #  seed:
+    #    versionName: "latest"
         
      # Docker options
     - name: dockerOptions
@@ -195,8 +195,15 @@ resources:
 
 #### JOBS CONFIG (GLOBAL ACROSS SUBSCRIPTION)
 jobs:
+    - name: jdemo_runCI
+      type: runCI
+      steps:
+        - IN: jdemo_ciRepo
+      
     - name: genericSetupStagingEnvironment
       type: runSh
+      on_start:
+        - NOTIFY: Slack
       dependencyMode: immediate   # optional
       flags:
         - jdemo
@@ -206,8 +213,6 @@ jobs:
             name: task
             script:
               - echo "==== TODO: Setup testing environment for testing Alpha release ===="
-      on_start:
-        - NOTIFY: Slack
       on_success:
         - NOTIFY: Slack
       on_failure:
@@ -218,7 +223,7 @@ jobs:
       flags:
         - jdemo
       steps:
-        - IN: jdemo
+        #- IN: jdemoImg
         - IN: dockerOptions
         - IN: replicas 
       
