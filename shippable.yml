@@ -131,13 +131,13 @@ integrations:
 
 #### RESOURCES CONFIG (GLOBAL ACROSS SUBSCRIPTION)
 resources:
-    #- name: jdemoImg
-    #  type: image
-    #  integration: Artifactory-CR
-    #  pointer:
-    #    sourceName: "TODO"
-    #  seed:
-    #    versionName: "latest"
+    - name: jdemoImg
+      type: image
+      integration: Binary-Repository-Registry
+      pointer:
+        sourceName: "jdemo"
+      seed:
+        versionName: "latest"
         
      # Docker options
     - name: dockerOptions
