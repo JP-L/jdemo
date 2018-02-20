@@ -20,11 +20,6 @@ scmVersion {
 		type = 'git' // type of repository
         directory = project.rootProject.file('./') // repository location
         remote = 'origin' // remote name
-
-        // Authorization
-        //customUsername = ""//TODO:get from shippable environment
-        //customKey = 'AAasaDDSSD...' //or project.file('myKey') // custom authorization key (file or String)
-        //customKeyPassword = 'secret' // key password
     }
     
     tag {
