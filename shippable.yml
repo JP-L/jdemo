@@ -190,6 +190,14 @@ resources:
       type: replicas
       version:
         count: 1
+        
+    #notification:
+    - name: Slack
+      type: notification
+      integration: Slack
+      pointer:
+        recipients:
+            - "#jdemo"
 
 #### END RESOURCES CONFIG
 
@@ -200,6 +208,16 @@ jobs:
       steps:
         - IN: jdemo_ciRepo
       
+    - name: jdemoManifest
+      type: manifest
+      flags:
+        - jdemo
+      steps:
+        - IN: jdemo_runCI
+        - IN: jdemoImg
+        - IN: dockerOptions
+        - IN: replicas 
+
     - name: genericSetupStagingEnvironment
       type: runSh
       on_start:
@@ -210,34 +228,64 @@ jobs:
       steps:
         - IN: jdemo_runCI
         - TASK:
-            name: task
+            name: setupStagingEnvironment
             script:
               - echo "==== TODO: Setup testing environment for testing Alpha release ===="
-      on_success:
-        - NOTIFY: Slack
+              - gradle -v
       on_failure:
         - NOTIFY: Slack
-
-    - name: jdemoManifest
-      type: manifest
-      flags:
-        - jdemo
-      steps:
-        - IN: jdemo_runCI
-        - IN: jdemoImg
-        - IN: dockerOptions
-        - IN: replicas 
       
     - name: genericDeployImage
       type: deploy
+      on_start:
+        - NOTIFY: Slack
+      dependencyMode: strict   # optional
       flags:
        - jdemo
       steps: 
-        - IN: jdemoManifest             # manifest
+        - IN: jdemoManifest    # manifest
+          switch: off
         - IN: genericSetupStagingEnvironment
           applyTo:
             - manifest: jdemoManifest
               image: jdemo
               port: 8080
-             
+      on_failure:
+        - NOTIFY: Slack
+
+    - name: genericRunAcceptanceAndSmokeTests
+      type: runSh
+      on_start:
+        - NOTIFY: Slack
+      dependencyMode: strict   # optional
+      flags:
+        - jdemo
+      steps:
+        - IN: genericDeployImage
+        - TASK:
+            name: runAcceptanceAndSmokeTests
+            script:
+              - echo "==== TODO: run tests for testing Alpha release ===="
+              - echo "==== TODO: set Beta release on success ===="
+              - echo "==== TODO: run tests for testing Beta release ===="
+              - echo "==== TODO: set RC release on success ===="
+      on_failure:
+        - NOTIFY: Slack
+
+    - name: genericPublish
+      type: runSh
+      on_start:
+        - NOTIFY: Slack
+      dependencyMode: strict   # optional
+      flags:
+        - jdemo
+      steps:
+        - IN: genericRunAcceptanceAndSmokeTests
+        - TASK:
+            name: publish
+            script:
+              - echo "==== TODO: finish all ===="
+      on_failure:
+        - NOTIFY: Slack
+
 #### END JOBS CONFIG
