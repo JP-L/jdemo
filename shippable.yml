@@ -93,7 +93,7 @@ build:
            gradle releaseAlpha;
       elif [ "$BRANCH" == "master" ]; then
            echo "==== Publish the next Release ====";   
-           gradle releaseVersion;
+           gradle publishRelease;
       else
            echo "==== Unknown branch ====";
       fi
@@ -102,22 +102,7 @@ build:
     - echo "==== Build failed ===="
     
   cache: false
-  
- #
- # Assembly line jobs
- #
-jobs:
-  - name: jdemo
-    type: runCI
-    dependencyMode: immediate   # optional
-    flags:
-      - jdemo
-    steps:
-      - OUT: jdemo-dev-image
 
- #
- # Integrations
- #
 integrations:
 # If you are using integrations, you'll need to set it up in two places. Subscription settings & here in this section of the yml.
     notifications:
@@ -141,3 +126,113 @@ integrations:
           region: eu-west-1
 #          agent_only:
 #          branches:
+  
+#### END CI CONFIG
+
+#### RESOURCES CONFIG (GLOBAL ACROSS SUBSCRIPTION)
+resources:
+    - name: jdemo
+      type: image
+      integration: Artifactory-CR
+      pointer:
+        sourceName: "TODO"
+      seed:
+        versionName: "latest"
+        
+     # Docker options
+    - name: dockerOptions
+      type: dockerOptions
+      version:
+        memory: 1024                        #in MiB
+        cpuShares: 10
+        portMappings:
+            - "8080:8080"
+        #links:                                    #containerName:alias
+        #   - <container name>:<alias>
+        #   - <container name>:<alias>
+        #volumes:
+        #  - "<source>:<container path>:<options>"
+        #  - "<source>:<container path>:<options>
+        logConfig:
+            type: awslogs
+            options:
+              awslogs-group: Demo-Applications
+              awslogs-region: eu-west-1
+        #entryPoint:
+        #  - <string>
+        #  - <string>
+        #cmd:
+        #  - <string>
+        #  - <string>
+        #workingDir: <path to working dir>
+        privileged: false                     # May be true or false
+        #labels:
+        #  <key1>: <value1>
+        #  <key2>: <value2>
+        #volumesFrom:
+        #  - "<container name>:<options>"
+        #  - "<container name>:<options>"
+        #ulimits:
+        #  - name: <name of limit>                 # e.g. cpu
+        #    soft: <number>                        # soft Limit
+        #    hard: <number>                        # hard Limit
+        #  - name: <name of limit>                 # e.g. nofile
+        #    soft: <number>                        # soft Limit, e.g. 50
+        #    hard: <number>                        # hard Limit, e.g. 100
+        #dnsServers:
+        #  - "<ip address>"
+        #dnsSearch:
+        #  - "<ip address>"
+        #user: <string>                            # For GKE, this should be the UID (a number)
+
+    # Number of replicas
+    - name: replicas
+      type: replicas
+      version:
+        count: 1
+
+#### END RESOURCES CONFIG
+
+#### JOBS CONFIG (GLOBAL ACROSS SUBSCRIPTION)
+jobs:
+    - name: genericSetupStagingEnvironment
+      type: runSh
+      dependencyMode: immediate   # optional
+      flags:
+        - jdemo
+      steps:
+        - IN: jdemo_runCI
+        - TASK:
+            name: task
+            script:
+              - echo "==== TODO: Setup testing environment for testing Alpha release ===="
+      on_start:
+        - NOTIFY: Slack
+      on_success:
+        - NOTIFY: Slack
+      on_failure:
+        - NOTIFY: Slack
+
+    - name: jdemoManifest
+      type: manifest
+      flags:
+        - jdemo
+      steps:
+        - IN: jdemo
+        - IN: dockerOptions
+        - IN: replicas 
+      
+    - name: genericDeployImage
+      type: deploy
+      flags:
+       - jdemo
+      steps: 
+        - IN: jdemoManifest             # manifest
+        - IN: genericStagingEnvironment
+          switch: off
+          applyTo:
+            - manifest: jdemoManifest
+              image: jdemo
+              port: 8080
+             
+#### END JOBS CONFIG

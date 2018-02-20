@@ -197,6 +197,7 @@ task releaseAlpha {
 	doLast {
 	    //setVersion("release", null).execute()
 	    println "==== TODO ===="
+	    // create docker image and push to Artifactory Repo
     }
 }
 task releaseBeta {
