@@ -240,7 +240,7 @@ jobs:
               - 'echo "==== TODO TODO TODO TODO ===="'
               - 'echo "==== Setup testing environment for testing Alpha release ===="'
               - 'echo $PATH'
-              - echo '"==== TODO TODO TODO TODO ===="'
+              - 'echo "==== TODO TODO TODO TODO ===="'
       on_failure:
         - NOTIFY: Slack
       
