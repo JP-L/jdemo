@@ -236,11 +236,10 @@ jobs:
               imageTag: '1.0'
               pull: true
               options: '--privileged=false --net=bridge -e FOO=true -e BOO=false'
-            script:
-              - echo "==== TODO TODO TODO TODO ===="
-              - echo "==== Setup testing environment for testing Alpha release ===="
-              - echo $PATH
-              - echo "==== TODO TODO TODO TODO ===="
+            script: echo "==== TODO TODO TODO TODO ===="
+            script: echo "==== Setup testing environment for testing Alpha release ===="
+            script: echo $PATH
+            script: echo "==== TODO TODO TODO TODO ===="
       on_failure:
         - NOTIFY: Slack
       
