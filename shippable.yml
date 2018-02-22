@@ -237,10 +237,10 @@ jobs:
                 pull: true
                 options: '--privileged=false --net=bridge -e FOO=true -e BOO=false'
             script: 
-              - echo "==== TODO TODO TODO TODO ===="
-              - echo "==== Setup testing environment for testing Alpha release ===="
-              - echo $PATH
-              - echo "==== TODO TODO TODO TODO ===="
+              - 'echo "==== TODO TODO TODO TODO ===="'
+              - 'echo "==== Setup testing environment for testing Alpha release ===="'
+              - 'echo $PATH'
+              - echo '"==== TODO TODO TODO TODO ===="'
       on_failure:
         - NOTIFY: Slack
       
@@ -274,12 +274,12 @@ jobs:
         - TASK:
             name: runAcceptanceAndSmokeTests
             script:
-              - echo "==== TODO TODO TODO TODO ===="
-              - echo "==== run tests for testing Alpha release ===="
-              - echo "==== set Beta release on success ===="
-              - echo "==== run tests for testing Beta release ===="
-              - echo "==== set RC release on success ===="
-              - echo "==== TODO TODO TODO TODO ===="
+              - 'echo "==== TODO TODO TODO TODO ===="'
+              - 'echo "==== run tests for testing Alpha release ===="'
+              - 'echo "==== set Beta release on success ===="'
+              - 'echo "==== run tests for testing Beta release ===="'
+              - 'echo "==== set RC release on success ===="'
+              - 'echo "==== TODO TODO TODO TODO ===="'
       on_failure:
         - NOTIFY: Slack
 
@@ -295,9 +295,9 @@ jobs:
         - TASK:
             name: publish
             script:
-              - echo "==== TODO TODO TODO TODO ===="
-              - echo "==== Finish all ===="
-              - echo "==== TODO TODO TODO TODO ===="
+              - 'echo "==== TODO TODO TODO TODO ===="'
+              - 'echo "==== Finish all ===="'
+              - 'echo "==== TODO TODO TODO TODO ===="'
       on_failure:
         - NOTIFY: Slack
 
