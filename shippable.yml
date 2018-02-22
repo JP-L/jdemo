@@ -224,18 +224,16 @@ jobs:
       dependencyMode: immediate   # optional
       on_start:
         - NOTIFY: Slack
-      flags:
-        - jdemo
       steps:
         - IN: jdemo_runCI
         - TASK:
             name: setupStagingEnvironment
-            runtime:                  # optional
-              options:
-                imageName: 791079558361.dkr.ecr.eu-west-1.amazonaws.com/jpl/u16jav
-                imageTag: '1.0'
-                pull: true
-                options: '--privileged=false --net=bridge -e FOO=true -e BOO=false'
+            #runtime:                  # optional
+            #  options:
+            #    imageName: 791079558361.dkr.ecr.eu-west-1.amazonaws.com/jpl/u16jav
+            #    imageTag: '1.0'
+            #    pull: true
+            #    options: '--privileged=false --net=bridge -e FOO=true -e BOO=false'
             script: 
               - 'echo "==== TODO TODO TODO TODO ===="'
               - 'echo "==== Setup testing environment for testing Alpha release ===="'
