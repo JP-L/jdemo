@@ -229,17 +229,17 @@ jobs:
       steps:
         - IN: jdemo_runCI
         - TASK:
-            name: setupStagingEnvironment
-            runtime:                  # optional
-            options:
-              imageName: 791079558361.dkr.ecr.eu-west-1.amazonaws.com/jpl/u16jav
-              imageTag: '1.0'
-              pull: true
-              options: '--privileged=false --net=bridge -e FOO=true -e BOO=false'
-            script: echo "==== TODO TODO TODO TODO ===="
-            script: echo "==== Setup testing environment for testing Alpha release ===="
-            script: echo $PATH
-            script: echo "==== TODO TODO TODO TODO ===="
+            #name: setupStagingEnvironment
+            #runtime:                  # optional
+            #options:
+            #  imageName: 791079558361.dkr.ecr.eu-west-1.amazonaws.com/jpl/u16jav
+            #  imageTag: '1.0'
+            #  pull: true
+            #  options: '--privileged=false --net=bridge -e FOO=true -e BOO=false'
+            - script: echo "==== TODO TODO TODO TODO ===="
+            - script: echo "==== Setup testing environment for testing Alpha release ===="
+            - script: echo $PATH
+            - script: echo "==== TODO TODO TODO TODO ===="
       on_failure:
         - NOTIFY: Slack
       
