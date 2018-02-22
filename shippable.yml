@@ -14,8 +14,8 @@ jdk:
 branches:
   only:
     - master
-    - releases
-    - development
+    #- releases
+    #- development
 
 # Specify which services you need. This is only valid if you use the default Shippable image for your build
 #services:
@@ -220,9 +220,10 @@ jobs:
 
     - name: genericSetupStagingEnvironment
       type: runSh
+      triggerMode: serial
+      dependencyMode: immediate   # optional
       on_start:
         - NOTIFY: Slack
-      dependencyMode: immediate   # optional
       flags:
         - jdemo
       steps:
@@ -230,17 +231,19 @@ jobs:
         - TASK:
             name: setupStagingEnvironment
             script:
-              - echo "==== TODO: Setup testing environment for testing Alpha release ===="
+              - echo "==== TODO TODO TODO TODO ===="
+              - echo "==== Setup testing environment for testing Alpha release ===="
               - echo $PATH
               - which gradle
+              - echo "==== TODO TODO TODO TODO ===="
       on_failure:
         - NOTIFY: Slack
       
     - name: genericDeployImage
       type: deploy
+      dependencyMode: strict   # optional
       on_start:
         - NOTIFY: Slack
-      dependencyMode: strict   # optional
       flags:
        - jdemo
       steps: 
@@ -256,9 +259,9 @@ jobs:
 
     - name: genericRunAcceptanceAndSmokeTests
       type: runSh
+      dependencyMode: strict   # optional
       on_start:
         - NOTIFY: Slack
-      dependencyMode: strict   # optional
       flags:
         - jdemo
       steps:
@@ -266,10 +269,12 @@ jobs:
         - TASK:
             name: runAcceptanceAndSmokeTests
             script:
-              - echo "==== TODO: run tests for testing Alpha release ===="
-              - echo "==== TODO: set Beta release on success ===="
-              - echo "==== TODO: run tests for testing Beta release ===="
-              - echo "==== TODO: set RC release on success ===="
+              - echo "==== TODO TODO TODO TODO ===="
+              - echo "==== run tests for testing Alpha release ===="
+              - echo "==== set Beta release on success ===="
+              - echo "==== run tests for testing Beta release ===="
+              - echo "==== set RC release on success ===="
+              - echo "==== TODO TODO TODO TODO ===="
       on_failure:
         - NOTIFY: Slack
 
