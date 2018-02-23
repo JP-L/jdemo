@@ -191,7 +191,10 @@ resources:
       version:
         count: 1
 
-
+    - name: aws
+      type: integration
+      integration: AWS
+        
     - name: aws-cliConfig
       type: cliConfig
       integration: AWS
@@ -202,7 +205,7 @@ resources:
     - name: Slack
       type: notification
       integration: Slack
-      pointer:
+      versionTemplate:
         recipients:
             - "#jdemo"
 
@@ -233,6 +236,7 @@ jobs:
         - NOTIFY: Slack
       steps:
         - IN: jdemo_runCI
+        - IN: aws
         - IN: aws-cliConfig
           scopes:
             - ecr
