@@ -192,9 +192,9 @@ resources:
         count: 1
 
 
-    - name:             aws-cliConfig
-      type:             cliConfig
-      integration:      AWS
+    - name: aws-cliConfig
+      type: cliConfig
+      integration: AWS
       versionTemplate:
         region: eu-west-1
             
