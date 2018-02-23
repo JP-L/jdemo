@@ -191,7 +191,7 @@ resources:
       version:
         count: 1
 
-    - name: aws
+    - name: aws-Integration
       type: integration
       integration: AWS
         
@@ -236,7 +236,7 @@ jobs:
         - NOTIFY: Slack
       steps:
         - IN: jdemo_runCI
-        - IN: aws
+        - IN: aws-Integration
         - IN: aws-cliConfig
           scopes:
             - ecr
