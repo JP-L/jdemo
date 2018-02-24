@@ -190,7 +190,16 @@ resources:
       type: replicas
       version:
         count: 1
+        
+    # Cluster
+    - name: QA-cluster
+      type: cluster
+      integration: AWS
+      versionTemplate:
+        region: eu-west-1
+        sourceName: qa-environment
 
+   #### INTEGRATIONS ####
     - name: aws-Integration
       type: integration
       integration: AWS
@@ -201,7 +210,7 @@ resources:
       versionTemplate:
         region: eu-west-1
 
-    #notification:
+    #### NOTIFICATIONS ####
     - name: Slack
       type: notification
       integration: Slack
@@ -236,7 +245,6 @@ jobs:
         - NOTIFY: Slack
       steps:
         - IN: jdemo_runCI
-        - IN: aws-Integration
         - IN: aws-cliConfig
           scopes:
             - ecr
@@ -274,29 +282,49 @@ jobs:
           switch: off
         - IN: genericSetupStagingEnvironment
           switch: off
-          applyTo:
-            - manifest: jdemoManifest
-              image: jdemo
-              port: 8080
+        - IN: QA-cluster
+          switch: off
+        #- IN: elbQA
+        #  applyTo:
+        #    - manifest: jdemoManifest
+        #      image: jdemo
+        #      port: 8080
       on_failure:
         - NOTIFY: Slack
 
-    - name: genericRunAcceptanceAndSmokeTests
+    - name: genericRunQATests
       type: runSh
       dependencyMode: strict   # optional
       on_start:
         - NOTIFY: Slack
       steps:
         - IN: genericDeployImage
+          switch: off
+        - IN: aws-cliConfig
+          scopes:
+            - ecr
         - TASK:
-            name: runAcceptanceAndSmokeTests
+            name: pullCustomImage
             script:
-              - 'echo "==== TODO TODO TODO TODO ===="'
-              - 'echo "==== run tests for testing Alpha release ===="'
-              - 'echo "==== set Beta release on success ===="'
-              - 'echo "==== run tests for testing Beta release ===="'
-              - 'echo "==== set RC release on success ===="'
-              - 'echo "==== TODO TODO TODO TODO ===="'
+              #- docker pull 791079558361.dkr.ecr.eu-west-1.amazonaws.com/jpl/u16jav:1.0
+              - docker pull drydock/u16javall:v6.1.4
+        - TASK:
+            name: runQATests
+            runtime:                  # optional
+              options:
+                #imageName: 791079558361.dkr.ecr.eu-west-1.amazonaws.com/jpl/u16jav
+                imageName: drydock/u16javall
+                imageTag: 'v6.1.4' #'1.0'
+                pull: false
+                options: '--privileged=false --net=bridge -e FOO=true -e BOO=false'
+            script:
+              - echo "==== TODO TODO TODO TODO ===="
+              - echo "==== run tests for testing Alpha release ===="
+              - echo "==== set Beta release on success ===="
+              - echo "==== run tests for testing Beta release ===="
+              - echo "==== set RC release on success ===="
+              - echo "==== merge into master ===="
+              - echo "==== TODO TODO TODO TODO ===="
       on_failure:
         - NOTIFY: Slack
 
@@ -306,7 +334,7 @@ jobs:
         - NOTIFY: Slack
       dependencyMode: strict   # optional
       steps:
-        - IN: genericRunAcceptanceAndSmokeTests
+        - IN: genericRunQATests
         - TASK:
             name: publish
             script:
