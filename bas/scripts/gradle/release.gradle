@@ -198,6 +198,7 @@ task releaseAlpha {
 	    //setVersion("release", null).execute()
 	    println "==== TODO ===="
 	    // create docker image and push to Artifactory Repo
+	    pushDockerImage.execute()
     }
 }
 task releaseBeta {
@@ -205,6 +206,8 @@ task releaseBeta {
 	doLast {
 	    //setVersion("release", true)
 	    println "==== TODO ===="
+	    // create docker image and push to Artifactory Repo
+	    //pushDockerImage.execute()
     }
 }
 task releaseCandidate {
@@ -212,6 +215,8 @@ task releaseCandidate {
 	doLast {
 	    //setVersion("release", false)
 	    println "==== TODO ===="
+	    // create docker image and push to Artifactory Repo
+	    //pushDockerImage.execute()
     }
 }
 task releaseVersion {

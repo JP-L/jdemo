@@ -60,18 +60,10 @@ task createDockerImage(type: DockerBuildImage) {
     inputDir = file("${getProject().getBuildDir()}/docker")
     tags = ["${dockerRepo}".toString() + '/' + "${getProject().getName()}".toString() + ':latest']
 }
-task tagDockerImage(type: DockerTagImage) {
-    dependsOn createDockerImage
-    force = true
-    targetImageId { createDockerImage.getImageId() }
-    repository = "${dockerRepo}"
-    tag = "${getProject().getVersion()}"
-}
 task pushDockerImage(type: DockerPushImage) {
     dependsOn createDockerImage
     imageName = "${dockerRepo}/${getProject().getName()}"
-    tag = "${getProject().getVersion()}"
-  	//registry = new DockerRegistry(url: "${binrepo_registryUrl}", username: "${binrepo_user}", password: "${binrepo_password}", email: "${binrepo_email}")
+    tag = 'latest' //"${getProject().getVersion()}"
 }
 
 /* ===== Docker Container tasks ==== */
