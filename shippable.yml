@@ -232,6 +232,7 @@ jobs:
       flags:
         - jdemo
       steps:
+        - IN: jdemoStaging_rsync
         - IN: jdemo_runCI
         - IN: jdemoImg
         - IN: dockerOptions
