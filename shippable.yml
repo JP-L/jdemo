@@ -229,9 +229,11 @@ jobs:
       
     - name: jdemoManifest
       type: manifest
+      dependencyMode: strict   # optional
       flags:
         - jdemo
       steps:
+        - IN: jdemoStaging_rSync
         - IN: jdemo_runCI
         - IN: jdemoImg
         - IN: dockerOptions
