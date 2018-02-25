@@ -222,6 +222,11 @@ resources:
 
 #### JOBS CONFIG (GLOBAL ACROSS SUBSCRIPTION)
 jobs:
+    - name: jdemoStaging_rSync
+      type: runCI
+      steps:
+        - IN: jdemoStaging
+        
     - name: jdemo_runCI
       type: runCI
       steps:
@@ -232,7 +237,6 @@ jobs:
       flags:
         - jdemo
       steps:
-        - IN: jdemoStaging_rsync
         - IN: jdemo_runCI
         - IN: jdemoImg
         - IN: dockerOptions
@@ -241,10 +245,11 @@ jobs:
     - name: genericSetupStagingEnvironment
       type: runSh
       triggerMode: serial
-      dependencyMode: immediate   # optional
+      dependencyMode: strict   # optional
       on_start:
         - NOTIFY: Slack
       steps:
+        - IN: jdemoStaging_rsync
         - IN: jdemo_runCI
         - IN: aws-cliConfig
           scopes:
