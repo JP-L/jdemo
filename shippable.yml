@@ -226,6 +226,7 @@ jobs:
       type: runCI
       steps:
         - IN: jdemo_ciRepo
+        - IN: jdemoStaging_rSync
       
     - name: jdemoManifest
       type: manifest
@@ -233,7 +234,6 @@ jobs:
       flags:
         - jdemo
       steps:
-        - IN: jdemoStaging_rSync
         - IN: jdemo_runCI
         - IN: jdemoImg
         - IN: dockerOptions
@@ -246,7 +246,6 @@ jobs:
       on_start:
         - NOTIFY: Slack
       steps:
-        - IN: jdemoStaging_rSync
         - IN: jdemo_runCI
         - IN: aws-cliConfig
           scopes:
