@@ -222,11 +222,6 @@ resources:
 
 #### JOBS CONFIG (GLOBAL ACROSS SUBSCRIPTION)
 jobs:
-    - name: jdemoStaging_rSync
-      type: runCI
-      steps:
-        - IN: jdemoStaging
-        
     - name: jdemo_runCI
       type: runCI
       steps:
