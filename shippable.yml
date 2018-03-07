@@ -241,11 +241,18 @@ resources:
 
 #### JOBS CONFIG (GLOBAL ACROSS SUBSCRIPTION)
 jobs:
-    - name: jdemo_runCI
+    - name: jdemo_runCIStaging
       type: runCI
       steps:
         - IN: jdemo_ciRepo
         - IN: jdemoStaging_rSync
+        
+    - name: jdemo_runCIPublishing
+      type: runCI
+      steps:
+        - IN: jdemo_ciRepo
+        - IN: jdemoPublishing_rSync
+        - IN: genericRunQATests
       
     - name: jdemoManifest
       type: manifest
@@ -253,7 +260,7 @@ jobs:
       flags:
         - jdemo
       steps:
-        - IN: jdemo_runCI
+        - IN: jdemo_runCIStaging
         - IN: jdemoImg
         - IN: dockerOptions
         - IN: replicas 
@@ -356,7 +363,7 @@ jobs:
         - NOTIFY: Slack
       dependencyMode: strict   # optional
       steps:
-        - IN: genericRunQATests
+        - IN: jdemo_runCIPublishing
         - TASK:
             name: publish
             script:
