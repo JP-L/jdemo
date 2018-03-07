@@ -172,11 +172,11 @@ resources:
         #volumes:
         #  - "<source>:<container path>:<options>"
         #  - "<source>:<container path>:<options>
-        logConfig:
-            type: awslogs
-            options:
-              awslogs-group: Demo-Applications
-              awslogs-region: eu-central-1
+        #logConfig:
+        #    type: awslogs
+        #    options:
+        #      awslogs-group: Demo-Applications
+        #      awslogs-region: eu-central-1
         #entryPoint:
         #  - <string>
         #  - <string>
@@ -215,7 +215,7 @@ resources:
       type: cluster
       integration: AWS
       versionTemplate:
-        sourceName: oz_cluster
+        sourceName: tst-cluster
         region: eu-central-1
 
    #### INTEGRATIONS ####
