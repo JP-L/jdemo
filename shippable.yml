@@ -1,7 +1,26 @@
+#/*
+# * Copyright (c) 2018 JP-L, https://www.jp-l.org/
+# *
+# * Permission is hereby granted, free of charge, to any person obtaining
+# * a copy of this software and associated documentation files (the
+# * "Software"), to deal in the Software without restriction, including
+# * without limitation the rights to use, copy, modify, merge, publish,
+# * distribute, sublicense, and/or sell copies of the Software, and to
+# * permit persons to whom the Software is furnished to do so, subject to
+# * the following conditions:
+# *
+# * The above copyright notice and this permission notice shall be
+# * included in all copies or substantial portions of the Software.
 #
-# Continuous Integration
-#
- 
+# * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+# * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+# * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+# * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+# * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+# * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+# * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+#*/
+
 # Language setting
 language: java
 
@@ -13,8 +32,8 @@ jdk:
 # http://docs.shippable.com/ci/advancedOptions/branches/
 branches:
   only:
-    - master
-    - release
+    #- master
+    - releases
     - development
 
 # Specify which services you need. This is only valid if you use the default Shippable image for your build
@@ -50,7 +69,7 @@ build:
            echo "==== Unknown branch ====";
       fi
     - echo "==== List all environment variables ====" && printenv
-    
+
   pre_ci_boot:
     image_name: 791079558361.dkr.ecr.eu-west-1.amazonaws.com/jpl/u16jav
     image_tag: '1.0'
@@ -62,7 +81,7 @@ build:
   ci:
     - echo "==== Prepare Gradle environment ===="
     - mkdir -p $HOME/.gradle
-    - cp $SHIPPABLE_REPO_DIR/src/main/resources/gradle/gradle.properties $HOME/.gradle/
+    - cp $SHIPPABLE_REPO_DIR/bas/resources/gradle/gradle.properties $HOME/.gradle/
     - printenv | grep SONARQUBE_PROP | cut -d'=' -f 2- | tr '|' '\n' >> $HOME/.gradle/gradle.properties
     - printenv | grep BINREPO_PROP | cut -d'=' -f 2- | tr '|' '\n' >> $HOME/.gradle/gradle.properties
     - printenv | grep SRCREPO_PROP | cut -d'=' -f 2- | tr '|' '\n' >> $HOME/.gradle/gradle.properties
@@ -83,17 +102,17 @@ build:
 
   post_ci:
     - echo "==== Post CI tasks==== "
-    
+
   on_success:
     - if [ "$BRANCH" == "development" ]; then
            echo "==== Release the code for Acceptance and Smoke testing ====";
            gradle releaseDevelopment;
-      elif [ "$BRANCH" == "release" ]; then
-           echo "==== Tag as milestone ====";
-           gradle releaseMilestone;
+      elif [ "$BRANCH" == "releases" ]; then
+           echo "==== Tag as alpha release ====";
+           gradle releaseAlpha;
       elif [ "$BRANCH" == "master" ]; then
            echo "==== Publish the next Release ====";   
-           gradle releaseVersion;
+           gradle publishRelease;
       else
            echo "==== Unknown branch ====";
       fi
@@ -102,22 +121,7 @@ build:
     - echo "==== Build failed ===="
     
   cache: false
-  
- #
- # Assembly line jobs
- #
-jobs:
-  - name: jdemo
-    type: runCI
-    dependencyMode: immediate   # optional
-    flags:
-      - jdemo
-    steps:
-      - OUT: jdemo-dev-image
 
- #
- # Integrations
- #
 integrations:
 # If you are using integrations, you'll need to set it up in two places. Subscription settings & here in this section of the yml.
     notifications:
@@ -136,8 +140,230 @@ integrations:
           on_start: always
 
     hub:
-        - integrationName: AWS-ECR
+        - integrationName: AWS
           type: ecr
           region: eu-west-1
 #          agent_only:
 #          branches:
+  
+#### END CI CONFIG
+
+#### RESOURCES CONFIG (GLOBAL ACROSS SUBSCRIPTION)
+resources:
+    - name: jdemoImg
+      type: image
+      integration: Binary-Repository-Registry
+      pointer:
+        sourceName: "jdemo"
+      seed:
+        versionName: "latest"
+
+     # Docker options
+    - name: dockerOptions
+      type: dockerOptions
+      version:
+        memory: 1024                        #in MiB
+        cpuShares: 10
+        portMappings:
+            - "8080:8080"
+        #links:                                    #containerName:alias
+        #   - <container name>:<alias>
+        #   - <container name>:<alias>
+        #volumes:
+        #  - "<source>:<container path>:<options>"
+        #  - "<source>:<container path>:<options>
+        logConfig:
+            type: awslogs
+            options:
+              awslogs-group: Demo-Applications
+              awslogs-region: eu-central-1
+        #entryPoint:
+        #  - <string>
+        #  - <string>
+        #cmd:
+        #  - <string>
+        #  - <string>
+        #workingDir: <path to working dir>
+        privileged: false                     # May be true or false
+        #labels:
+        #  <key1>: <value1>
+        #  <key2>: <value2>
+        #volumesFrom:
+        #  - "<container name>:<options>"
+        #  - "<container name>:<options>"
+        #ulimits:
+        #  - name: <name of limit>                 # e.g. cpu
+        #    soft: <number>                        # soft Limit
+        #    hard: <number>                        # hard Limit
+        #  - name: <name of limit>                 # e.g. nofile
+        #    soft: <number>                        # soft Limit, e.g. 50
+        #    hard: <number>                        # hard Limit, e.g. 100
+        #dnsServers:
+        #  - "<ip address>"
+        #dnsSearch:
+        #  - "<ip address>"
+        #user: <string>                            # For GKE, this should be the UID (a number)
+
+    # Number of replicas
+    - name: replicas
+      type: replicas
+      version:
+        count: 1
+        
+    # Cluster
+    - name: QA-cluster
+      type: cluster
+      integration: AWS
+      versionTemplate:
+        region: eu-central-1
+        sourceName: oz-cluster
+
+   #### INTEGRATIONS ####
+    - name: aws-Integration
+      type: integration
+      integration: AWS
+
+    - name: aws-cliConfig
+      type: cliConfig
+      integration: AWS
+      versionTemplate:
+        region: eu-central-1
+
+    #### NOTIFICATIONS ####
+    - name: Slack
+      type: notification
+      integration: Slack
+      versionTemplate:
+        recipients:
+            - "#jdemo"
+
+#### END RESOURCES CONFIG
+
+#### JOBS CONFIG (GLOBAL ACROSS SUBSCRIPTION)
+jobs:
+    - name: jdemo_runCI
+      type: runCI
+      steps:
+        - IN: jdemo_ciRepo
+        - IN: jdemoStaging_rSync
+      
+    - name: jdemoManifest
+      type: manifest
+      dependencyMode: strict   # optional
+      flags:
+        - jdemo
+      steps:
+        - IN: jdemo_runCI
+        - IN: jdemoImg
+        - IN: dockerOptions
+        - IN: replicas 
+
+    - name: genericSetupStagingEnvironment
+      type: runSh
+      triggerMode: serial
+      dependencyMode: strict   # optional
+      on_start:
+        - NOTIFY: Slack
+      steps:
+        - IN: jdemo_runCI
+        - IN: aws-cliConfig
+          scopes:
+            - ecr
+        - TASK:
+            name: pullCustomImage
+            script:
+              #- docker pull 791079558361.dkr.ecr.eu-west-1.amazonaws.com/jpl/u16jav:1.0
+              - docker pull drydock/u16javall:v6.1.4
+        - TASK:
+            name: setupStagingEnvironment
+            runtime:                  # optional
+              options:
+                #imageName: 791079558361.dkr.ecr.eu-west-1.amazonaws.com/jpl/u16jav
+                imageName: drydock/u16javall
+                imageTag: 'v6.1.4' #'1.0'
+                pull: false
+                options: '--privileged=false --net=bridge -e FOO=true -e BOO=false'
+            script: 
+              - echo "==== TODO TODO TODO TODO ===="
+              - echo "==== Setup testing environment for testing Alpha release ===="
+              - gradle -v
+              - echo "==== TODO TODO TODO TODO ===="
+      on_failure:
+        - NOTIFY: Slack
+
+    - name: genericDeployImage
+      type: deploy
+      dependencyMode: strict   # optional
+      on_start:
+        - NOTIFY: Slack
+      flags:
+       - jdemo
+      steps: 
+        - IN: jdemoManifest    # manifest
+          switch: off
+        - IN: genericSetupStagingEnvironment
+          switch: off
+        - IN: QA-cluster
+          switch: off
+        #- IN: elbQA
+        #  applyTo:
+        #    - manifest: jdemoManifest
+        #      image: jdemo
+        #      port: 8080
+      on_failure:
+        - NOTIFY: Slack
+
+    - name: genericRunQATests
+      type: runSh
+      dependencyMode: strict   # optional
+      on_start:
+        - NOTIFY: Slack
+      steps:
+        - IN: genericDeployImage
+          switch: off
+        - IN: aws-cliConfig
+          scopes:
+            - ecr
+        - TASK:
+            name: pullCustomImage
+            script:
+              #- docker pull 791079558361.dkr.ecr.eu-west-1.amazonaws.com/jpl/u16jav:1.0
+              - docker pull drydock/u16javall:v6.1.4
+        - TASK:
+            name: runQATests
+            runtime:                  # optional
+              options:
+                #imageName: 791079558361.dkr.ecr.eu-west-1.amazonaws.com/jpl/u16jav
+                imageName: drydock/u16javall
+                imageTag: 'v6.1.4' #'1.0'
+                pull: false
+                options: '--privileged=false --net=bridge -e FOO=true -e BOO=false'
+            script:
+              - echo "==== TODO TODO TODO TODO ===="
+              - echo "==== run tests for testing Alpha release ===="
+              - gradle -v
+              - echo "==== set Beta release on success ===="
+              - echo "==== run tests for testing Beta release ===="
+              - echo "==== set RC release on success ===="
+              - echo "==== merge into master ===="
+              - echo "==== TODO TODO TODO TODO ===="
+      on_failure:
+        - NOTIFY: Slack
+
+    - name: genericPublish
+      type: runSh
+      on_start:
+        - NOTIFY: Slack
+      dependencyMode: strict   # optional
+      steps:
+        - IN: genericRunQATests
+        - TASK:
+            name: publish
+            script:
+              - 'echo "==== TODO TODO TODO TODO ===="'
+              - 'echo "==== Finish all ===="'
+              - 'echo "==== TODO TODO TODO TODO ===="'
+      on_failure:
+        - NOTIFY: Slack
+
+#### END JOBS CONFIG

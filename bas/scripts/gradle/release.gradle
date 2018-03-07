@@ -1,0 +1,267 @@
+/*
+ * Copyright (c) 2018 JP-L, https://www.jp-l.org/
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining
+ * a copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject to
+ * the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be
+ * included in all copies or substantial portions of the Software.
+
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+ * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+ * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+ * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ *
+ * Release configuration
+ */
+
+/* ==== Apply plugins ==== */
+//apply plugin: "maven"
+
+scmVersion {
+	// Dry run & local only release
+    localOnly = "${release_dryrun}" // never connect to remote when true
+    // Uncommitted changes
+    ignoreUncommittedChanges = true // should uncommitted changes force version bump
+    // :doc`use_highest_version`
+    useHighestVersion = true // Defaults as false, setting to true will find the highest visible version in the commit tree
+    // Sanitization
+    sanitizeVersion = true // should created version be sanitized, true by default
+    scmVersion.repository.customUsername = System.properties."${repo_key}"
+
+	repository {
+		type = 'git' // type of repository
+        directory = project.rootProject.file('./') // repository location
+        remote = 'origin' // remote name
+    }
+    
+    tag {
+    	prefix = ''
+        //initialVersion(prefix: "", separator: "-", tag: "1.0.0")
+    }
+        
+    nextVersion {
+    	suffix = ''
+    }
+    
+    versionCreator 'simple'					// default Version creator
+    branchVersionCreator = [
+    	'development/.*' : 'simple',
+        'releases/.*' : 'incrementPrerelease',
+        'bugfix/.*' : 'simple',
+        'master/.*' : 'simple'        
+    ]
+    
+    versionIncrementer 'incrementPatch' 	// default Version incrementer
+    branchVersionIncrementer = [
+        'development/.*' : 'incrementPatch',
+        'releases/.*' : 'incrementPrerelease',
+        'bugfix/.*' : { c -> c.currentVersion.incrementPatchVersion() },
+        'master/.*' : 'incrementMinor'
+    ]
+    
+    // Release hooks
+    createReleaseCommit true // should create empty commit to annotate release in commit history, false by default
+    //releaseCommitMessage { version, position -> ... } // custom commit message if commits are created
+
+    // Pre-release checks
+    checks {
+        uncommittedChanges = false // permanently disable uncommitted changes check
+        aheadOfRemote = false // permanently disable ahead of remote check
+    }
+    
+    hooks {
+        pre 'fileUpdate', [file: 'README.md', pattern: {v,p -> /(version.) $v/}, replacement: {v, p -> "\$1 $v"}]
+        pre 'commit'
+    }
+}
+
+def merge(def branchFrom, def branchTo, def stage) {
+		StackTraceElement[] stackTraceElements = Thread.currentThread().getStackTrace()
+    	println "called by " + stackTraceElements[2].getMethodName()
+    return tasks.create("merge${stage}") {
+    	doLast {
+		    // Check if the release branch exists
+	    	if ( grgit.branch.list().find{it.name == "${branchTo}"} != null ) {
+	    		println "Checkout branch ${branchTo}"
+	    		grgit.checkout(branch: "${branchTo}")
+	    	} else {
+	    		println "Checkout new branch ${branchTo} based on ${branchFrom}"
+	    		grgit.checkout(branch: "${branchTo}", createBranch: true, startPoint: "${branchFrom}")
+	    	}
+	    	//assuming the merge was successful we can now merge branchFrom into branchTo
+	    	println "merge branch ${branchFrom} into ${branchTo}"
+			grgit.merge(head: "${branchFrom}", mode: "create-commit", message: "Merged ${branchFrom} branch into ${branchTo} branch")
+			// Push the changes upstream
+			println "push upstream"
+			if ("${release_dryrun}" == true) {
+				grgit.push(remote: "origin", refsOrSpecs: ["+${branchTo}"], force: true, dryRun: true)
+			} else {
+				grgit.push(remote: "origin", refsOrSpecs: ["${branchTo}"], force: true)
+			}
+			// Checkout original branch
+			println "checkout starting branch"
+			grgit.checkout(branch: "${branchFrom}")
+		}
+    }
+}
+def setVersion(def phaseLCM, def successfulTest) {
+		StackTraceElement[] stackTraceElements = Thread.currentThread().getStackTrace()
+    	println "called by " + stackTraceElements[2].getMethodName()
+    return tasks.create("setVersion${phaseLCM}") {
+	    doLast {
+			// If a branch has no tags yet version defaults to SNAPSHOT.
+			// We like to change that behavior and set it to:
+			// - on development branch set to: milestone
+			// - on release branch set to:     alpha
+			// - on master branch set to:      version (fx 1.0.0)
+			// If a new version is configured in gradle.properties (major number increased) we
+			// like to change behavior to:
+			// - on development branch set to: incrementMajor
+			// - on release branch set to:     incrementMajor + -alpha
+			// - on master branch set to:      incrementMajor
+			// If the development branch integration and functional testing is successful
+			// we set version to incrementPatch (still using milestone). So:
+			// - on development branch set to: incrementPatch (fx 1.0.1-milestone)
+			// If the release branch is feature complete and acceptance testing is successful
+			// we like to set the version to beta. So:
+			// - on release branch set to:     beta           (fx 1.0.0-beta)
+			// - otherwise we tag as alpha:    incrementPatch (fx 1.0.1-alpha)
+			// If the release branch is feature complete, acceptance testing and smoke testing are successful
+			// we like to set the version to RC. So:
+			// - on release branch set to:     RC			 (fx 1.0.0-rc2)
+			// - otherwise we tag as beta:    incrementPatch (fx 1.0.1-beta)
+			// If the release branch is feature complete, acceptance testing and smoke testing are successful,
+			// but failed the manual tests we stay on RC, and all patches combined become the next rc. So:
+			// - on release branch set to:     incrementPrerelease (fx 1.0.0-rc2)
+			// If the master branch verification tests are successful
+			// we like to set the version to next version. So:
+			// - on master branch set to:      incrementMajor
+			def tag = grgit.describe() 	// get the latest tag
+			switch(phaseLCM){
+				case "development":
+					if ( tag == null || tag.take(1) != "${release_version}".take(1) ) {
+						project.ext."release.version" = "${release_version}-milestone"
+					} else {
+						project.ext."release.versionIncrementer" = "incrementPatch"
+					}
+					break
+				case "release":
+					switch(tag) {
+						case null:
+							project.ext."release.version" = "${release_version}-alpha"
+							break
+						case ~/.*alpha.*/:
+							project.ext."release.version" = "incrementPatch"
+							break
+						case ~/.*beta.*/:
+							if (successfulTests) {
+								project.ext."release.version" = "${release_version}-beta"
+								markNextVersion.execute()
+							} else {
+								project.ext."release.version" = "incrementPatch"
+							}
+							break
+						case ~/.*RC.*/:
+							if (successfulTests) {
+								project.ext."release.version" = "${release_version}-RC1" //incrementPrerelease??
+								markNextVersion.execute()
+							} else {
+								project.ext."release.version" = "incrementPrerelease"
+							}
+							break
+					}
+					break
+				case "master":
+					if ( "${scmVersion.version}".contains("SNAPSHOT") ) {
+						project.ext."release.version" = "${release_version}"
+					} else {
+						project.ext."release.versionIncrementer" = "incrementMajor"
+					}
+					break
+			}
+			project.ext."release.dryrun" = "${release_dryrun}"
+		    release.execute()
+		}
+	}
+}
+
+task testIdeas {
+	group "Release"
+	doLast {
+		def tag = grgit.describe()
+		if ( tag == null ) {
+			println "tag is null, so on dev branch we need to set release.version"
+		} else if ( tag.take(1) == "${release_version}".take(1) && tag.contains("milestone") ) {
+			println "dev branch, using milestone. Major equals gradle props. We want to increment Patch"
+		} else {
+			println "More debugging required"
+		}
+	}
+}
+task releaseDevelopment {
+    description "Tag the development branch as a milestone version and merge it into release branch"
+    group "Release"
+    doLast {
+        //setVersion("development", null).execute()
+		merge("development","releases", "Development").execute()
+	}
+}
+task releaseAlpha {
+	description "Tag the release branch as a alpha version"
+	group "Release"
+	doLast {
+	    //setVersion("release", null).execute()
+	    println "==== TODO ===="
+	    // create docker image and push to Artifactory Repo
+	    pushDockerImage.execute()
+    }
+}
+task releaseBeta {
+	description "Tag the release branch as a beta version"
+	group "Release"
+	doLast {
+	    //setVersion("release", true)
+	    println "==== TODO ===="
+	    // create docker image and push to Artifactory Repo
+	    //pushDockerImage.execute()
+    }
+}
+task releaseCandidate {
+	description "Tag the release branch as a Release Candidate"
+	group "Release"
+	doLast {
+	    //setVersion("release", false)
+	    println "==== TODO ===="
+	    // create docker image and push to Artifactory Repo
+	    //pushDockerImage.execute()
+    }
+}
+task releaseVersion {
+	description "Tag the release branch as a version and merge it into master branch"
+	group "Release"
+	doLast {
+		println "==== TODO ===="
+		//setVersion("final", null).execute()
+		merge("releases","master", "RC").execute()
+    }
+}
+task publishRelease {
+	description "Tag the master branch as a version, push to DockerHub and deploy"
+	group "Release"
+	doLast {
+		setVersion("master", null)
+	    // push to dockerHub
+	    //TODO
+	    // deploy into production and run a healthcheck
+	    //TODO
+    }
+}
