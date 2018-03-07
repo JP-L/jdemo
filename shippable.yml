@@ -176,7 +176,7 @@ resources:
             type: awslogs
             options:
               awslogs-group: Demo-Applications
-              awslogs-region: eu-west-1
+              awslogs-region: eu-central-1
         #entryPoint:
         #  - <string>
         #  - <string>
@@ -215,8 +215,8 @@ resources:
       type: cluster
       integration: AWS
       versionTemplate:
-        region: eu-west-1
-        sourceName: qa-environment
+        region: eu-central-1
+        sourceName: oz-cluster
 
    #### INTEGRATIONS ####
     - name: aws-Integration
@@ -227,7 +227,7 @@ resources:
       type: cliConfig
       integration: AWS
       versionTemplate:
-        region: eu-west-1
+        region: eu-central-1
 
     #### NOTIFICATIONS ####
     - name: Slack
@@ -341,6 +341,7 @@ jobs:
             script:
               - echo "==== TODO TODO TODO TODO ===="
               - echo "==== run tests for testing Alpha release ===="
+              - gradle -v
               - echo "==== set Beta release on success ===="
               - echo "==== run tests for testing Beta release ===="
               - echo "==== set RC release on success ===="

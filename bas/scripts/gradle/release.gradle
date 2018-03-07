@@ -195,6 +195,7 @@ def setVersion(def phaseLCM, def successfulTest) {
 }
 
 task testIdeas {
+	group "Release"
 	doLast {
 		def tag = grgit.describe()
 		if ( tag == null ) {
@@ -208,6 +209,7 @@ task testIdeas {
 }
 task releaseDevelopment {
     description "Tag the development branch as a milestone version and merge it into release branch"
+    group "Release"
     doLast {
         //setVersion("development", null).execute()
 		merge("development","releases", "Development").execute()
@@ -215,6 +217,7 @@ task releaseDevelopment {
 }
 task releaseAlpha {
 	description "Tag the release branch as a alpha version"
+	group "Release"
 	doLast {
 	    //setVersion("release", null).execute()
 	    println "==== TODO ===="
@@ -224,6 +227,7 @@ task releaseAlpha {
 }
 task releaseBeta {
 	description "Tag the release branch as a beta version"
+	group "Release"
 	doLast {
 	    //setVersion("release", true)
 	    println "==== TODO ===="
@@ -233,6 +237,7 @@ task releaseBeta {
 }
 task releaseCandidate {
 	description "Tag the release branch as a Release Candidate"
+	group "Release"
 	doLast {
 	    //setVersion("release", false)
 	    println "==== TODO ===="
@@ -242,6 +247,7 @@ task releaseCandidate {
 }
 task releaseVersion {
 	description "Tag the release branch as a version and merge it into master branch"
+	group "Release"
 	doLast {
 		println "==== TODO ===="
 		//setVersion("final", null).execute()
@@ -250,6 +256,7 @@ task releaseVersion {
 }
 task publishRelease {
 	description "Tag the master branch as a version, push to DockerHub and deploy"
+	group "Release"
 	doLast {
 		setVersion("master", null)
 	    // push to dockerHub

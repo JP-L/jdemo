@@ -77,11 +77,13 @@ task copyFiles(type: Copy) {
 }
 /* ===== Docker Image tasks ==== */
 task createDockerImage(type: DockerBuildImage) {
+	group "Docker"
     dependsOn   'copyFiles'
     inputDir = file("${getProject().getBuildDir()}/docker")
     tags = ["${dockerRepo}".toString() + '/' + "${getProject().getName()}".toString() + ':latest']
 }
 task pushDockerImage(type: DockerPushImage) {
+	group "Docker"
     dependsOn createDockerImage
     imageName = "${dockerRepo}/${getProject().getName()}"
     tag = 'latest' //"${getProject().getVersion()}"
@@ -89,14 +91,17 @@ task pushDockerImage(type: DockerPushImage) {
 
 /* ===== Docker Container tasks ==== */
 task createDockerContainer(type: DockerCreateContainer) {
+	group "Docker"
     dependsOn createDockerImage
     targetImageId { createDockerImage.getImageId() }
     portBindings = ['8080:8080']
 }
 task startDockerContainer(type: DockerStartContainer) {
+	group "Docker"
     dependsOn createDockerContainer
     targetContainerId { createDockerContainer.getContainerId() }
 }
 task stopDockerContainer(type: DockerStopContainer) {
+	group "Docker"
     targetContainerId { createDockerContainer.getContainerId() }
 }

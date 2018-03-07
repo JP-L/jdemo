@@ -60,10 +60,12 @@ task codeCovIO(type: Exec) {
 }
 
 task inspectQuality(type: GradleBuild) {
+	group "Test"
     tasks = ['test', 'cobertura', 'sonarqube', 'codeCovIO']
 }
 
 task runFunctionalAndIntegrationTests(type: Exec) {
+	group "Test"
     dependsOn startDockerContainer
     finalizedBy stopDockerContainer
     commandLine "/bin/bash", "-c", "${projectDir}/src/test/docker/dockerFunctionalTests.sh"
@@ -74,6 +76,7 @@ task runFunctionalAndIntegrationTests(type: Exec) {
     }
 }
 task runAcceptanceAndSmokeTests(type: Exec) << {
+	group "Test"
 	//dependsOn .... releaseCI -> probably this becomes a shippable Job
 }
 
