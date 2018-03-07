@@ -303,8 +303,75 @@ jobs:
                 options: '--privileged=false --net=bridge -e FOO=true -e BOO=false'
             script: 
               - echo "==== TODO TODO TODO TODO ===="
-              - echo "==== Setup testing environment for testing Alpha release ===="
+              - echo "==== Setup testing environment for testing Alpha, Beta and RC release ===="
               - gradle -v
+              - echo "==== TODO TODO TODO TODO ===="
+      on_failure:
+        - NOTIFY: Slack
+
+     # ****************************************************************************************************************
+     # *                                   ------------- Then ------------------------------>                         *
+     # *                                                 C. Deploy Image                                              *
+     # *                                                 D. Run QA tests                                              *
+     # *                                                 E. Merge Release branch into Master branch                   *
+     # ****************************************************************************************************************
+    - name: genericDeployImage
+      type: deploy
+      dependencyMode: strict   # optional
+      on_start:
+        - NOTIFY: Slack
+      flags:
+       - jdemo
+      steps: 
+        - IN: jdemoManifest    # manifest
+          switch: off
+        - IN: genericSetupStagingEnvironment
+          switch: off
+        - IN: QA-cluster
+          switch: off
+        #- IN: elbQA
+        #  applyTo:
+        #    - manifest: jdemoManifest
+        #      image: jdemo
+        #      port: 8080
+      on_failure:
+        - NOTIFY: Slack
+
+    - name: genericRunQATests
+      type: runSh
+      dependencyMode: strict   # optional
+      on_start:
+        - NOTIFY: Slack
+      steps:
+        - IN: genericDeployImage
+          switch: off
+        - IN: aws-cliConfig
+          scopes:
+            - ecr
+        - TASK:
+            name: pullCustomImage
+            script:
+              #- docker pull 791079558361.dkr.ecr.eu-west-1.amazonaws.com/jpl/u16jav:1.0
+              - docker pull drydock/u16javall:v6.1.4
+        - TASK:
+            name: runQATests
+            runtime:                  # optional
+              options:
+                #imageName: 791079558361.dkr.ecr.eu-west-1.amazonaws.com/jpl/u16jav
+                imageName: drydock/u16javall
+                imageTag: 'v6.1.4' #'1.0'
+                pull: false
+                options: '--privileged=false --net=bridge -e FOO=true -e BOO=false'
+            script:
+              - echo "==== TODO TODO TODO TODO ===="
+              - echo "==== run tests for testing Alpha release ===="
+              - gradle -v
+              - echo "==== set Beta release on success ===="
+              - echo "==== run tests for testing Beta release ===="
+              - echo "==== set RC release on success ===="
+              - echo "==== run RC tests if any ===="
+              - echo "==== clean up deployed image and test env ===="
+              - echo "==== merge into master ===="
               - echo "==== TODO TODO TODO TODO ===="
       on_failure:
         - NOTIFY: Slack
