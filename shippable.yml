@@ -261,21 +261,6 @@ jobs:
      # *                                   A. Create a Manifest                                                       *
      # *                                   B. setup Staging environment                                               *
      # ****************************************************************************************************************
-    - name: jdemo_runCI
-      type: runCI
-      steps:
-        - OUT: jdemo
-
-    - name: jdemoManifest
-      type: manifest
-      dependencyMode: strict   # optional
-      flags:
-        - jdemo
-      steps:
-        - IN: jdemo_staging_rSync
-        - IN: jdemo
-        - IN: dockerOptions
-        - IN: replicas
         
         
 #### END JOBS CONFIG
