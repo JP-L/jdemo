@@ -48,7 +48,7 @@ env:
     - MOD_LOC=$SHIPPABLE_REPO_DIR/node_modules/.bin/
     - secure: Qk6NKicUfeWMIPcA5HGJebxUzVUV4SPTV6Oq47G2GgC1TjrFMcwrrZTzrHGJ1q2jP1el+M0OmcuTmQjgUIHGXWZACkvw/y6F3Y0yOLUGJhAHRIN2JHsj5c3PjMoz4U/wYM2eKOiZwiaFsI2sm455wU2jHo6+9cgCJdEfMPX2rBM6w9Uy9VpWbZ/FUzBRxuDakVoErtJ63frGKEcQ0nbNrbqETARQJfsrLw/zY65tNW6+EOpEunQOMTaZfpQ5yY6CEFMDxN2AsdBfmTpfD4x5houhSOvWXSm1zyDmavYlO+aXjq/WzuZymCmfGhjDUfDj0CMAw/E1hMpMrJ5f8zWdEg==
     - secure: YREamOExERn8jpJqUMepfsc/pGpMuk5Dapmn6zxdEPviLUjDePN9btybFonYK+H/+sDtiHVATdvCpj+bAqcGwfUU9JvjoFoEsHH+YjuEeb2SkvLXAnmVo1rgZkrGqGzPZKszK4SU9cjwIVzmSI4qcdlfP//ZAjQqiE19DjXTNv4ik4VsOtfde7XNxYkiFwr3wCCuZiOAlwZ2tknGSVVloX+h8JrdT7yZ4lRqUjJWP+xCbfpGgRtUhgeA69oQfft4DKEivzGA07jLv7yfjY+WnQl/xiqnUFI9kai1zOxHaYfcQuHd2fL/kb11E3g74F91gFOkKm9ORAvp7pxxZnPLvivEk0uUSBKKkW+39eGTscAdSkktFErnzbzOEqBrJClqi3qvFsmy0ITq2brY06fkXxKJWeGGTCkleIFljthTJ6XrVo4bVnXCDtsfDftVUvMOy45RlpyQJb2DlWvQyWctRh+MfDFF0rBwo/QsKPQ9hw6/bfySpAhS+U7szHF45rY4ertrVabhQSzqx9zhUnExiUo1wTwyhN34sq0hA9kgTAbovsBn4xl5hFpjoXnxPHnNwEu4betTlWU1c/11Ahe1owQCZfVqlEt+a2udyLXiMumZQGHuX0WmuQA7ZchwP5rUF8sqXd43KiZhYN9W7aIv55EiVq+h6X/fcU55wK+UqfU=
-    - secure: pXRSudOmtF/JCP4x1MfIHtCY83zFOvZwtLRTkK9Wk2mfM+PEoVnb8e2gL0FLkjLgX92k0XJZaQiAtWIhE/LfNe+jInMoYtYeUFW/TXmkIzcuVOAZ9eRwX6qkR/qMmIOvG05X7YQX4d7YoZBVXJaerTUjcri8NACrjHfdJQD3SMEpIESLsVE902W3f3BmvjfEaKSL0CY2TdlmcqKaG4geBlkzlJBT1tn9UC7M2JeipE0tczsdzBtbP1zH1sDdlnlof/dSI3RaULrfIcz7k4Y2ywOQ8LGJ79fUd4984JMaviR4+Onqne75as0uEHLFUoPC9KGbooqSKMPcYwPUEyQU9Q==
+    - secure: f2yCn95w8G4xGKqso5KzQbD5XoMk/4xzs4nEJunzxtltSr4ogep+3ZhL9vU3MfkfQIb08efhL4zIko1fEGDrvgjJp8C4pW6bXkMyb2MipVNtV4PX/NvStNNr49XqWGrtrHVAuceYUffTdIZANYKbDL80eYvAk5r6Mo0EouMBZi3DxljjM3TJRvN4ZCVeoLzmEKVHJEetNM9VZ73qoqYinw0CYyLbJmNNlfcE6rIviJmeEyuPTQB897lRZzDjnq1TDg5EqNDM17YdCILqwLeDLpYpEuNme1FxvPdW/0KFs1v1Vloc1nWlLT+7lVviRfRb3U/T7UHiCrZFq2OjgoeAuw==
 
 #matrix:
 
@@ -215,8 +215,8 @@ resources:
       type: cluster
       integration: AWS
       versionTemplate:
+        sourceName: oz_cluster
         region: eu-central-1
-        sourceName: oz-cluster
 
    #### INTEGRATIONS ####
     - name: aws-Integration
