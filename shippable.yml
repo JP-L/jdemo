@@ -150,7 +150,7 @@ integrations:
 
 #### RESOURCES CONFIG (GLOBAL ACROSS SUBSCRIPTION)
 resources:
-    - name: jdemo
+    - name: jdemoImg
       type: image
       integration: Binary-Repository-Registry
       pointer:
@@ -255,12 +255,25 @@ resources:
 # ****************************************************************************************************************
 
 jobs:
-     # ****************************************************************************************************************
-     # * Build Release branch after successful merge from Development branch                                          *
-     # *                    ------------- Then ------------------------------>                                        *
-     # *                                   A. Create a Manifest                                                       *
-     # *                                   B. setup Staging environment                                               *
-     # ****************************************************************************************************************
+    # ****************************************************************************************************************
+    # * Build Release branch after successful merge from Development branch                                          *
+    # *                    ------------- Then ------------------------------>                                        *
+    # *                                   A. Create a Manifest                                                       *
+    # *                                   B. setup Staging environment                                               *
+    # ****************************************************************************************************************
+    - name: jdemo_runCI
+      type: runCI
+      steps:
+        - OUT: jdemoImg
         
+    - name: jdemoManifest
+      type: manifest
+      dependencyMode: strict   # optional
+      flags:
+        - jdemo
+      steps:
+        - IN: jdemoImg
+        - IN: dockerOptions
+        - IN: replicas   
         
 #### END JOBS CONFIG
