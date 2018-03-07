@@ -240,19 +240,32 @@ resources:
 #### END RESOURCES CONFIG
 
 #### JOBS CONFIG (GLOBAL ACROSS SUBSCRIPTION)
+# ****************************************************************************************************************
+# * Build Release branch after successful merge from Development branch                                          *
+# *                    ------------- Then ------------------------------>                                        *
+# *                                   A. Create a Manifest                                                       *
+# *                                   B. setup Staging environment                                               *
+# *                                   ------------- Then ------------------------------>                         *
+# *                                                 C. Deploy Image                                              *
+# *                                                 D. Run QA tests                                              *
+# *                                                 E. Merge Release branch into Master branch                   *
+# *                                                 ------------- Then ------------------------------>           *
+# *                                                               F. Build Master branch                         *
+# *                                                               G. Publish to DockerHub after successful build *
+# ****************************************************************************************************************
+
 jobs:
+     # ****************************************************************************************************************
+     # * Build Release branch after successful merge from Development branch                                          *
+     # *                    ------------- Then ------------------------------>                                        *
+     # *                                   A. Create a Manifest                                                       *
+     # *                                   B. setup Staging environment                                               *
+     # ****************************************************************************************************************
     - name: jdemo_runCIStaging
       type: runCI
       steps:
         - IN: jdemo_ciRepo
         - IN: jdemoStaging_rSync
-        
-    - name: jdemo_runCIPublishing
-      type: runCI
-      steps:
-        - IN: jdemo_ciRepo
-        - IN: jdemoPublishing_rSync
-        - IN: genericRunQATests
       
     - name: jdemoManifest
       type: manifest
@@ -298,6 +311,12 @@ jobs:
       on_failure:
         - NOTIFY: Slack
 
+     # ****************************************************************************************************************
+     # *                                   ------------- Then ------------------------------>                         *
+     # *                                                 C. Deploy Image                                              *
+     # *                                                 D. Run QA tests                                              *
+     # *                                                 E. Merge Release branch into Master branch                   *
+     # ****************************************************************************************************************
     - name: genericDeployImage
       type: deploy
       dependencyMode: strict   # optional
@@ -357,6 +376,18 @@ jobs:
       on_failure:
         - NOTIFY: Slack
 
+     # ****************************************************************************************************************
+     # *                                                 ------------- Then ------------------------------>           *
+     # *                                                               F. Build Master branch                         *
+     # *                                                               G. Publish to DockerHub after successful build *
+     # ****************************************************************************************************************
+    - name: jdemo_runCIPublishing
+      type: runCI
+      steps:
+        - IN: jdemo_ciRepo
+        - IN: jdemoPublishing_rSync
+        - IN: genericRunQATests
+        
     - name: genericPublish
       type: runSh
       on_start:
