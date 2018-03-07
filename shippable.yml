@@ -150,7 +150,7 @@ integrations:
 
 #### RESOURCES CONFIG (GLOBAL ACROSS SUBSCRIPTION)
 resources:
-    - name: jdemoImg
+    - name: jdemo
       type: image
       integration: Binary-Repository-Registry
       pointer:
@@ -264,7 +264,7 @@ jobs:
     - name: jdemo_runCI
       type: runCI
       steps:
-        - OUT: jdemoImg
+        - OUT: jdemo
 
     - name: jdemoManifest
       type: manifest
@@ -273,7 +273,7 @@ jobs:
         - jdemo
       steps:
         - IN: jdemo_staging_rSync
-        - IN: jdemoImg
+        - IN: jdemo
         - IN: dockerOptions
         - IN: replicas
         
