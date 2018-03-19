@@ -36,6 +36,7 @@ buildscript {
     }
     dependencies {
         classpath "com.bmuschko:gradle-docker-plugin:3.2.3"
+        classpath "gradle.plugin.com.patdouble:gradle-aws-ecr-plugin:0.3.3"
     }
 }
 
@@ -43,6 +44,7 @@ buildscript {
 
 // use fully qualified class name
 apply plugin: com.bmuschko.gradle.docker.DockerRemoteApiPlugin
+apply plugin: "com.patdouble.awsecr"
 
 import com.bmuschko.gradle.docker.tasks.image.*
 import com.bmuschko.gradle.docker.tasks.container.*
@@ -64,9 +66,9 @@ docker {
     																	       
     registryCredentials {
         url = "${binrepo_registryUrl}"
-        username = "${binrepo_user}"
-        password = "${binrepo_password}"
-        email = "${binrepo_email}"
+        //username = "${binrepo_user}"
+        //password = "${binrepo_password}"
+        //email = "${binrepo_email}"
     }
 }
 

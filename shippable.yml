@@ -223,7 +223,7 @@ resources:
       type: cluster
       integration: AWS
       versionTemplate:
-        sourceName: tst-cluster
+        sourceName: oz-qa-cluster
         region: eu-central-1
 
    #### INTEGRATIONS ####
