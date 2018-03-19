@@ -27,27 +27,33 @@
 apply plugin: 'maven'
     
 /* ===== Repositories ===== */    
-artifactory {
-    contextUrl = "${binrepo_url}"   //The base Artifactory URL if not overridden by the publisher/resolver
-    publish {
-        repository {
-            repoKey = 'gradle-dev-local'
-            username = "${binrepo_user}"
-            password = "${binrepo_password}"
-            maven = true
-            
-        }
-    }
-    resolve {
-    	repository {
-      		repoKey = 'jcenter' // The Artifactory (preferably virtual) repository key to resolve from
-      		username = "${binrepo_user}" // Optional resolver user name (leave out to use anonymous resolution)
-      		password = "${binrepo_password}" // The resolver password
-      		maven = true     
-    	}
-  	}
+repositories {
+	jcenter()
 }
 
+// Use below when we have Artifactory active again
+//artifactory {
+//    contextUrl = "${binrepo_url}"   //The base Artifactory URL if not overridden by the publisher/resolver
+//    publish {
+//        repository {
+//            repoKey = 'gradle-dev-local'
+//            username = "${binrepo_user}"
+//            password = "${binrepo_password}"
+//            maven = true
+//            
+//        }
+//    }
+//    resolve {
+//    	repository {
+//      		repoKey = 'jcenter' // The Artifactory (preferably virtual) repository key to resolve from
+//      		username = "${binrepo_user}" // Optional resolver user name (leave out to use anonymous resolution)
+//      		password = "${binrepo_password}" // The resolver password
+//      		maven = true     
+//    	}
+//  	}
+//}
+
+// Use below when we have Nexus OSS active again
 //repositories {
 //    maven {
 //        url "${binrepo_url}/repository/jcenter/"
