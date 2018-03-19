@@ -24,7 +24,9 @@
  */
 buildscript {
     repositories {
-    	jcenter()
+    	maven {
+    		url "https://plugins.gradle.org/m2/"
+    	}
         // Activate below when using Artifacotry or Nexus
         //maven {
 	    //    url "${binrepo_url}/jcenter/"
