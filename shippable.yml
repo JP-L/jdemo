@@ -154,14 +154,14 @@ integrations:
 resources:
     - name: jdemoImg
       type: image
-      integration: Binary-Repository-Registry
+      integration: AWS
       versionTemplate:
         sourceName: "jdemo"
         versionName: "latest"
         
     - name: jdemoImgQA
       type: image
-      integration: Binary-Repository-Registry
+      integration: AWS
       versionTemplate:
         sourceName: "jdemo"
         versionName: "latest"
