@@ -340,6 +340,7 @@ jobs:
     - name: genericDeployImage
       type: deploy
       dependencyMode: strict   # optional
+      method: replace
       on_start:
         - NOTIFY: Slack
       flags:
