@@ -183,11 +183,11 @@ resources:
         #volumes:
         #  - "<source>:<container path>:<options>"
         #  - "<source>:<container path>:<options>
-        #logConfig:
-        #    type: awslogs
-        #    options:
-        #      awslogs-group: Demo-Applications
-        #      awslogs-region: eu-central-1
+        logConfig:
+            type: awslogs
+            options:
+              awslogs-group: /var/log/docker
+              awslogs-region: eu-central-1
         #entryPoint:
         #  - <string>
         #  - <string>
