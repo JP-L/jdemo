@@ -218,12 +218,14 @@ task releaseDevelopment {
 task releaseAlpha {
 	description "Tag the release branch as a alpha version"
 	group "Release"
-	doLast {
+	dependsOn pushDockerImage //setVersion("release", null)
+	//pushDockerImage.mustRunAfter setVersion
+	//doLast {
 	    //setVersion("release", null).execute()
-	    println "==== TODO ===="
-	    // create docker image and push to Artifactory Repo
-	    pushDockerImage.execute()
-    }
+	//    println "==== TODO ===="
+	    // create docker image and push to Binary Repo
+	//    pushDockerImage.execute()
+    //}
 }
 task releaseBeta {
 	description "Tag the release branch as a beta version"
@@ -231,7 +233,7 @@ task releaseBeta {
 	doLast {
 	    //setVersion("release", true)
 	    println "==== TODO ===="
-	    // create docker image and push to Artifactory Repo
+	    // create docker image and push to Binary Repo
 	    //pushDockerImage.execute()
     }
 }
@@ -241,7 +243,7 @@ task releaseCandidate {
 	doLast {
 	    //setVersion("release", false)
 	    println "==== TODO ===="
-	    // create docker image and push to Artifactory Repo
+	    // create docker image and push to Binary Repo
 	    //pushDockerImage.execute()
     }
 }

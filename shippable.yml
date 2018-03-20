@@ -47,8 +47,8 @@ env:
     - TESTS_LOC_DIR=$SHIPPABLE_REPO_DIR/src/test
     - MOD_LOC=$SHIPPABLE_REPO_DIR/node_modules/.bin/
     - secure: Qk6NKicUfeWMIPcA5HGJebxUzVUV4SPTV6Oq47G2GgC1TjrFMcwrrZTzrHGJ1q2jP1el+M0OmcuTmQjgUIHGXWZACkvw/y6F3Y0yOLUGJhAHRIN2JHsj5c3PjMoz4U/wYM2eKOiZwiaFsI2sm455wU2jHo6+9cgCJdEfMPX2rBM6w9Uy9VpWbZ/FUzBRxuDakVoErtJ63frGKEcQ0nbNrbqETARQJfsrLw/zY65tNW6+EOpEunQOMTaZfpQ5yY6CEFMDxN2AsdBfmTpfD4x5houhSOvWXSm1zyDmavYlO+aXjq/WzuZymCmfGhjDUfDj0CMAw/E1hMpMrJ5f8zWdEg==
-    - secure: YREamOExERn8jpJqUMepfsc/pGpMuk5Dapmn6zxdEPviLUjDePN9btybFonYK+H/+sDtiHVATdvCpj+bAqcGwfUU9JvjoFoEsHH+YjuEeb2SkvLXAnmVo1rgZkrGqGzPZKszK4SU9cjwIVzmSI4qcdlfP//ZAjQqiE19DjXTNv4ik4VsOtfde7XNxYkiFwr3wCCuZiOAlwZ2tknGSVVloX+h8JrdT7yZ4lRqUjJWP+xCbfpGgRtUhgeA69oQfft4DKEivzGA07jLv7yfjY+WnQl/xiqnUFI9kai1zOxHaYfcQuHd2fL/kb11E3g74F91gFOkKm9ORAvp7pxxZnPLvivEk0uUSBKKkW+39eGTscAdSkktFErnzbzOEqBrJClqi3qvFsmy0ITq2brY06fkXxKJWeGGTCkleIFljthTJ6XrVo4bVnXCDtsfDftVUvMOy45RlpyQJb2DlWvQyWctRh+MfDFF0rBwo/QsKPQ9hw6/bfySpAhS+U7szHF45rY4ertrVabhQSzqx9zhUnExiUo1wTwyhN34sq0hA9kgTAbovsBn4xl5hFpjoXnxPHnNwEu4betTlWU1c/11Ahe1owQCZfVqlEt+a2udyLXiMumZQGHuX0WmuQA7ZchwP5rUF8sqXd43KiZhYN9W7aIv55EiVq+h6X/fcU55wK+UqfU=
-    - secure: pXRSudOmtF/JCP4x1MfIHtCY83zFOvZwtLRTkK9Wk2mfM+PEoVnb8e2gL0FLkjLgX92k0XJZaQiAtWIhE/LfNe+jInMoYtYeUFW/TXmkIzcuVOAZ9eRwX6qkR/qMmIOvG05X7YQX4d7YoZBVXJaerTUjcri8NACrjHfdJQD3SMEpIESLsVE902W3f3BmvjfEaKSL0CY2TdlmcqKaG4geBlkzlJBT1tn9UC7M2JeipE0tczsdzBtbP1zH1sDdlnlof/dSI3RaULrfIcz7k4Y2ywOQ8LGJ79fUd4984JMaviR4+Onqne75as0uEHLFUoPC9KGbooqSKMPcYwPUEyQU9Q==
+    - secure: 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
+    - secure: bzzevaPxwwIxFbyR2ik3xILewufFDzVxlDxB5lcPRGzIUjXpe3pFxaHtoBX3NO/1mcqURCWvavMHccyHaP8/IywDVvjql3PB/au3ql2/bW8c+E4ylncFt1f7a07QrZQaZVa5ZBQoWgpWhIjNxxHiy4Stcm7YfJGauvsX6sDwk49WfiJlva6TzSPl0PXayesjeSjznOoFu2d++lFpwkwt7YazD/+nAbVVmu+boBHFFjy3wwaKtlVRq9WtTq7xOU+YhpMKkLA3ZO2/ixmad1SzSbjHBnunWgr5byzK3Zmuc2JbFMydiwQwlrUebKmSr6I+jKJaixAapygzuRmZU3xhPQ==
 
 #matrix:
 
@@ -68,7 +68,7 @@ build:
       else
            echo "==== Unknown branch ====";
       fi
-    - echo "==== List all environment variables ====" && printenv
+    - echo "==== DEBUG List all environment variables ====" && printenv
 
   pre_ci_boot:
     image_name: 791079558361.dkr.ecr.eu-west-1.amazonaws.com/jpl/u16jav
@@ -85,6 +85,9 @@ build:
     - printenv | grep SONARQUBE_PROP | cut -d'=' -f 2- | tr '|' '\n' >> $HOME/.gradle/gradle.properties
     - printenv | grep BINREPO_PROP | cut -d'=' -f 2- | tr '|' '\n' >> $HOME/.gradle/gradle.properties
     - printenv | grep SRCREPO_PROP | cut -d'=' -f 2- | tr '|' '\n' >> $HOME/.gradle/gradle.properties
+    - sed -i -r "s|MY_ACCESS_ID|$AMAZONKEYS_ACCESSKEY|g" $HOME/.gradle/gradle.properties 
+    - sed -i -r "s|MY_SECRET|$AMAZONKEYS_SECRETKEY|g" $HOME/.gradle/gradle.properties
+    
     - echo "==== Building the Java application ===="
     - gradle assemble
     - if [ "$BRANCH" != "master" ]; then
@@ -102,6 +105,8 @@ build:
 
   post_ci:
     - echo "==== Post CI tasks==== "
+    - if [ "$BRANCH" == "master" ]; then shipctl post_resource_state jdemoImg versionName $BRANCH.$BUILD_NUMBER; fi
+    - if [ "$BRANCH" == "releases" ]; then shipctl post_resource_state jdemoImgQA versionName $BRANCH.$BUILD_NUMBER; fi
 
   on_success:
     - if [ "$BRANCH" == "development" ]; then
@@ -152,10 +157,16 @@ integrations:
 resources:
     - name: jdemoImg
       type: image
-      integration: Binary-Repository-Registry
-      pointer:
+      integration: AWS
+      versionTemplate:
         sourceName: "jdemo"
-      seed:
+        versionName: "latest"
+        
+    - name: jdemoImgQA
+      type: image
+      integration: AWS
+      versionTemplate:
+        sourceName: "jdemo"
         versionName: "latest"
 
      # Docker options
@@ -175,7 +186,7 @@ resources:
         logConfig:
             type: awslogs
             options:
-              awslogs-group: Demo-Applications
+              awslogs-group: /var/log/docker
               awslogs-region: eu-central-1
         #entryPoint:
         #  - <string>
@@ -215,8 +226,8 @@ resources:
       type: cluster
       integration: AWS
       versionTemplate:
+        sourceName: oz-qa-cluster
         region: eu-central-1
-        sourceName: oz-cluster
 
    #### INTEGRATIONS ####
     - name: aws-Integration
@@ -240,24 +251,53 @@ resources:
 #### END RESOURCES CONFIG
 
 #### JOBS CONFIG (GLOBAL ACROSS SUBSCRIPTION)
+# ****************************************************************************************************************
+# * Build Release branch after successful merge from Development branch                                          *
+# *                    ------------- Then ------------------------------>                                        *
+# *                                   A. Create a Manifest                                                       *
+# *                                   B. setup Staging environment                                               *
+# *                                   ------------- Then ------------------------------>                         *
+# *                                                 C. Deploy Image                                              *
+# *                                                 D. Run QA tests                                              *
+# *                                                 E. Merge Release branch into Master branch                   *
+# *                                                 ------------- Then ------------------------------>           *
+# *                                                               F. Build Master branch                         *
+# *                                                               G. Publish to DockerHub after successful build *
+# ****************************************************************************************************************
+
 jobs:
+    # ****************************************************************************************************************
+    # * Build Release branch after successful merge from Development branch                                          *
+    # *                    ------------- Then ------------------------------>                                        *
+    # *                                   A. Create a Manifest                                                       *
+    # *                                   B. setup Staging environment                                               *
+    # ****************************************************************************************************************
     - name: jdemo_runCI
       type: runCI
       steps:
-        - IN: jdemo_ciRepo
-        - IN: jdemoStaging_rSync
-      
+        - OUT: jdemoImg
+        - OUT: jdemoImgQA
+        
     - name: jdemoManifest
       type: manifest
       dependencyMode: strict   # optional
       flags:
         - jdemo
       steps:
-        - IN: jdemo_runCI
         - IN: jdemoImg
         - IN: dockerOptions
-        - IN: replicas 
+        - IN: replicas
 
+    - name: jdemoManifestQA
+      type: manifest
+      dependencyMode: strict   # optional
+      flags:
+        - jdemo
+      steps:
+        - IN: jdemoImgQA
+        - IN: dockerOptions
+        - IN: replicas
+        
     - name: genericSetupStagingEnvironment
       type: runSh
       triggerMode: serial
@@ -265,7 +305,7 @@ jobs:
       on_start:
         - NOTIFY: Slack
       steps:
-        - IN: jdemo_runCI
+        - IN: jdemoImgQA
         - IN: aws-cliConfig
           scopes:
             - ecr
@@ -285,26 +325,30 @@ jobs:
                 options: '--privileged=false --net=bridge -e FOO=true -e BOO=false'
             script: 
               - echo "==== TODO TODO TODO TODO ===="
-              - echo "==== Setup testing environment for testing Alpha release ===="
+              - echo "==== Setup testing environment for testing Alpha, Beta and RC release ===="
               - gradle -v
               - echo "==== TODO TODO TODO TODO ===="
       on_failure:
         - NOTIFY: Slack
 
+     # ****************************************************************************************************************
+     # *                                   ------------- Then ------------------------------>                         *
+     # *                                                 C. Deploy Image                                              *
+     # *                                                 D. Run QA tests                                              *
+     # *                                                 E. Merge Release branch into Master branch                   *
+     # ****************************************************************************************************************
     - name: genericDeployImage
       type: deploy
       dependencyMode: strict   # optional
+      method: replace
       on_start:
         - NOTIFY: Slack
       flags:
        - jdemo
       steps: 
-        - IN: jdemoManifest    # manifest
-          switch: off
+        - IN: jdemoManifestQA    # manifest
         - IN: genericSetupStagingEnvironment
-          switch: off
         - IN: QA-cluster
-          switch: off
         #- IN: elbQA
         #  applyTo:
         #    - manifest: jdemoManifest
@@ -345,24 +389,10 @@ jobs:
               - echo "==== set Beta release on success ===="
               - echo "==== run tests for testing Beta release ===="
               - echo "==== set RC release on success ===="
+              - echo "==== run RC tests if any ===="
+              - echo "==== clean up deployed image and test env ===="
               - echo "==== merge into master ===="
               - echo "==== TODO TODO TODO TODO ===="
-      on_failure:
-        - NOTIFY: Slack
-
-    - name: genericPublish
-      type: runSh
-      on_start:
-        - NOTIFY: Slack
-      dependencyMode: strict   # optional
-      steps:
-        - IN: genericRunQATests
-        - TASK:
-            name: publish
-            script:
-              - 'echo "==== TODO TODO TODO TODO ===="'
-              - 'echo "==== Finish all ===="'
-              - 'echo "==== TODO TODO TODO TODO ===="'
       on_failure:
         - NOTIFY: Slack
 
