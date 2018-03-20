@@ -20,7 +20,7 @@
 # * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #*/
-FROM tomcat:9.0.4
+FROM tomcat:9.0.6
 MAINTAINER JP-L
 
 LABEL Description="JDemo is a simple Java Web application using prevayler for persistency. It's running on Tomcat (including JSF libraries) within a Docker container."\
