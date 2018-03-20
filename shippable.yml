@@ -68,7 +68,7 @@ build:
       else
            echo "==== Unknown branch ====";
       fi
-    - echo "==== List all environment variables ====" && printenv
+    - echo "==== DEBUG List all environment variables ====" && printenv
 
   pre_ci_boot:
     image_name: 791079558361.dkr.ecr.eu-west-1.amazonaws.com/jpl/u16jav
@@ -87,6 +87,7 @@ build:
     - printenv | grep SRCREPO_PROP | cut -d'=' -f 2- | tr '|' '\n' >> $HOME/.gradle/gradle.properties
     - sed -i -r "s|MY_ACCESS_ID|$AMAZONKEYS_ACCESSKEY|g" $HOME/.gradle/gradle.properties 
     - sed -i -r "s|MY_SECRET|$AMAZONKEYS_SECRETKEY|g" $HOME/.gradle/gradle.properties
+    - echo "==== DEBUG see whats in gradle props ====" && more $HOME/.gradle/gradle.properties
     
     - echo "==== Building the Java application ===="
     - gradle assemble
