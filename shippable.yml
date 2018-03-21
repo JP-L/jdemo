@@ -170,12 +170,12 @@ resources:
     #    sourceName: $IMAGE_REPOSITORY
     #    versionName: $IMAGE_VERSION
         
-    #- name: jdemoImgQA
-    #  type: image
-    #  integration: AWS
-    #  versionTemplate:
-    #    sourceName: $IMAGE_REPOSITORY
-    #    versionName: $IMAGE_VERSION
+    - name: QA_jdemoImg
+      type: image
+      integration: AWS
+      versionTemplate:
+        sourceName: $IMAGE_REPOSITORY
+        versionName: $IMAGE_VERSION
 
      # Docker options
     - name: dockerOptions
@@ -254,7 +254,7 @@ jobs:
       type: runCI
       steps:
       #  - OUT: jdemoImg
-        - OUT: jdemoImgQA
+        - OUT: QA_jdemoImg
         
     - name: jdemoManifest
       type: manifest
@@ -272,7 +272,7 @@ jobs:
       flags:
         - jdemo
       steps:
-        - IN: jdemoImgQA
+        - IN: QA_jdemoImg
         - IN: dockerOptions
         - IN: replicas
         
