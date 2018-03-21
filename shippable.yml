@@ -170,12 +170,12 @@ resources:
     #    sourceName: $IMAGE_REPOSITORY
     #    versionName: $IMAGE_VERSION
         
-    - name: jdemoImgQA
-      type: image
-      integration: AWS
-      versionTemplate:
-        sourceName: $IMAGE_REPOSITORY
-        versionName: $IMAGE_VERSION
+    #- name: jdemoImgQA
+    #  type: image
+    #  integration: AWS
+    #  versionTemplate:
+    #    sourceName: $IMAGE_REPOSITORY
+    #    versionName: $IMAGE_VERSION
 
      # Docker options
     - name: dockerOptions
