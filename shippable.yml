@@ -167,15 +167,15 @@ resources:
       type: image
       integration: AWS
       versionTemplate:
-        sourceName: $IMAGE_REPOSITORY
-        versionName: $IMAGE_VERSION
+        sourceName: "791079558361.dkr.ecr.eu-west-1.amazonaws.com/jpl/jdemo"
+        versionName: "latest"
         
     - name: jdemoImgQA
       type: image
       integration: AWS
       versionTemplate:
-        sourceName: $IMAGE_REPOSITORY
-        versionName: $IMAGE_VERSION
+        sourceName: "791079558361.dkr.ecr.eu-west-1.amazonaws.com/jpl/jdemo"
+        versionName: "latest"
 
      # Docker options
     - name: dockerOptions
