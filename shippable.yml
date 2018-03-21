@@ -173,53 +173,23 @@ resources:
      # Docker options
     - name: dockerOptions
       type: dockerOptions
-      version:
+      versionTemplate:
         memory: 1024                        #in MiB
-        cpuShares: 10
+        #cpuShares: 10
         portMappings:
-            - "8080:8080"
-        #links:                                    #containerName:alias
-        #   - <container name>:<alias>
-        #   - <container name>:<alias>
-        #volumes:
-        #  - "<source>:<container path>:<options>"
-        #  - "<source>:<container path>:<options>
+            - "8080:8080/tcp"
         logConfig:
             type: awslogs
             options:
               awslogs-group: /var/log/docker
               awslogs-region: eu-central-1
-        #entryPoint:
-        #  - <string>
-        #  - <string>
-        #cmd:
-        #  - <string>
-        #  - <string>
-        #workingDir: <path to working dir>
+              awslogs-stream-prefix: jdemo
         privileged: false                     # May be true or false
-        #labels:
-        #  <key1>: <value1>
-        #  <key2>: <value2>
-        #volumesFrom:
-        #  - "<container name>:<options>"
-        #  - "<container name>:<options>"
-        #ulimits:
-        #  - name: <name of limit>                 # e.g. cpu
-        #    soft: <number>                        # soft Limit
-        #    hard: <number>                        # hard Limit
-        #  - name: <name of limit>                 # e.g. nofile
-        #    soft: <number>                        # soft Limit, e.g. 50
-        #    hard: <number>                        # hard Limit, e.g. 100
-        #dnsServers:
-        #  - "<ip address>"
-        #dnsSearch:
-        #  - "<ip address>"
-        #user: <string>                            # For GKE, this should be the UID (a number)
 
     # Number of replicas
     - name: replicas
       type: replicas
-      version:
+      versionTemplate:
         count: 1
         
     # Cluster
