@@ -365,11 +365,14 @@ jobs:
               - echo "==== run tests for testing Alpha release ===="
               - gradle -v
               - echo "==== set Beta release on success ===="
+              - gradle releaseBeta;
               - echo "==== run tests for testing Beta release ===="
               - echo "==== set RC release on success ===="
+              - gradle releaseCandidate;
               - echo "==== run RC tests if any ===="
               - echo "==== clean up deployed image and test env ===="
-              - echo "==== merge into master ===="
+              - echo "==== Release the next version ===="
+              - gradle releaseVersion;
               - echo "==== TODO TODO TODO TODO ===="
       on_failure:
         - NOTIFY: Slack
