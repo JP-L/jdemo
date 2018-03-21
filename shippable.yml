@@ -75,7 +75,7 @@ build:
       else
            echo "==== Unknown branch ====";
       fi
-    - echo "==== Kill any old containers which might be running ====" && "docker ps -a | grep -v 'reqProc' | cut -d ' ' -f1 | xargs docker stop"
+    #- echo "==== Kill any old containers which might be running ====" && docker ps -a | grep -v 'reqProc' | cut -d ' ' -f1 #| xargs docker stop"
     - echo "==== DEBUG List all environment variables ====" && printenv
 
   pre_ci_boot:
@@ -113,8 +113,8 @@ build:
 
   post_ci:
     - echo "==== Post CI tasks==== "
-    #- if [ "$BRANCH" == "master" ]; then shipctl post_resource_state jdemoImg versionName $BRANCH.$BUILD_NUMBER; fi
-    #- if [ "$BRANCH" == "releases" ]; then shipctl post_resource_state jdemoImgQA versionName $BRANCH.$BUILD_NUMBER; fi
+    - if [ "$BRANCH" == "master" ]; then shipctl post_resource_state jdemoImg versionName $BRANCH.$BUILD_NUMBER; fi
+    - if [ "$BRANCH" == "releases" ]; then shipctl post_resource_state QA_jdemoImg versionName $BRANCH.$BUILD_NUMBER; fi
 
   on_success:
     - if [ "$BRANCH" == "development" ]; then
@@ -163,14 +163,14 @@ integrations:
 
 #### RESOURCES CONFIG (GLOBAL ACROSS SUBSCRIPTION)
 resources:
-    #- name: jdemoImg
-    #  type: image
-    #  integration: AWS
-    #  versionTemplate:
-    #    sourceName: $IMAGE_REPOSITORY
-    #    versionName: $IMAGE_VERSION
+    - name: jdemoImg
+      type: image
+      integration: AWS
+      versionTemplate:
+        sourceName: $IMAGE_REPOSITORY
+        versionName: $IMAGE_VERSION
         
-    - name: jdemoImgQA
+    - name: QA_jdemoImg
       type: image
       integration: AWS
       versionTemplate:
@@ -253,8 +253,8 @@ jobs:
     - name: jdemo_runCI
       type: runCI
       steps:
-      #  - OUT: jdemoImg
-        - OUT: jdemoImgQA
+        - OUT: jdemoImg
+        - OUT: QA_jdemoImg
         
     - name: jdemoManifest
       type: manifest
@@ -262,7 +262,7 @@ jobs:
       flags:
         - jdemo
       steps:
-        #- IN: jdemoImg
+        - IN: jdemoImg
         - IN: dockerOptions
         - IN: replicas
 
@@ -272,7 +272,7 @@ jobs:
       flags:
         - jdemo
       steps:
-        - IN: jdemoImgQA
+        - IN: QA_jdemoImg
         - IN: dockerOptions
         - IN: replicas
         
@@ -283,7 +283,7 @@ jobs:
       on_start:
         - NOTIFY: Slack
       steps:
-        #- IN: jdemoImgQA
+        #- IN: QA_jdemoImg
         - IN: aws-cliConfig
           scopes:
             - ecr
