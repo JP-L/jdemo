@@ -163,19 +163,19 @@ integrations:
 
 #### RESOURCES CONFIG (GLOBAL ACROSS SUBSCRIPTION)
 resources:
-    - name: jdemoImg
-      type: image
-      integration: AWS
-      versionTemplate:
-        sourceName: $IMAGE_REPOSITORY
-        versionName: $IMAGE_VERSION
+    #- name: jdemoImg
+    #  type: image
+    #  integration: AWS
+    #  versionTemplate:
+    #    sourceName: $IMAGE_REPOSITORY
+    #    versionName: $IMAGE_VERSION
         
-    - name: jdemoImgQA
-      type: image
-      integration: AWS
-      versionTemplate:
-        sourceName: $IMAGE_REPOSITORY
-        versionName: $IMAGE_VERSION
+    #- name: jdemoImgQA
+    #  type: image
+    #  integration: AWS
+    #  versionTemplate:
+    #    sourceName: $IMAGE_REPOSITORY
+    #    versionName: $IMAGE_VERSION
 
      # Docker options
     - name: dockerOptions
@@ -252,9 +252,9 @@ jobs:
     # ****************************************************************************************************************
     - name: jdemo_runCI
       type: runCI
-      steps:
-        - OUT: jdemoImg
-        - OUT: jdemoImgQA
+      #steps:
+      #  - OUT: jdemoImg
+      #  - OUT: jdemoImgQA
         
     - name: jdemoManifest
       type: manifest
@@ -262,7 +262,7 @@ jobs:
       flags:
         - jdemo
       steps:
-        - IN: jdemoImg
+        #- IN: jdemoImg
         - IN: dockerOptions
         - IN: replicas
 
@@ -272,7 +272,7 @@ jobs:
       flags:
         - jdemo
       steps:
-        - IN: jdemoImgQA
+        #- IN: jdemoImgQA
         - IN: dockerOptions
         - IN: replicas
         
@@ -283,7 +283,7 @@ jobs:
       on_start:
         - NOTIFY: Slack
       steps:
-        - IN: jdemoImgQA
+        #- IN: jdemoImgQA
         - IN: aws-cliConfig
           scopes:
             - ecr
