@@ -114,7 +114,7 @@ build:
   post_ci:
     - echo "==== Post CI tasks==== "
     - if [ "$BRANCH" == "master" ]; then shipctl post_resource_state jdemoImg versionName $BRANCH.$BUILD_NUMBER; fi
-    - if [ "$BRANCH" == "releases" ]; then shipctl post_resource_state QA_jdemoImg versionName $BRANCH.$BUILD_NUMBER; fi
+    - if [ "$BRANCH" == "releases" ]; then shipctl post_resource_state jdemoImgQA versionName $BRANCH.$BUILD_NUMBER; fi
 
   on_success:
     - if [ "$BRANCH" == "development" ]; then
@@ -167,15 +167,15 @@ resources:
       type: image
       integration: AWS
       versionTemplate:
-        sourceName: $IMAGE_REPOSITORY
-        versionName: $IMAGE_VERSION
+        sourceName: "$IMAGE_REPOSITORY"
+        versionName: "$IMAGE_VERSION"
         
-    - name: QA_jdemoImg
+    - name: jdemoImgQA
       type: image
       integration: AWS
       versionTemplate:
-        sourceName: $IMAGE_REPOSITORY
-        versionName: $IMAGE_VERSION
+        sourceName: "$IMAGE_REPOSITORY"
+        versionName: "$IMAGE_VERSION"
 
      # Docker options
     - name: dockerOptions
@@ -254,7 +254,7 @@ jobs:
       type: runCI
       steps:
         - OUT: jdemoImg
-        - OUT: QA_jdemoImg
+        - OUT: jdemoImgQA
         
     - name: jdemoManifest
       type: manifest
@@ -272,7 +272,7 @@ jobs:
       flags:
         - jdemo
       steps:
-        - IN: QA_jdemoImg
+        - IN: jdemoImgQA
         - IN: dockerOptions
         - IN: replicas
         
