@@ -113,8 +113,8 @@ build:
 
   post_ci:
     - echo "==== Post CI tasks==== "
-    - if [ "$BRANCH" == "master" ]; then shipctl post_resource_state jdemoImg versionName $BRANCH.$BUILD_NUMBER; fi
-    - if [ "$BRANCH" == "releases" ]; then shipctl post_resource_state jdemoImgQA versionName $BRANCH.$BUILD_NUMBER; fi
+    #- if [ "$BRANCH" == "master" ]; then shipctl post_resource_state jdemoImg versionName $BRANCH.$BUILD_NUMBER; fi
+    #- if [ "$BRANCH" == "releases" ]; then shipctl post_resource_state jdemoImgQA versionName $BRANCH.$BUILD_NUMBER; fi
 
   on_success:
     - if [ "$BRANCH" == "development" ]; then
