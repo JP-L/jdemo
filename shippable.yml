@@ -73,8 +73,8 @@ build:
       else
            echo "==== Unknown branch ====";
       fi
-    - echo "==== Kill any old containers which might be running ====" && 
-      "docker ps -a | grep -v 'reqProc' | awk '{print $1}' | xargs docker stop"
+    #- echo "==== Kill any old containers which might be running ====" && 
+    #  "docker ps -a | grep -v 'reqProc' | awk '{print $1}' | xargs docker stop"
     - echo "==== DEBUG List all environment variables ====" && printenv
 
   pre_ci_boot:
