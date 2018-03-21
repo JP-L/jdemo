@@ -160,14 +160,14 @@ resources:
       type: image
       integration: AWS
       versionTemplate:
-        sourceName: "jdemo"
+        sourceName: "jpl/jdemo"
         versionName: "latest"
         
     - name: jdemoImgQA
       type: image
       integration: AWS
       versionTemplate:
-        sourceName: "jdemo"
+        sourceName: "jpl/jdemo"
         versionName: "latest"
 
      # Docker options
