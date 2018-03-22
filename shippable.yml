@@ -113,15 +113,16 @@ build:
     - echo "==== CI completed. Move to post CI ===="
 
   post_ci:
-    - echo "==== Post CI tasks==== ";
+    - echo "==== Post CI tasks ==== ";
       if [ "$BRANCH" == "releases" ]; then
+           echo "==== Set $IMAGE_REPOSITORY with $IMAGE_VERSION for $BUILDNUMBER ==== ";
            shipctl put_resource_state jdemoImgQA sourceName $IMAGE_REPOSITORY;
            shipctl put_resource_state jdemoImgQA versionName $IMAGE_VERSION;
-           shipctl put_resource_state jdemoImgQA buildNumber $BUILDNUMBER;
+           shipctl put_resource_state jdemoImgQA buildNumber $BUILD_NUMBER;
       elif [ "$BRANCH" == "master" ]; then
            shipctl put_resource_state jdemoImg sourceName $IMAGE_REPOSITORY;
            shipctl put_resource_state jdemoImg versionName $IMAGE_VERSION;
-           shipctl put_resource_state jdemoImg buildNumber $BUILDNUMBER;
+           shipctl put_resource_state jdemoImg buildNumber $BUILD_NUMBER;
       else
            echo "==== No Post CI tasks required ====";
       fi
@@ -294,7 +295,6 @@ jobs:
       on_start:
         - NOTIFY: Slack
       steps:
-        - IN: jdemoManifestQA
         - IN: aws-cliConfig
           scopes:
             - ecr
