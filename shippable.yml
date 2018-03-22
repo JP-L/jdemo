@@ -93,13 +93,13 @@ build:
       cp $SHIPPABLE_REPO_DIR/bas/resources/gradle/gradle.properties $HOME/.gradle/ &&
       printenv | grep SONARQUBE_PROP | cut -d'=' -f 2- | tr '|' '\n' >> $HOME/.gradle/gradle.properties && 
       printenv | grep BINREPO_PROP | cut -d'=' -f 2- | tr '|' '\n' >> $HOME/.gradle/gradle.properties &&
-      printenv | grep SRCREPO_PROP | cut -d'=' -f 2- | tr '|' '\n' >> $HOME/.gradle/gradle.properties
-    - sed -i -r "s|MY_ACCESS_ID|$AMAZONKEYS_ACCESSKEY|g" $HOME/.gradle/gradle.properties 
-    - sed -i -r "s|MY_SECRET|$AMAZONKEYS_SECRETKEY|g" $HOME/.gradle/gradle.properties
+      printenv | grep SRCREPO_PROP | cut -d'=' -f 2- | tr '|' '\n' >> $HOME/.gradle/gradle.properties &&
+      sed -i -r "s|MY_ACCESS_ID|$AMAZONKEYS_ACCESSKEY|g" $HOME/.gradle/gradle.properties && 
+      sed -i -r "s|MY_SECRET|$AMAZONKEYS_SECRETKEY|g" $HOME/.gradle/gradle.properties
     
     - echo "==== Building the Java application ====" &&
-      gradle assemble
-    - if [ "$BRANCH" != "master" ]; then
+      gradle assemble;
+      if [ "$BRANCH" != "master" ]; then
            echo "==== Tests and Quality control for the Java application ====";  
            gradle inspectQuality;
            gradle runFunctionalAndIntegrationTests;
@@ -113,7 +113,7 @@ build:
     - echo "==== CI completed. Move to post CI ===="
 
   post_ci:
-    - echo "==== Post CI tasks==== " && \
+    - echo "==== Post CI tasks==== ";
       if [ "$BRANCH" == "releases" ]; then
            shipctl put_resource_state jdemoImgQA sourceName $IMAGE_REPOSITORY
            shipctl put_resource_state jdemoImgQA versionName $IMAGE_VERSION
@@ -314,8 +314,8 @@ jobs:
                 options: '--privileged=false --net=bridge -e FOO=true -e BOO=false'
             script: 
               - echo "==== TODO TODO TODO TODO ===="
-              - echo "==== Configure testing environment for testing Alpha, Beta and RC release ===="
-              - gradle -v
+              - echo "==== Configure testing environment for testing Alpha, Beta and RC release ====" &&
+                gradle -v
               - echo "==== TODO TODO TODO TODO ===="
       on_failure:
         - NOTIFY: Slack
@@ -373,17 +373,18 @@ jobs:
                 options: '--privileged=false --net=bridge -e FOO=true -e BOO=false'
             script:
               - echo "==== TODO TODO TODO TODO ===="
-              - echo "==== run tests for testing Alpha release ===="
-              - gradle -v
-              - echo "==== set Beta release on success ===="
-              - gradle releaseBeta;
-              - echo "==== run tests for testing Beta release ===="
-              - echo "==== set RC release on success ===="
-              - gradle releaseCandidate;
+              - echo "==== run tests for testing Alpha release ====" &&
+                gradle -v
+              - echo "==== set Beta release on success ====" &&
+                gradle releaseBeta
+              - echo "==== run tests for testing Beta release ====" &&
+                gradle -v
+              - echo "==== set RC release on success ====" &&
+                gradle releaseCandidate
               - echo "==== run RC tests if any ===="
               - echo "==== clean up deployed image and test env ===="
-              - echo "==== Release the next version ===="
-              - gradle releaseVersion;
+              - echo "==== Release the next version ====" &&
+                gradle releaseVersion
               - echo "==== TODO TODO TODO TODO ===="
       on_failure:
         - NOTIFY: Slack
@@ -414,7 +415,6 @@ jobs:
                 pull: false
                 options: '--privileged=false --net=bridge -e FOO=true -e BOO=false'
             script:
-              - echo "==== TODO TODO TODO TODO ===="
               - echo "==== TODO TODO TODO TODO ===="
       on_failure:
         - NOTIFY: Slack
