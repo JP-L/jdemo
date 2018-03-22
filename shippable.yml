@@ -63,10 +63,10 @@ env:
 build:
   # commands in this section run on your build machine and not inside your CI container.
   pre_ci:
-    - echo "==== Prepare environment ===="
-    - mkdir -p $TEST_RESULTS_DIR && mkdir -p $CODE_COVERAGE_DIR
-    - pushd $TESTS_LOC_DIR
-    - if [ "$BRANCH" == "development" ]; then
+    - echo "==== Prepare environment ====" && \
+      mkdir -p $TEST_RESULTS_DIR && mkdir -p $CODE_COVERAGE_DIR && \
+      pushd $TESTS_LOC_DIR && \
+      if [ "$BRANCH" == "development" ]; then
            echo "==== Development branch ====";
       elif [ "$BRANCH" == "release" ]; then
            echo "==== Release branch ====";
@@ -87,12 +87,12 @@ build:
   # commands in this section run inside your CI container. In addition, any commands such as ls, 
   # in this section can be used to skip default processing for CI.
   ci:
-    - echo "==== Prepare Gradle environment ===="
-    - mkdir -p $HOME/.gradle
-    - cp $SHIPPABLE_REPO_DIR/bas/resources/gradle/gradle.properties $HOME/.gradle/
-    - printenv | grep SONARQUBE_PROP | cut -d'=' -f 2- | tr '|' '\n' >> $HOME/.gradle/gradle.properties
-    - printenv | grep BINREPO_PROP | cut -d'=' -f 2- | tr '|' '\n' >> $HOME/.gradle/gradle.properties
-    - printenv | grep SRCREPO_PROP | cut -d'=' -f 2- | tr '|' '\n' >> $HOME/.gradle/gradle.properties
+    - echo "==== Prepare Gradle environment ====" && \
+      mkdir -p $HOME/.gradle && \
+      cp $SHIPPABLE_REPO_DIR/bas/resources/gradle/gradle.properties $HOME/.gradle/ && \
+      printenv | grep SONARQUBE_PROP | cut -d'=' -f 2- | tr '|' '\n' >> $HOME/.gradle/gradle.properties && \
+      printenv | grep BINREPO_PROP | cut -d'=' -f 2- | tr '|' '\n' >> $HOME/.gradle/gradle.properties && \
+      printenv | grep SRCREPO_PROP | cut -d'=' -f 2- | tr '|' '\n' >> $HOME/.gradle/gradle.properties
     - sed -i -r "s|MY_ACCESS_ID|$AMAZONKEYS_ACCESSKEY|g" $HOME/.gradle/gradle.properties 
     - sed -i -r "s|MY_SECRET|$AMAZONKEYS_SECRETKEY|g" $HOME/.gradle/gradle.properties
     
@@ -112,9 +112,19 @@ build:
     - echo "==== CI completed. Move to post CI ===="
 
   post_ci:
-    - echo "==== Post CI tasks==== "
+    - echo "==== Post CI tasks==== " && \
+      if [ "$BRANCH" == "releases" ]; then
+           shipctl put_resource_state jdemoImgQA sourceName $IMAGE_REPOSITORY
+           shipctl put_resource_state jdemoImgQA versionName $IMAGE_VERSION
+           shipctl put_resource_state jdemoImgQA buildNumber $BUILDNUMBER
+      elif [ "$BRANCH" == "master" ]; then
+           shipctl put_resource_state jdemoImg sourceName $IMAGE_REPOSITORY
+           shipctl put_resource_state jdemoImg versionName $IMAGE_VERSION
+           shipctl put_resource_state jdemoImg buildNumber $BUILDNUMBER
+      else
+           echo "==== No Post CI tasks required ====";
+      fi
     #- if [ "$BRANCH" == "master" ]; then shipctl post_resource_state jdemoImg versionName $BRANCH.$BUILD_NUMBER; fi
-    #- if [ "$BRANCH" == "releases" ]; then shipctl post_resource_state jdemoImgQA versionName $BRANCH.$BUILD_NUMBER; fi
 
   on_success:
     - if [ "$BRANCH" == "development" ]; then
@@ -167,8 +177,8 @@ resources:
       type: image
       integration: AWS
       versionTemplate:
-        sourceName: "791079558361.dkr.ecr.eu-west-1.amazonaws.com/jpl/jdemo"
-        versionName: "latest"
+        sourceName: $IMAGE_REPOSITORY
+        versionName: $IMAGE_VERSION
         
     - name: jdemoImgQA
       type: image
@@ -276,14 +286,14 @@ jobs:
         - IN: dockerOptions
         - IN: replicas
         
-    - name: genericSetupStagingEnvironment
+    - name: configureStagingEnvironment
       type: runSh
       triggerMode: serial
       dependencyMode: strict   # optional
       on_start:
         - NOTIFY: Slack
       steps:
-        #- IN: QA_jdemoImg
+        - IN: jdemoManifestQA
         - IN: aws-cliConfig
           scopes:
             - ecr
@@ -303,7 +313,7 @@ jobs:
                 options: '--privileged=false --net=bridge -e FOO=true -e BOO=false'
             script: 
               - echo "==== TODO TODO TODO TODO ===="
-              - echo "==== Setup testing environment for testing Alpha, Beta and RC release ===="
+              - echo "==== Configure testing environment for testing Alpha, Beta and RC release ===="
               - gradle -v
               - echo "==== TODO TODO TODO TODO ===="
       on_failure:
@@ -315,7 +325,7 @@ jobs:
      # *                                                 D. Run QA tests                                              *
      # *                                                 E. Merge Release branch into Master branch                   *
      # ****************************************************************************************************************
-    - name: genericDeployImage
+    - name: deployImage
       type: deploy
       dependencyMode: strict   # optional
       method: replace
@@ -325,7 +335,7 @@ jobs:
        - jdemo
       steps: 
         - IN: jdemoManifestQA    # manifest
-        - IN: genericSetupStagingEnvironment
+        - IN: configureStagingEnvironment
         - IN: QA-cluster
         #- IN: elbQA
         #  applyTo:
@@ -341,7 +351,7 @@ jobs:
       on_start:
         - NOTIFY: Slack
       steps:
-        - IN: genericDeployImage
+        - IN: deployImage
           switch: off
         - IN: aws-cliConfig
           scopes:
@@ -377,4 +387,35 @@ jobs:
       on_failure:
         - NOTIFY: Slack
 
+    - name: verify
+      type: runSh
+      dependencyMode: strict   # optional
+      on_start:
+        - NOTIFY: Slack
+      steps:
+        - IN: jdemoManifest
+          switch: off
+        - IN: aws-cliConfig
+          scopes:
+            - ecr
+        - TASK:
+            name: pullCustomImage
+            script:
+              #- docker pull $CI_CONTAINER:$CI_CONTAINER_VERSION
+              - docker pull drydock/u16javall:v6.1.4
+        - TASK:
+            name: checkHealth
+            runtime:                  # optional
+              options:
+                #imageName: $CI_CONTAINER
+                imageName: drydock/u16javall
+                imageTag: 'v6.1.4' #'1.0'
+                pull: false
+                options: '--privileged=false --net=bridge -e FOO=true -e BOO=false'
+            script:
+              - echo "==== TODO TODO TODO TODO ===="
+              - echo "==== TODO TODO TODO TODO ===="
+      on_failure:
+        - NOTIFY: Slack
+        
 #### END JOBS CONFIG
