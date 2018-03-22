@@ -321,7 +321,7 @@ jobs:
                 pull: false
                 options: '--privileged=false --net=bridge -e FOO=true -e BOO=false'
             script: 
-              - echo "==== TODO TODO TODO TODO ====" && echo $PATH && ls -l
+              - echo "==== TODO TODO TODO TODO ====" && echo $PATH && ls -l IN/ && ls -l OUT/ && ls -l state/ && ls -l scripts/ && ls -l shared/
               - echo "==== Prepare container environment ====" &&
                 mkdir -p $HOME/.gradle &&
                 cp $SHIPPABLE_REPO_DIR/bas/resources/gradle/gradle.properties $HOME/.gradle/ &&
