@@ -115,13 +115,13 @@ build:
   post_ci:
     - echo "==== Post CI tasks==== ";
       if [ "$BRANCH" == "releases" ]; then
-           shipctl put_resource_state jdemoImgQA sourceName $IMAGE_REPOSITORY
-           shipctl put_resource_state jdemoImgQA versionName $IMAGE_VERSION
-           shipctl put_resource_state jdemoImgQA buildNumber $BUILDNUMBER
+           shipctl put_resource_state jdemoImgQA sourceName $IMAGE_REPOSITORY;
+           shipctl put_resource_state jdemoImgQA versionName $IMAGE_VERSION;
+           shipctl put_resource_state jdemoImgQA buildNumber $BUILDNUMBER;
       elif [ "$BRANCH" == "master" ]; then
-           shipctl put_resource_state jdemoImg sourceName $IMAGE_REPOSITORY
-           shipctl put_resource_state jdemoImg versionName $IMAGE_VERSION
-           shipctl put_resource_state jdemoImg buildNumber $BUILDNUMBER
+           shipctl put_resource_state jdemoImg sourceName $IMAGE_REPOSITORY;
+           shipctl put_resource_state jdemoImg versionName $IMAGE_VERSION;
+           shipctl put_resource_state jdemoImg buildNumber $BUILDNUMBER;
       else
            echo "==== No Post CI tasks required ====";
       fi
