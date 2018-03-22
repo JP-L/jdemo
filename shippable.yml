@@ -64,8 +64,9 @@ build:
   # commands in this section run on your build machine and not inside your CI container.
   pre_ci:
     - echo "==== Prepare environment ====" && \
-      mkdir -p $TEST_RESULTS_DIR && mkdir -p $CODE_COVERAGE_DIR && \
-      pushd $TESTS_LOC_DIR && \
+      mkdir -p $TEST_RESULTS_DIR && \
+      mkdir -p $CODE_COVERAGE_DIR && \
+      pushd $TESTS_LOC_DIR;
       if [ "$BRANCH" == "development" ]; then
            echo "==== Development branch ====";
       elif [ "$BRANCH" == "release" ]; then
