@@ -305,15 +305,15 @@ jobs:
               - docker pull drydock/u16javall:v6.1.4
         - TASK:
             name: setupStagingEnvironment
-            runtime:                  # optional
-              options:
+            #runtime:                  # optional
+            #  options:
                 #imageName: $CI_CONTAINER
-                imageName: drydock/u16javall
-                imageTag: 'v6.1.4' #'1.0'
-                pull: false
-                options: '--privileged=false --net=bridge -e FOO=true -e BOO=false'
+            #    imageName: drydock/u16javall
+            #    imageTag: 'v6.1.4' #'1.0'
+            #    pull: false
+            #    options: '--privileged=false --net=bridge -e FOO=true -e BOO=false'
             script: 
-              - echo "==== TODO TODO TODO TODO ===="
+              - echo "==== TODO TODO TODO TODO ====" && echo $PATH && ls -l
               - echo "==== Configure testing environment for testing Alpha, Beta and RC release ====" &&
                 gradle -v
               - echo "==== TODO TODO TODO TODO ===="
@@ -352,6 +352,7 @@ jobs:
       on_start:
         - NOTIFY: Slack
       steps:
+        - IN: jdemo_ciRepo
         - IN: deployImage
           switch: off
         - IN: aws-cliConfig
@@ -373,6 +374,14 @@ jobs:
                 options: '--privileged=false --net=bridge -e FOO=true -e BOO=false'
             script:
               - echo "==== TODO TODO TODO TODO ===="
+              - echo "==== Prepare Gradle environment ====" && 
+                mkdir -p $HOME/.gradle &&
+                cp $SHIPPABLE_REPO_DIR/bas/resources/gradle/gradle.properties $HOME/.gradle/ &&
+                printenv | grep SONARQUBE_PROP | cut -d'=' -f 2- | tr '|' '\n' >> $HOME/.gradle/gradle.properties && 
+                printenv | grep BINREPO_PROP | cut -d'=' -f 2- | tr '|' '\n' >> $HOME/.gradle/gradle.properties &&
+                printenv | grep SRCREPO_PROP | cut -d'=' -f 2- | tr '|' '\n' >> $HOME/.gradle/gradle.properties &&
+                sed -i -r "s|MY_ACCESS_ID|$AMAZONKEYS_ACCESSKEY|g" $HOME/.gradle/gradle.properties && 
+                sed -i -r "s|MY_SECRET|$AMAZONKEYS_SECRETKEY|g" $HOME/.gradle/gradle.properties
               - echo "==== run tests for testing Alpha release ====" &&
                 gradle -v
               - echo "==== set Beta release on success ====" &&
