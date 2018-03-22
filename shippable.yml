@@ -63,9 +63,9 @@ env:
 build:
   # commands in this section run on your build machine and not inside your CI container.
   pre_ci:
-    - echo "==== Prepare environment ====" && \
-      mkdir -p $TEST_RESULTS_DIR && \
-      mkdir -p $CODE_COVERAGE_DIR && \
+    - echo "==== Prepare environment ====" &&
+      mkdir -p $TEST_RESULTS_DIR && 
+      mkdir -p $CODE_COVERAGE_DIR && 
       pushd $TESTS_LOC_DIR;
       if [ "$BRANCH" == "development" ]; then
            echo "==== Development branch ====";
@@ -88,17 +88,17 @@ build:
   # commands in this section run inside your CI container. In addition, any commands such as ls, 
   # in this section can be used to skip default processing for CI.
   ci:
-    - echo "==== Prepare Gradle environment ====" && \
-      mkdir -p $HOME/.gradle && \
-      cp $SHIPPABLE_REPO_DIR/bas/resources/gradle/gradle.properties $HOME/.gradle/ && \
-      printenv | grep SONARQUBE_PROP | cut -d'=' -f 2- | tr '|' '\n' >> $HOME/.gradle/gradle.properties && \
-      printenv | grep BINREPO_PROP | cut -d'=' -f 2- | tr '|' '\n' >> $HOME/.gradle/gradle.properties && \
+    - echo "==== Prepare Gradle environment ====" && 
+      mkdir -p $HOME/.gradle &&
+      cp $SHIPPABLE_REPO_DIR/bas/resources/gradle/gradle.properties $HOME/.gradle/ &&
+      printenv | grep SONARQUBE_PROP | cut -d'=' -f 2- | tr '|' '\n' >> $HOME/.gradle/gradle.properties && 
+      printenv | grep BINREPO_PROP | cut -d'=' -f 2- | tr '|' '\n' >> $HOME/.gradle/gradle.properties &&
       printenv | grep SRCREPO_PROP | cut -d'=' -f 2- | tr '|' '\n' >> $HOME/.gradle/gradle.properties
     - sed -i -r "s|MY_ACCESS_ID|$AMAZONKEYS_ACCESSKEY|g" $HOME/.gradle/gradle.properties 
     - sed -i -r "s|MY_SECRET|$AMAZONKEYS_SECRETKEY|g" $HOME/.gradle/gradle.properties
     
-    - echo "==== Building the Java application ===="
-    - gradle assemble
+    - echo "==== Building the Java application ====" &&
+      gradle assemble
     - if [ "$BRANCH" != "master" ]; then
            echo "==== Tests and Quality control for the Java application ====";  
            gradle inspectQuality;
