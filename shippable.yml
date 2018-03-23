@@ -321,10 +321,10 @@ jobs:
                 pull: false
                 options: '--privileged=false --net=bridge -e FOO=true -e BOO=false'
             script: 
-              - echo "==== TODO TODO TODO TODO ====" && ls -l IN/scripts-from-srcRepo/ && ls -l scripts/resources/
+              - echo "==== TODO TODO TODO TODO ====" && ls -l IN/scripts-from-srcRepo/gitRepo/
               - echo "==== Prepare container environment ====" &&
                 mkdir -p $HOME/.gradle &&
-                cp IN/scripts-from-srcRepo/bas/resources/gradle/gradle.properties $HOME/.gradle/ &&
+                cp IN/scripts-from-srcRepo/gitRepo/bas/resources/gradle/gradle.properties $HOME/.gradle/ &&
                 printenv | grep BINREPO_PROP | cut -d'=' -f 2- | tr '|' '\n' >> $HOME/.gradle/gradle.properties &&
                 printenv | grep SRCREPO_PROP | cut -d'=' -f 2- | tr '|' '\n' >> $HOME/.gradle/gradle.properties &&
                 sed -i -r "s|MY_ACCESS_ID|$AMAZONKEYS_ACCESSKEY|g" $HOME/.gradle/gradle.properties &&
