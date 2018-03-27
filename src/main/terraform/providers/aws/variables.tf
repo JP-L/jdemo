@@ -21,15 +21,37 @@
 # * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #*/
 
-#Release properties
-release.useAutomaticVersion=true
-release_dryrun=false
-#
-repo_key=org.ajoberstar.grgit.auth.username
+# ==== Region and AV ====
+variable "default_region" {
+	description = "Default region to setup"
+	default = "eu-central-1"
+}
+variable "regions" {
+	description = "Regions to setup"
+	default = ["eu-west-1","eu-west-2","eu-west-3"]
+}	
+variable "default_ip_range" {
+	description = "PZ IP range from my IP range"
+	default = "138.199.69.187/32"
+}
 
-awsAccessKeyId=MY_ACCESS_ID
-awsSecretAccessKey=MY_SECRET
+# ==== Applications ====
+variable "applications" {
+	description = "The load balancer configuration for the application"
+	type = "map"
+	default = {
+		jdemo.protocol	 			= "HTTP"
+		jdemo.ingressPort			= "80"
+		jdemo.egressPort			= ""
+		jdemo.allowIPv4Ingress		= "0.0.0.0/0"
+		jdemo.allowIPv6Ingress		= "::/0"
+		jdemo.allowIPv4Egress		= "0.0.0.0/0"
+		jdemo.allowIPv6Egress		= "::/0"
+		
+		jdemo.deregistration_delay  = "300"
+		jdemo.health_check_path	 	= "/jdemo"
+		jdemo.action_type			= "forward"
+	}
+}
 
-terraform_plan=tfplan
-terraform_workingdir=tf-temp
-
+	

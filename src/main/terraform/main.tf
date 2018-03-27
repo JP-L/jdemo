@@ -21,15 +21,15 @@
 # * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #*/
 
-#Release properties
-release.useAutomaticVersion=true
-release_dryrun=false
+# Note: This file is based upon the awslabs terraform demo, located at:
 #
-repo_key=org.ajoberstar.grgit.auth.username
+#     https://github.com/awslabs/apn-blog/blob/tf_blog_v1.0/terraform_demo/
+#
 
-awsAccessKeyId=MY_ACCESS_ID
-awsSecretAccessKey=MY_SECRET
+module "aws" {
+  source = "./providers/aws"
+}
 
-terraform_plan=tfplan
-terraform_workingdir=tf-temp
-
+terraform {
+	required_version = "> 0.7.0"
+}

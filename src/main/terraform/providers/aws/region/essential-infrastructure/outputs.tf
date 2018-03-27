@@ -21,15 +21,10 @@
 # * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #*/
 
-#Release properties
-release.useAutomaticVersion=true
-release_dryrun=false
 #
-repo_key=org.ajoberstar.grgit.auth.username
-
-awsAccessKeyId=MY_ACCESS_ID
-awsSecretAccessKey=MY_SECRET
-
-terraform_plan=tfplan
-terraform_workingdir=tf-temp
-
+# Root outputs
+#
+output "lb_tg_arn" {
+	description = "The AWS load balancer target group arn"
+	value = "${module.load_balancers.lb_tg_arn}"
+}

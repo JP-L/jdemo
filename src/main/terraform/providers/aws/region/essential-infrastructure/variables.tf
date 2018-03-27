@@ -21,15 +21,24 @@
 # * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #*/
 
-#Release properties
-release.useAutomaticVersion=true
-release_dryrun=false
 #
-repo_key=org.ajoberstar.grgit.auth.username
+# variables
+#
+variable "region" {
+	description = "The region"
+}
+variable "vpc_id" {
+	description = "The VPC id for a region"
+}
+variable "alb_config" {
+	description = "The configuration of the ALB as previously configured by TF "
+	type = "map"
+}
 
-awsAccessKeyId=MY_ACCESS_ID
-awsSecretAccessKey=MY_SECRET
-
-terraform_plan=tfplan
-terraform_workingdir=tf-temp
-
+#
+# APPLICATIONS
+#
+variable "applications" {
+	description = "The load balancer configuration for the application"
+	type = "map"
+}

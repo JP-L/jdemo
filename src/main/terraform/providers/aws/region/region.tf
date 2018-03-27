@@ -21,15 +21,25 @@
 # * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #*/
 
-#Release properties
-release.useAutomaticVersion=true
-release_dryrun=false
+# Note: This file is based upon the ecs ..:
 #
-repo_key=org.ajoberstar.grgit.auth.username
+#     https://github.com/..
+#
+provider "aws" {
+	shared_credentials_file = "${path.cwd}/tf-temp/credentials"
+	profile = "default"
+	region = "${var.region}"
+}
 
-awsAccessKeyId=MY_ACCESS_ID
-awsSecretAccessKey=MY_SECRET
+#
+# ESSENTIAL INFRASTUCTURE
+#
+module "essential-infrastructure" {
+	source = "./essential-infrastructure"
 
-terraform_plan=tfplan
-terraform_workingdir=tf-temp
+	region			= "${var.region}"
+	vpc_id			= "${var.vpc_id}"
+	alb_config		= "${var.alb_config}"
+	applications	= "${var.applications}"
+}
 

@@ -21,15 +21,47 @@
 # * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #*/
 
-#Release properties
-release.useAutomaticVersion=true
-release_dryrun=false
 #
-repo_key=org.ajoberstar.grgit.auth.username
+# ALB variables
+#
+variable "vpc_id" {
+  description = "VPC ID generated on creation of the VPC"
+}
+variable "alb_id" {
+  description = ""
+}
+variable "alb_name" {
+  description = ""
+}
+variable "sg_alb_id" {
+  description = ""
+}
 
-awsAccessKeyId=MY_ACCESS_ID
-awsSecretAccessKey=MY_SECRET
-
-terraform_plan=tfplan
-terraform_workingdir=tf-temp
-
+# Application specific
+variable "ingressPort" {
+	description = ""
+}
+variable "protocol" {
+	description = ""
+}
+variable "allowIPv4Ingress" {
+	description = ""
+}
+variable "allowIPv6Ingress" {
+	description = ""
+}
+variable "allowIPv4Egress" {
+	description = ""
+}
+variable "allowIPv6Egress" {
+	description = ""
+}
+variable "deregistration_delay" {
+	description = ""
+}
+variable "health_check_path" {
+	description = ""
+}
+variable "action_type" {
+	description = ""
+}

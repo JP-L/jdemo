@@ -21,15 +21,14 @@
 # * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #*/
 
-#Release properties
-release.useAutomaticVersion=true
-release_dryrun=false
 #
-repo_key=org.ajoberstar.grgit.auth.username
-
-awsAccessKeyId=MY_ACCESS_ID
-awsSecretAccessKey=MY_SECRET
-
-terraform_plan=tfplan
-terraform_workingdir=tf-temp
-
+# Load Balancers
+#
+module "load_balancers" {
+	source = "./load-balancers"
+	
+	region			= "${var.region}"
+	vpc_id			= "${var.vpc_id}"
+	alb_config		= "${var.alb_config}"
+	applications	= "${var.applications}"
+}

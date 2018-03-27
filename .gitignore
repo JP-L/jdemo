@@ -2,7 +2,10 @@
 build/
 /bin/
 /shippable/
+/tf-temp/
+/WebContent/
 /PrevalenceBase/
+.terraform/
 .settings/
 .classpath
 .project
