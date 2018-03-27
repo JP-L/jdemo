@@ -376,7 +376,6 @@ jobs:
       on_start:
         - NOTIFY: Slack
       steps:
-        - IN: jdemo_ciRepo
         - IN: deployImage-EUC1
           switch: off
         - IN: aws-cliConfig
