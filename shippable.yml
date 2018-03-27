@@ -336,6 +336,7 @@ jobs:
                 sed -i -r "s|MY_ACCESS_ID|$AMAZONKEYS_ACCESSKEY|g" $HOME/.gradle/gradle.properties &&
                 sed -i -r "s|MY_SECRET|$AMAZONKEYS_SECRETKEY|g" $HOME/.gradle/gradle.properties
               - echo "==== Configure testing environment for testing Alpha, Beta and RC release ====" &&
+                cd IN/scripts-from-srcRepo/gitRepo/ &&
                 gradle applyTerraform
               - echo "==== TODO TODO TODO TODO ===="
               - terraform output | grep $REGION | cut -d'=' -f 2- | sed -e 's/^[ \t]*//'
