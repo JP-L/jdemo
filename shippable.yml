@@ -309,6 +309,7 @@ jobs:
       on_start:
         - NOTIFY: Slack
       steps:
+        - IN: jdemo_runCI
         - IN: scripts-from-srcRepo
         - IN: aws-cliConfig
           scopes:
