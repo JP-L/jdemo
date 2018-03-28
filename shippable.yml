@@ -327,7 +327,8 @@ jobs:
                 imageTag: 'v6.1.4' #'1.0'
                 pull: false
                 options: '--privileged=false --net=bridge -e FOO=true -e BOO=false'
-            script: 
+            script:
+              - echo "==== DEBUG List all environment variables ====" && printenv
               - echo "==== Prepare container environment ====" &&
                 mkdir -p $HOME/.gradle &&
                 cp IN/scripts-from-srcRepo/gitRepo/bas/resources/gradle/gradle.properties $HOME/.gradle/ &&
