@@ -330,7 +330,7 @@ jobs:
                 options: '--privileged=false --net=bridge -e FOO=true -e BOO=false'
             script:
               - echo "==== Prepare container environment ====" &&
-                ls -l && ls -l IN/ && ls -l OUT/&& ls -l state/ &&
+                ls -l && ls -l IN/ && ls -l /IN/jdemo_runCI && ls -l OUT/ && ls -l state/ &&
                 mkdir -p $HOME/.gradle &&
                 cp state/gradle.properties $HOME/.gradle/ &&
                 more $HOME/.gradle/gradle.properties
