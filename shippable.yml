@@ -168,7 +168,7 @@ resources:
       type: params
       versionTemplate:
         params:
-          secure: Yj4TDT0UVN9vxNcr+oilXI5W1fmK5Z8rlmSn4WYi8RbBPMKfFum6RxwWqoMEAw7jZyuZax6pZDHndGhczoFL8nY6EgMoMhvZDRxE3E7fLX32cwCQ3wh4HAT1zu6Xcn4ziqtc/inSKOfZrVSg2mavX9DzSY3NaK5GheKeRhuiD5lEm7/rJEbtDje9KcIGoSrr0zW0q2lPRJul4ZROP9KnvtsLGJmxefvVIS3yWKYnsjPbrzQjfkuYtuJd4YoXV9F4QW17jE5SuEENNKafNFI4ph+3BNleXleDJC2Oh1uF3RnqsMQ5pGfdCo7HQAsk9mpA4iMCuRNNivWO+Uxet3w2cw==
+          secure: bKMQapNqdCOKOigxPuyLTHV4y+BvBrtSp+e6PhZEcGKkwoSRC0OMA9+3iCDyIOjPGouiYpDD2ShgqVu8CNidp5FjlpdNCqbzT6ovlcmXSkisBIEqio4q1wazOlEYQGdi60lmn+/jRydCAOeLiYbXOZ1wWG3c6hytl4G6f6uB68+kH5BLrWSRUrLnnoQLiUEJb16R7E9kjzpMzYWFzt1ofOH1WMi155GK2eDTY7qcIRDITvEpReJeNMmlTT+ceYyNdsIYQIUWSHjz/d/Vjso9aQ8o4u43r8C/a+TZFUY9t6jf08xbNz+leTkgYmrFvc00DNAUY8FfWYWwVjTiEqJjdg==
 
     - name: CI_CONTAINER_VERSION
       type: params
@@ -180,7 +180,7 @@ resources:
       type: params
       versionTemplate:
         params:
-          secure: YyXGL8vjtLsCzwQF4VKV+2X8BUc6FVqOqlvKKliAKYJ3AlWBIdSrm+VL3MLfxBkB62i57WWcMzD2ufUvpfwLVhvsV2kMo3AkufvWxc9hlHEiPmcoRujUfmzYDKGl0V5y7+v1ApugCEW8LdLJTS9cTbLpycZxeQURBw4HVOUko1Da7Q+SvoaeVXLbsI4M+nPZXrP8D40zOqXsjn899mJzsrZhPWCN817jEPf4MNEv3yxwXIVV0bWk3/0vWlR+o6PdrfrDWOb2HCYdkG+Jf1LnhlQ7kZXkacb2m3qFFlJJl5GbKqPgBtRWEg7RjC8JsWQS3Lhb3KCJuO0i88RciFw8kg==
+          secure: QeuzsKzHkuajVJZRzot2eMFbi5yxqjsdsSkOfVoPU8vS5GWeZkK9aUyvUSxPiQVSstDXJhifFYlrTFJ9zwkvjReSpEKd7Yq0OyX+aLFG7oLmqxplyqUIQcM77pEguBRO2ohQnu0j838RZW3xvQc1CBYfvINEorDPF+hVti9T96oS+E2XRVGo3b+HYLAMQ0jjj8LDetDSK/rEHRhcjNh0YLWHemrBelwr114EtPLdqsharqSPdwsTPhQMYjZdnrOemEg7yfCxku+br7ZHudgKCWL+jpxPWrn3zR0CRlYSlVc/YDYycjU9EPRNZgwO3hXBBxDOkzAykUHjvF3R/Sotkg==
 
     - name: IMAGE_VERSION
       type: params
@@ -313,8 +313,6 @@ jobs:
       steps:
         - IN: CI_CONTAINER
         - IN: CI_CONTAINER_VERSION
-        - IN: SRCREPO
-        - IN: SONARQUBE
         - IN: IMAGE
         - IN: IMAGE_VERSION
         - OUT: jdemoImg
@@ -348,12 +346,6 @@ jobs:
         - NOTIFY: Slack
       steps:
         - IN: jdemo_runCI
-        - IN: CI_CONTAINER
-        - IN: CI_CONTAINER_VERSION
-        - IN: SRCREPO
-        - IN: SONARQUBE
-        - IN: IMAGE
-        - IN: IMAGE_VERSION
         - IN: scripts-from-srcRepo
         - IN: aws-cliConfig
           scopes:
