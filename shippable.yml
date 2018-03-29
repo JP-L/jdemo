@@ -95,7 +95,7 @@ build:
       
       sed -i -r "s|MY_ACCESS_ID|$AMAZONKEYS_ACCESSKEY|g" $HOME/.gradle/gradle.properties && 
       sed -i -r "s|MY_SECRET|$AMAZONKEYS_SECRETKEY|g" $HOME/.gradle/gradle.properties
-    
+    - more $HOME/.gradle/gradle.properties
     - echo "==== Building the Java application ====" &&
       gradle assemble;
       if [ "$BRANCH" != "master" ]; then
