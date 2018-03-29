@@ -95,7 +95,7 @@ build:
       
       sed -i -r "s|MY_ACCESS_ID|$AMAZONKEYS_ACCESSKEY|g" $HOME/.gradle/gradle.properties && 
       sed -i -r "s|MY_SECRET|$AMAZONKEYS_SECRETKEY|g" $HOME/.gradle/gradle.properties
-    - more $HOME/.gradle/gradle.properties
+
     - echo "==== Building the Java application ====" &&
       gradle assemble;
       if [ "$BRANCH" != "master" ]; then
@@ -400,6 +400,7 @@ jobs:
                 options: '--privileged=false --net=bridge -e FOO=true -e BOO=false'
             script:
               - echo "==== Prepare container environment ====" &&
+                mkdir -p $HOME/.gradle &&
                 cp IN/scripts-from-srcRepo/gitRepo/bas/resources/gradle/gradle.properties $HOME/.gradle/ &&
                 sed -i -r "s|URL|$BINREPO_URL|g" $HOME/.gradle/gradle.properties &&
                 sed -i -r "s|REG_URL|$BINREPO_REGURL|g" $HOME/.gradle/gradle.properties &&
@@ -415,6 +416,7 @@ jobs:
       
                 sed -i -r "s|MY_ACCESS_ID|$AMAZONKEYS_ACCESSKEY|g" $HOME/.gradle/gradle.properties && 
                 sed -i -r "s|MY_SECRET|$AMAZONKEYS_SECRETKEY|g" $HOME/.gradle/gradle.properties
+              - more $HOME/.gradle/gradle.properties
               - echo "==== Configure testing environment for testing Alpha, Beta and RC release ====" &&
                 cd IN/scripts-from-srcRepo/gitRepo/ &&
                 gradle applyTerraform
