@@ -47,7 +47,7 @@ env:
     - MOD_LOC=$SHIPPABLE_REPO_DIR/node_modules/.bin/
     # Shippable required
     # Container
-    - secure: bKMQapNqdCOKOigxPuyLTHV4y+BvBrtSp+e6PhZEcGKkwoSRC0OMA9+3iCDyIOjPGouiYpDD2ShgqVu8CNidp5FjlpdNCqbzT6ovlcmXSkisBIEqio4q1wazOlEYQGdi60lmn+/jRydCAOeLiYbXOZ1wWG3c6hytl4G6f6uB68+kH5BLrWSRUrLnnoQLiUEJb16R7E9kjzpMzYWFzt1ofOH1WMi155GK2eDTY7qcIRDITvEpReJeNMmlTT+ceYyNdsIYQIUWSHjz/d/Vjso9aQ8o4u43r8C/a+TZFUY9t6jf08xbNz+leTkgYmrFvc00DNAUY8FfWYWwVjTiEqJjdg==
+    #- secure: bKMQapNqdCOKOigxPuyLTHV4y+BvBrtSp+e6PhZEcGKkwoSRC0OMA9+3iCDyIOjPGouiYpDD2ShgqVu8CNidp5FjlpdNCqbzT6ovlcmXSkisBIEqio4q1wazOlEYQGdi60lmn+/jRydCAOeLiYbXOZ1wWG3c6hytl4G6f6uB68+kH5BLrWSRUrLnnoQLiUEJb16R7E9kjzpMzYWFzt1ofOH1WMi155GK2eDTY7qcIRDITvEpReJeNMmlTT+ceYyNdsIYQIUWSHjz/d/Vjso9aQ8o4u43r8C/a+TZFUY9t6jf08xbNz+leTkgYmrFvc00DNAUY8FfWYWwVjTiEqJjdg==
     - CI_CONTAINER_VERSION='1.0'
     # Image
     - secure: QeuzsKzHkuajVJZRzot2eMFbi5yxqjsdsSkOfVoPU8vS5GWeZkK9aUyvUSxPiQVSstDXJhifFYlrTFJ9zwkvjReSpEKd7Yq0OyX+aLFG7oLmqxplyqUIQcM77pEguBRO2ohQnu0j838RZW3xvQc1CBYfvINEorDPF+hVti9T96oS+E2XRVGo3b+HYLAMQ0jjj8LDetDSK/rEHRhcjNh0YLWHemrBelwr114EtPLdqsharqSPdwsTPhQMYjZdnrOemEg7yfCxku+br7ZHudgKCWL+jpxPWrn3zR0CRlYSlVc/YDYycjU9EPRNZgwO3hXBBxDOkzAykUHjvF3R/Sotkg==
@@ -175,6 +175,15 @@ integrations:
 
 #### RESOURCES CONFIG (GLOBAL ACROSS SUBSCRIPTION)
 resources:
+    # Params
+    - name: CI_CONTAINER
+      type: params
+      versionTemplate:
+        params:
+          KEY1: CI_CONTAINER
+          secure: bKMQapNqdCOKOigxPuyLTHV4y+BvBrtSp+e6PhZEcGKkwoSRC0OMA9+3iCDyIOjPGouiYpDD2ShgqVu8CNidp5FjlpdNCqbzT6ovlcmXSkisBIEqio4q1wazOlEYQGdi60lmn+/jRydCAOeLiYbXOZ1wWG3c6hytl4G6f6uB68+kH5BLrWSRUrLnnoQLiUEJb16R7E9kjzpMzYWFzt1ofOH1WMi155GK2eDTY7qcIRDITvEpReJeNMmlTT+ceYyNdsIYQIUWSHjz/d/Vjso9aQ8o4u43r8C/a+TZFUY9t6jf08xbNz+leTkgYmrFvc00DNAUY8FfWYWwVjTiEqJjdg==
+    
+    # Job resources
     - name: scripts-from-srcRepo
       type: gitRepo
       integration: GitHub
@@ -279,6 +288,7 @@ jobs:
     - name: jdemo_runCI
       type: runCI
       steps:
+        - IN: CI_CONTAINER
         - OUT: jdemoImg
         - OUT: jdemoImgQA
         
