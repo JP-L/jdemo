@@ -168,14 +168,13 @@ resources:
       type: params
       versionTemplate:
         params:
-          KEY1: CI_CONTAINER
           secure: bKMQapNqdCOKOigxPuyLTHV4y+BvBrtSp+e6PhZEcGKkwoSRC0OMA9+3iCDyIOjPGouiYpDD2ShgqVu8CNidp5FjlpdNCqbzT6ovlcmXSkisBIEqio4q1wazOlEYQGdi60lmn+/jRydCAOeLiYbXOZ1wWG3c6hytl4G6f6uB68+kH5BLrWSRUrLnnoQLiUEJb16R7E9kjzpMzYWFzt1ofOH1WMi155GK2eDTY7qcIRDITvEpReJeNMmlTT+ceYyNdsIYQIUWSHjz/d/Vjso9aQ8o4u43r8C/a+TZFUY9t6jf08xbNz+leTkgYmrFvc00DNAUY8FfWYWwVjTiEqJjdg==
 
     - name: CI_CONTAINER_VERSION
       type: params
       versionTemplate:
         params:
-          KEY1: '1.0'
+          CI_CONTAINER_VERSION: '1.0'
     
     - name: IMAGE_REPOSITORY
       type: params
