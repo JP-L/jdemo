@@ -80,9 +80,19 @@ build:
     - echo "==== Prepare Gradle environment ====" && 
       mkdir -p $HOME/.gradle &&
       cp $SHIPPABLE_REPO_DIR/bas/resources/gradle/gradle.properties $HOME/.gradle/ &&
-      printenv | grep SONARQUBE_PROP | cut -d'=' -f 2- | tr '|' '\n' >> $HOME/.gradle/gradle.properties && 
-      printenv | grep BINREPO_PROP | cut -d'=' -f 2- | tr '|' '\n' >> $HOME/.gradle/gradle.properties &&
-      printenv | grep SRCREPO_PROP | cut -d'=' -f 2- | tr '|' '\n' >> $HOME/.gradle/gradle.properties &&
+
+      sed -i -r "s|URL|$BINREPO_URL|g" $HOME/.gradle/gradle.properties &&
+      sed -i -r "s|REG_URL|$BINREPO_REGURL|g" $HOME/.gradle/gradle.properties &&
+      sed -i -r "s|USR|$BINREPO_USR|g" $HOME/.gradle/gradle.properties &&
+      sed -i -r "s|PWD|$BINREPO_PWD|g" $HOME/.gradle/gradle.properties &&
+      sed -i -r "s|EMAIL|$BINREPO_EMAIL|g" $HOME/.gradle/gradle.properties &&
+
+      sed -i -r "s|SONARURL|$SONAR_URL|g" $HOME/.gradle/gradle.properties &&
+      sed -i -r "s|ORG|$ORGANIZATION|g" $HOME/.gradle/gradle.properties &&
+      sed -i -r "s|KEY|$SONAR_KEY|g" $HOME/.gradle/gradle.properties &&
+      
+      sed -i -r "s|SRCREPO_KEY|$SRCREPO_USR|g" $HOME/.gradle/gradle.properties &&
+      
       sed -i -r "s|MY_ACCESS_ID|$AMAZONKEYS_ACCESSKEY|g" $HOME/.gradle/gradle.properties && 
       sed -i -r "s|MY_SECRET|$AMAZONKEYS_SECRETKEY|g" $HOME/.gradle/gradle.properties
     
@@ -159,9 +169,9 @@ integrations:
 #          agent_only:
 #          branches:
 
-    generic:     
-        - integrationName: Sonar
-        - integrationName: BRep
+    #generic:     
+    #    - integrationName: Sonar
+    #    - integrationName: BRep
     
 #### END CI CONFIG
 
@@ -204,11 +214,11 @@ resources:
     #    params:
     #      secure: QJWVnuzyig93enX3DE2CX9LntyTMOxsnOv2P+oFhU4+4gIm+9WCkk9O3TTDgTp5T5bS2qdQ0tkYJUDoTbT+mrAcIM1+PPPHicMppaUZPOq7w3gzsY5ekt9diKp9X840Z5TUrxi/j2WkT+R15weuxaD4oqfrLmw2nFvUhj6btmOzQMjg3Zc1yVbtAnT3tRle5t3cboQWA/VKg7NK1X61xfCY51KeXwak68uevVj0TBjdHY6jpQdI8Drw/LVXS5tMigc9O+l5jad1a02CORPp37Ujx5qd1vQU5IXdVVdgTYG7BPXCOzZZO4XBMvrby7Zs5gYiBxibWrjP6ccCydJFiSw==
 
-    - name: SRCREPO
-      type: params
-      versionTemplate:
-        params:
-          secure: PLOZuiTlzdH8EWNrIy1DZ/oTM4etr8WEWLd8yY659FDu5dbtfM2TW9FEM/9gkGjfH6s5Ka6TWU5g2Z1m47GtQKuTAP3mDNsxmhxgvQvLAJ+cQ1vD0vs9dvTlkacMtL5dInjZRBwpENynqG5FfsvZcjGBaMoQdkkbUsL59XHiAyrCeyZ05Q8ui8IWDFyfeuVLCz7qMoPe5TlYj/h6BlD4vMcbeNlMs9Xih/x1ruXq5FFAuPI1UEJi7ZtB6KP2tI6iJV0fystlmga6IYAQCTjRpj6DyEvA0dx1Jbygm3FbCFsF1wn1GLhVJWM8saqYlDZeFKB4/LdJJ7fNvvAFnzvS3Q==
+    #- name: SRCREPO
+    #  type: params
+    #  versionTemplate:
+    #    params:
+    #      secure: PLOZuiTlzdH8EWNrIy1DZ/oTM4etr8WEWLd8yY659FDu5dbtfM2TW9FEM/9gkGjfH6s5Ka6TWU5g2Z1m47GtQKuTAP3mDNsxmhxgvQvLAJ+cQ1vD0vs9dvTlkacMtL5dInjZRBwpENynqG5FfsvZcjGBaMoQdkkbUsL59XHiAyrCeyZ05Q8ui8IWDFyfeuVLCz7qMoPe5TlYj/h6BlD4vMcbeNlMs9Xih/x1ruXq5FFAuPI1UEJi7ZtB6KP2tI6iJV0fystlmga6IYAQCTjRpj6DyEvA0dx1Jbygm3FbCFsF1wn1GLhVJWM8saqYlDZeFKB4/LdJJ7fNvvAFnzvS3Q==
     
     # Job resources
     - name: scripts-from-srcRepo
@@ -288,6 +298,10 @@ resources:
       type: integration
       integration: BRep
 
+    - name: SRep
+      type: integration
+      integration: SRep
+      
     #### NOTIFICATIONS ####
     - name: Slack
       type: notification
@@ -325,6 +339,11 @@ jobs:
       steps:
         - IN: CI_CONTAINER
         - IN: CI_CONTAINER_VERSION
+        - IN: Sonar
+        - IN: BRep
+        - IN: SRep
+        - IN: IMAGE
+        - IN: IMAGE_VERSION
         - OUT: jdemoImg
         - OUT: jdemoImgQA
         
@@ -356,6 +375,13 @@ jobs:
         - NOTIFY: Slack
       steps:
         - IN: jdemo_runCI
+        - IN: CI_CONTAINER
+        - IN: CI_CONTAINER_VERSION
+        - IN: Sonar
+        - IN: BRep
+        - IN: SRep
+        - IN: IMAGE
+        - IN: IMAGE_VERSION
         - IN: scripts-from-srcRepo
         - IN: aws-cliConfig
           scopes:
@@ -377,9 +403,19 @@ jobs:
             script:
               - echo "==== Prepare container environment ====" &&
                 cp IN/scripts-from-srcRepo/gitRepo/bas/resources/gradle/gradle.properties $HOME/.gradle/ &&
-                printenv | grep BINREPO_PROP | cut -d'=' -f 2- | tr '|' '\n' >> $HOME/.gradle/gradle.properties &&
-                printenv | grep SRCREPO_PROP | cut -d'=' -f 2- | tr '|' '\n' >> $HOME/.gradle/gradle.properties &&
-                sed -i -r "s|MY_ACCESS_ID|$AMAZONKEYS_ACCESSKEY|g" $HOME/.gradle/gradle.properties &&
+                sed -i -r "s|URL|$BINREPO_URL|g" $HOME/.gradle/gradle.properties &&
+                sed -i -r "s|REG_URL|$BINREPO_REGURL|g" $HOME/.gradle/gradle.properties &&
+                sed -i -r "s|USR|$BINREPO_USR|g" $HOME/.gradle/gradle.properties &&
+                sed -i -r "s|PWD|$BINREPO_PWD|g" $HOME/.gradle/gradle.properties &&
+                sed -i -r "s|EMAIL|$BINREPO_EMAIL|g" $HOME/.gradle/gradle.properties &&
+
+                sed -i -r "s|SONARURL|$SONAR_URL|g" $HOME/.gradle/gradle.properties &&
+                sed -i -r "s|ORG|$ORGANIZATION|g" $HOME/.gradle/gradle.properties &&
+                sed -i -r "s|KEY|$SONAR_KEY|g" $HOME/.gradle/gradle.properties &&
+      
+                sed -i -r "s|SRCREPO_KEY|$SRCREPO_USR|g" $HOME/.gradle/gradle.properties &&
+      
+                sed -i -r "s|MY_ACCESS_ID|$AMAZONKEYS_ACCESSKEY|g" $HOME/.gradle/gradle.properties && 
                 sed -i -r "s|MY_SECRET|$AMAZONKEYS_SECRETKEY|g" $HOME/.gradle/gradle.properties
               - echo "==== Configure testing environment for testing Alpha, Beta and RC release ====" &&
                 cd IN/scripts-from-srcRepo/gitRepo/ &&
