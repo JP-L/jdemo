@@ -322,8 +322,8 @@ jobs:
         - IN: SRCREPO
         - IN: BINREPO
         - IN: SONARQUBE
-        - OUT: jdemoImg
-        - OUT: jdemoImgQA
+        #- OUT: jdemoImg
+        #- OUT: jdemoImgQA
         
     - name: jdemoManifest
       type: manifest
