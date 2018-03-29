@@ -174,7 +174,7 @@ resources:
       type: params
       versionTemplate:
         params:
-          TEST2:""trial|and|error2""
+          TEST2: "'trial|and|error2'"
                 
     - name: CI_CONTAINER
       type: params
