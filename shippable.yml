@@ -314,12 +314,12 @@ jobs:
         - IN: CI_CONTAINER
         - IN: CI_CONTAINER_VERSION
         - IN: SRCREPO
-        - IN: BINREPO
+        #- IN: BINREPO
         - IN: SONARQUBE
         - IN: IMAGE
         - IN: IMAGE_VERSION
-        #- OUT: jdemoImg
-        #- OUT: jdemoImgQA
+        - OUT: jdemoImg
+        - OUT: jdemoImgQA
         
     - name: jdemoManifest
       type: manifest
