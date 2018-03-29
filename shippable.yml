@@ -402,24 +402,30 @@ jobs:
               - echo "==== Prepare container environment ====" &&
                 mkdir -p $HOME/.gradle &&
                 cp IN/scripts-from-srcRepo/gitRepo/bas/resources/gradle/gradle.properties $HOME/.gradle/ &&
-                sed -i -r "s|URL|$BINREPO_URL|g" $HOME/.gradle/gradle.properties &&
+                sed -i -r "s|BURL|$BINREPO_URL|g" $HOME/.gradle/gradle.properties &&
                 sed -i -r "s|REG_URL|$BINREPO_REGURL|g" $HOME/.gradle/gradle.properties &&
                 sed -i -r "s|USR|$BINREPO_USR|g" $HOME/.gradle/gradle.properties &&
                 sed -i -r "s|PWD|$BINREPO_PWD|g" $HOME/.gradle/gradle.properties &&
                 sed -i -r "s|EMAIL|$BINREPO_EMAIL|g" $HOME/.gradle/gradle.properties &&
 
-                sed -i -r "s|SONARURL|$SONAR_URL|g" $HOME/.gradle/gradle.properties &&
+                sed -i -r "s|SONAR_URL|$SONAR_URL|g" $HOME/.gradle/gradle.properties &&
                 sed -i -r "s|ORG|$ORGANIZATION|g" $HOME/.gradle/gradle.properties &&
-                sed -i -r "s|KEY|$SONAR_KEY|g" $HOME/.gradle/gradle.properties &&
+                sed -i -r "s|SONAR_KEY|$SONAR_KEY|g" $HOME/.gradle/gradle.properties &&
       
                 sed -i -r "s|SRCREPO_KEY|$SRCREPO_USR|g" $HOME/.gradle/gradle.properties &&
       
                 sed -i -r "s|MY_ACCESS_ID|$AMAZONKEYS_ACCESSKEY|g" $HOME/.gradle/gradle.properties && 
                 sed -i -r "s|MY_SECRET|$AMAZONKEYS_SECRETKEY|g" $HOME/.gradle/gradle.properties
-              - more $HOME/.gradle/gradle.properties
+              - echo "==== DEBUG List all environment variables ====" && printenv
+              - echo $MYGITHUBREPO_STATE
+              - ls -al $MYGITHUBREPO_STATE
               - echo "==== Configure testing environment for testing Alpha, Beta and RC release ====" &&
                 cd IN/scripts-from-srcRepo/gitRepo/ &&
-                gradle applyTerraform
+                ls -al
+                gradle prepareTF
+                ls -al tf-temp/
+                gradle initTerraform
+                ls -al tf-temp/
               - echo "==== TODO TODO TODO TODO ===="
               - terraform output | grep $REGION | cut -d'=' -f 2- | sed -e 's/^[ \t]*//'
               - ARN=$(terraform output | grep $REGION | cut -d'=' -f 2- | sed -e 's/^[ \t]*//')
