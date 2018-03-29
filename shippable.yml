@@ -45,17 +45,6 @@ env:
     - CODE_COVERAGE_DIR=$SHIPPABLE_REPO_DIR/shippable/codecoverage
     - TESTS_LOC_DIR=$SHIPPABLE_REPO_DIR/src/test
     - MOD_LOC=$SHIPPABLE_REPO_DIR/node_modules/.bin/
-    # Shippable required
-    # Container
-    #- secure: bKMQapNqdCOKOigxPuyLTHV4y+BvBrtSp+e6PhZEcGKkwoSRC0OMA9+3iCDyIOjPGouiYpDD2ShgqVu8CNidp5FjlpdNCqbzT6ovlcmXSkisBIEqio4q1wazOlEYQGdi60lmn+/jRydCAOeLiYbXOZ1wWG3c6hytl4G6f6uB68+kH5BLrWSRUrLnnoQLiUEJb16R7E9kjzpMzYWFzt1ofOH1WMi155GK2eDTY7qcIRDITvEpReJeNMmlTT+ceYyNdsIYQIUWSHjz/d/Vjso9aQ8o4u43r8C/a+TZFUY9t6jf08xbNz+leTkgYmrFvc00DNAUY8FfWYWwVjTiEqJjdg==
-    - CI_CONTAINER_VERSION='1.0'
-    # Image
-    - secure: QeuzsKzHkuajVJZRzot2eMFbi5yxqjsdsSkOfVoPU8vS5GWeZkK9aUyvUSxPiQVSstDXJhifFYlrTFJ9zwkvjReSpEKd7Yq0OyX+aLFG7oLmqxplyqUIQcM77pEguBRO2ohQnu0j838RZW3xvQc1CBYfvINEorDPF+hVti9T96oS+E2XRVGo3b+HYLAMQ0jjj8LDetDSK/rEHRhcjNh0YLWHemrBelwr114EtPLdqsharqSPdwsTPhQMYjZdnrOemEg7yfCxku+br7ZHudgKCWL+jpxPWrn3zR0CRlYSlVc/YDYycjU9EPRNZgwO3hXBBxDOkzAykUHjvF3R/Sotkg==
-    - IMAGE_VERSION="latest"
-    # Secure Gradle props
-    - secure: Qk6NKicUfeWMIPcA5HGJebxUzVUV4SPTV6Oq47G2GgC1TjrFMcwrrZTzrHGJ1q2jP1el+M0OmcuTmQjgUIHGXWZACkvw/y6F3Y0yOLUGJhAHRIN2JHsj5c3PjMoz4U/wYM2eKOiZwiaFsI2sm455wU2jHo6+9cgCJdEfMPX2rBM6w9Uy9VpWbZ/FUzBRxuDakVoErtJ63frGKEcQ0nbNrbqETARQJfsrLw/zY65tNW6+EOpEunQOMTaZfpQ5yY6CEFMDxN2AsdBfmTpfD4x5houhSOvWXSm1zyDmavYlO+aXjq/WzuZymCmfGhjDUfDj0CMAw/E1hMpMrJ5f8zWdEg==
-    - secure: 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
-    - secure: bzzevaPxwwIxFbyR2ik3xILewufFDzVxlDxB5lcPRGzIUjXpe3pFxaHtoBX3NO/1mcqURCWvavMHccyHaP8/IywDVvjql3PB/au3ql2/bW8c+E4ylncFt1f7a07QrZQaZVa5ZBQoWgpWhIjNxxHiy4Stcm7YfJGauvsX6sDwk49WfiJlva6TzSPl0PXayesjeSjznOoFu2d++lFpwkwt7YazD/+nAbVVmu+boBHFFjy3wwaKtlVRq9WtTq7xOU+YhpMKkLA3ZO2/ixmad1SzSbjHBnunWgr5byzK3Zmuc2JbFMydiwQwlrUebKmSr6I+jKJaixAapygzuRmZU3xhPQ==
 
 #matrix:
 
@@ -113,8 +102,7 @@ build:
     - echo "==== CI completed. Move to post CI ===="
 
   post_ci:
-    - echo "==== Post CI tasks ==== " &&
-      shipctl copy_file_to_state $HOME/.gradle/gradle.properties;
+    - echo "==== Post CI tasks ==== ";
       if [ "$BRANCH" == "releases" ]; then
            echo "==== Set $IMAGE_REPOSITORY with $IMAGE_VERSION for $BUILDNUMBER ==== ";
            shipctl put_resource_state jdemoImgQA sourceName $IMAGE_REPOSITORY;
@@ -182,6 +170,46 @@ resources:
         params:
           KEY1: CI_CONTAINER
           secure: bKMQapNqdCOKOigxPuyLTHV4y+BvBrtSp+e6PhZEcGKkwoSRC0OMA9+3iCDyIOjPGouiYpDD2ShgqVu8CNidp5FjlpdNCqbzT6ovlcmXSkisBIEqio4q1wazOlEYQGdi60lmn+/jRydCAOeLiYbXOZ1wWG3c6hytl4G6f6uB68+kH5BLrWSRUrLnnoQLiUEJb16R7E9kjzpMzYWFzt1ofOH1WMi155GK2eDTY7qcIRDITvEpReJeNMmlTT+ceYyNdsIYQIUWSHjz/d/Vjso9aQ8o4u43r8C/a+TZFUY9t6jf08xbNz+leTkgYmrFvc00DNAUY8FfWYWwVjTiEqJjdg==
+
+    - name: CI_CONTAINER_VERSION
+      type: params
+      versionTemplate:
+        params:
+          KEY1: '1.0'
+    
+    - name: IMAGE_REPOSITORY
+      type: params
+      versionTemplate:
+        params:
+          KEY1: IMAGE_REPOSITORY
+          secure: QeuzsKzHkuajVJZRzot2eMFbi5yxqjsdsSkOfVoPU8vS5GWeZkK9aUyvUSxPiQVSstDXJhifFYlrTFJ9zwkvjReSpEKd7Yq0OyX+aLFG7oLmqxplyqUIQcM77pEguBRO2ohQnu0j838RZW3xvQc1CBYfvINEorDPF+hVti9T96oS+E2XRVGo3b+HYLAMQ0jjj8LDetDSK/rEHRhcjNh0YLWHemrBelwr114EtPLdqsharqSPdwsTPhQMYjZdnrOemEg7yfCxku+br7ZHudgKCWL+jpxPWrn3zR0CRlYSlVc/YDYycjU9EPRNZgwO3hXBBxDOkzAykUHjvF3R/Sotkg==
+
+    - name: IMAGE_VERSION
+      type: params
+      versionTemplate:
+        params:
+          KEY1: 'latest'
+
+    - name: BINREPO
+      type: params
+      versionTemplate:
+        params:
+          KEY1: BINREPO
+          secure: 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
+     
+    - name: SONARQUBE
+      type: params
+      versionTemplate:
+        params:
+          KEY1: SONARQUBE
+          secure: Qk6NKicUfeWMIPcA5HGJebxUzVUV4SPTV6Oq47G2GgC1TjrFMcwrrZTzrHGJ1q2jP1el+M0OmcuTmQjgUIHGXWZACkvw/y6F3Y0yOLUGJhAHRIN2JHsj5c3PjMoz4U/wYM2eKOiZwiaFsI2sm455wU2jHo6+9cgCJdEfMPX2rBM6w9Uy9VpWbZ/FUzBRxuDakVoErtJ63frGKEcQ0nbNrbqETARQJfsrLw/zY65tNW6+EOpEunQOMTaZfpQ5yY6CEFMDxN2AsdBfmTpfD4x5houhSOvWXSm1zyDmavYlO+aXjq/WzuZymCmfGhjDUfDj0CMAw/E1hMpMrJ5f8zWdEg==
+
+    - name: SRCREPO
+      type: params
+      versionTemplate:
+        params:
+          KEY1: SRCREPO
+          secure: bzzevaPxwwIxFbyR2ik3xILewufFDzVxlDxB5lcPRGzIUjXpe3pFxaHtoBX3NO/1mcqURCWvavMHccyHaP8/IywDVvjql3PB/au3ql2/bW8c+E4ylncFt1f7a07QrZQaZVa5ZBQoWgpWhIjNxxHiy4Stcm7YfJGauvsX6sDwk49WfiJlva6TzSPl0PXayesjeSjznOoFu2d++lFpwkwt7YazD/+nAbVVmu+boBHFFjy3wwaKtlVRq9WtTq7xOU+YhpMKkLA3ZO2/ixmad1SzSbjHBnunWgr5byzK3Zmuc2JbFMydiwQwlrUebKmSr6I+jKJaixAapygzuRmZU3xhPQ==
     
     # Job resources
     - name: scripts-from-srcRepo
@@ -289,6 +317,12 @@ jobs:
       type: runCI
       steps:
         - IN: CI_CONTAINER
+        - IN: CI_CONTAINER_VERSION
+        - IN: IMAGE_REPOSITORY
+        - IN: IMAGE_VERSION
+        - IN: SRCREPO
+        - IN: BINREPO
+        - IN: SONARQUBE
         - OUT: jdemoImg
         - OUT: jdemoImgQA
         
@@ -320,6 +354,13 @@ jobs:
         - NOTIFY: Slack
       steps:
         - IN: jdemo_runCI
+        - IN: CI_CONTAINER
+        - IN: CI_CONTAINER_VERSION
+        - IN: IMAGE_REPOSITORY
+        - IN: IMAGE_VERSION
+        - IN: SRCREPO
+        - IN: BINREPO
+        - IN: SONARQUBE
         - IN: scripts-from-srcRepo
         - IN: aws-cliConfig
           scopes:
@@ -340,15 +381,11 @@ jobs:
                 options: '--privileged=false --net=bridge -e FOO=true -e BOO=false'
             script:
               - echo "==== Prepare container environment ====" &&
-                ls -l && ls -l IN/ && ls -l /IN/jdemo_runCI && ls -l OUT/ && ls -l state/ &&
-                mkdir -p $HOME/.gradle &&
-                cp state/gradle.properties $HOME/.gradle/ &&
-                more $HOME/.gradle/gradle.properties
-                #cp IN/scripts-from-srcRepo/gitRepo/bas/resources/gradle/gradle.properties $HOME/.gradle/ &&
-                #printenv | grep BINREPO_PROP | cut -d'=' -f 2- | tr '|' '\n' >> $HOME/.gradle/gradle.properties &&
-                #printenv | grep SRCREPO_PROP | cut -d'=' -f 2- | tr '|' '\n' >> $HOME/.gradle/gradle.properties &&
-                #sed -i -r "s|MY_ACCESS_ID|$AMAZONKEYS_ACCESSKEY|g" $HOME/.gradle/gradle.properties &&
-                #sed -i -r "s|MY_SECRET|$AMAZONKEYS_SECRETKEY|g" $HOME/.gradle/gradle.properties
+                cp IN/scripts-from-srcRepo/gitRepo/bas/resources/gradle/gradle.properties $HOME/.gradle/ &&
+                printenv | grep BINREPO_PROP | cut -d'=' -f 2- | tr '|' '\n' >> $HOME/.gradle/gradle.properties &&
+                printenv | grep SRCREPO_PROP | cut -d'=' -f 2- | tr '|' '\n' >> $HOME/.gradle/gradle.properties &&
+                sed -i -r "s|MY_ACCESS_ID|$AMAZONKEYS_ACCESSKEY|g" $HOME/.gradle/gradle.properties &&
+                sed -i -r "s|MY_SECRET|$AMAZONKEYS_SECRETKEY|g" $HOME/.gradle/gradle.properties
               - echo "==== Configure testing environment for testing Alpha, Beta and RC release ====" &&
                 cd IN/scripts-from-srcRepo/gitRepo/ &&
                 gradle applyTerraform
