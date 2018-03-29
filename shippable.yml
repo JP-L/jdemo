@@ -318,8 +318,8 @@ jobs:
         - IN: SONARQUBE
         - IN: IMAGE
         - IN: IMAGE_VERSION
-        - OUT: jdemoImg
-        - OUT: jdemoImgQA
+        #- OUT: jdemoImg
+        #- OUT: jdemoImgQA
         
     - name: jdemoManifest
       type: manifest
