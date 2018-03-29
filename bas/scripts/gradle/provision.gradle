@@ -23,6 +23,8 @@
  * Provision IaaS configuration
  */
 
+def terraform_workingdir="${projectDir}/${terraform_workdir}"
+
 task cleanTF(type: Delete) {
 	group "Terraform"
 	delete "${terraform_workingdir}"
