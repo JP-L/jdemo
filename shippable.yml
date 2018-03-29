@@ -351,11 +351,11 @@ jobs:
         - IN: jdemo_runCI
         - IN: CI_CONTAINER
         - IN: CI_CONTAINER_VERSION
-        - IN: IMAGE_REPOSITORY
-        - IN: IMAGE_VERSION
         - IN: SRCREPO
         - IN: BINREPO
         - IN: SONARQUBE
+        - IN: IMAGE
+        - IN: IMAGE_VERSION
         - IN: scripts-from-srcRepo
         - IN: aws-cliConfig
           scopes:
