@@ -314,7 +314,6 @@ jobs:
         - IN: CI_CONTAINER
         - IN: CI_CONTAINER_VERSION
         - IN: SRCREPO
-        #- IN: BINREPO
         - IN: SONARQUBE
         - IN: IMAGE
         - IN: IMAGE_VERSION
@@ -352,7 +351,6 @@ jobs:
         - IN: CI_CONTAINER
         - IN: CI_CONTAINER_VERSION
         - IN: SRCREPO
-        - IN: BINREPO
         - IN: SONARQUBE
         - IN: IMAGE
         - IN: IMAGE_VERSION
