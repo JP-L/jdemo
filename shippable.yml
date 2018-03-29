@@ -81,7 +81,7 @@ build:
       mkdir -p $HOME/.gradle &&
       cp $SHIPPABLE_REPO_DIR/bas/resources/gradle/gradle.properties $HOME/.gradle/ &&
 
-      sed -i -r "s|URL|$BINREPO_URL|g" $HOME/.gradle/gradle.properties &&
+      sed -i -r "s|BURL|$BINREPO_URL|g" $HOME/.gradle/gradle.properties &&
       sed -i -r "s|REG_URL|$BINREPO_REGURL|g" $HOME/.gradle/gradle.properties &&
       sed -i -r "s|USR|$BINREPO_USR|g" $HOME/.gradle/gradle.properties &&
       sed -i -r "s|PWD|$BINREPO_PWD|g" $HOME/.gradle/gradle.properties &&
@@ -169,9 +169,10 @@ integrations:
 #          agent_only:
 #          branches:
 
-    #generic:     
-    #    - integrationName: Sonar
-    #    - integrationName: BRep
+    generic:     
+        - integrationName: Sonar
+        - integrationName: BRep
+        - integrationName: SRep
     
 #### END CI CONFIG
 
@@ -339,9 +340,6 @@ jobs:
       steps:
         - IN: CI_CONTAINER
         - IN: CI_CONTAINER_VERSION
-        - IN: Sonar
-        - IN: BRep
-        - IN: SRep
         - IN: IMAGE
         - IN: IMAGE_VERSION
         - OUT: jdemoImg
