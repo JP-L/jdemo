@@ -313,8 +313,6 @@ jobs:
       steps:
         - IN: CI_CONTAINER
         - IN: CI_CONTAINER_VERSION
-        - IN: IMAGE
-        - IN: IMAGE_VERSION
         - OUT: jdemoImg
         - OUT: jdemoImgQA
         
