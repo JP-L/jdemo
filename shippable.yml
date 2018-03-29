@@ -164,6 +164,18 @@ integrations:
 #### RESOURCES CONFIG (GLOBAL ACROSS SUBSCRIPTION)
 resources:
     # Params
+    - name: TEST1
+      type: params
+      versionTemplate:
+        params:
+          TEST1: "trial|and|error"
+          
+    - name: TEST2
+      type: params
+      versionTemplate:
+        params:
+          TEST2:""trial|and|error2""
+                
     - name: CI_CONTAINER
       type: params
       versionTemplate:
