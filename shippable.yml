@@ -316,7 +316,7 @@ jobs:
         - IN: SRCREPO
         - IN: BINREPO
         - IN: SONARQUBE
-        - IN: IMAGE_REPOSITORY
+        - IN: IMAGE
         - IN: IMAGE_VERSION
         #- OUT: jdemoImg
         #- OUT: jdemoImgQA
