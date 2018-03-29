@@ -29,8 +29,8 @@ apply plugin: "org.sonarqube"
 
 /* ===== Unit testing ===== */
 test {
-    reports.junitXml.destination = "${projectDir}/shippable/testresults"  
-    reports.html.destination = "${projectDir}/shippable/testresults"
+    reports.junitXml.destination = file("${projectDir}/shippable/testresults")  
+    reports.html.destination = file("${projectDir}/shippable/testresults")
 }
 // ===== Code Coverage Analysis =====
 cobertura {

@@ -25,7 +25,7 @@
 
 task cleanTF(type: Delete) {
 	group "Terraform"
-	delete "${projectDir}/tf-temp"
+	delete "${terraform_workingdir}"
 	followSymlinks = true
 }
 task copyTFfiles(type: Copy) {
@@ -35,14 +35,14 @@ task copyTFfiles(type: Copy) {
     outputs.upToDateWhen { false }
     from		"${projectDir}/src/main/terraform"
     from		"${projectDir}/src/main/resources/terraform"
-    into        "${projectDir}/${terraform_workingdir}"
+    into        "${terraform_workingdir}"
 }
 task prepareTF {
 	description "Prepare TF"
     group "Terraform"
     dependsOn copyTFfiles
     doLast {
-    	new File("${projectDir}/${terraform_workingdir}/credentials").text = """
+    	new File("${terraform_workingdir}/credentials").text = """
 [default]
 aws_access_key_id = "${awsAccessKeyId}"
 aws_secret_access_key = "${awsSecretAccessKey}"
@@ -53,8 +53,8 @@ task initTerraform(type: Exec) {
 	description "Terraform init"
 	group "Terraform"
 	dependsOn prepareTF
-	workingDir "${projectDir}/${terraform_workingdir}"
-    commandLine "/bin/bash", "-c", "terraform init -input=false"
+	workingDir "${terraform_workingdir}"
+    commandLine "/bin/bash", "-c", "terraform init -input=false ${terraform_workingdir}"
     //ignoreExitValue true
     
     standardOutput = new ByteArrayOutputStream()
@@ -66,8 +66,8 @@ task planTerraform(type: Exec) {
 	description "Terraform plan"
 	group "Terraform"
 	dependsOn initTerraform
-	workingDir "${projectDir}/${terraform_workingdir}"
-    commandLine "/bin/bash", "-c", "terraform plan -out ${terraform_plan} -input=false"
+	workingDir "${terraform_workingdir}"
+    commandLine "/bin/bash", "-c", "terraform plan -out ${terraform_workingdir}/${terraform_plan} -input=false ${terraform_workingdir}"
     //ignoreExitValue true
     
     standardOutput = new ByteArrayOutputStream()
@@ -79,8 +79,8 @@ task applyTerraform(type: Exec) {
 	description "Terraform apply"
 	group "Terraform"
 	dependsOn planTerraform
-	workingDir "${projectDir}/${terraform_workingdir}"
-    commandLine "/bin/bash", "-c", "terraform apply -input=false ${terraform_plan}"
+	workingDir "${terraform_workingdir}"
+    commandLine "/bin/bash", "-c", "terraform apply -input=false ${terraform_workingdir}/${terraform_plan}"
     //ignoreExitValue true
     
     standardOutput = new ByteArrayOutputStream()
@@ -92,7 +92,7 @@ task destroyTerraform(type: Exec) {
 	description "Terraform destroy"
 	group "Terraform"
 	//dependsOn planTerraform
-	workingDir "${projectDir}/${terraform_workingdir}"
+	workingDir "${terraform_workingdir}"
     commandLine "/bin/bash", "-c", "terraform destroy -force"
     //ignoreExitValue true
     
@@ -105,8 +105,8 @@ task showTerraform(type: Exec) {
 	description "Terraform show"
 	group "Terraform"
 	dependsOn planTerraform
-	workingDir "${projectDir}/${terraform_workingdir}"
-    commandLine "/bin/bash", "-c", "terraform show -module-depth=-1 ${terraform_plan}"
+	workingDir "${terraform_workingdir}"
+    commandLine "/bin/bash", "-c", "terraform show -module-depth=-1 ${terraform_workingdir}/${terraform_plan}"
     //ignoreExitValue true
     
     standardOutput = new ByteArrayOutputStream()

@@ -417,15 +417,11 @@ jobs:
                 sed -i -r "s|MY_ACCESS_ID|$AMAZONKEYS_ACCESSKEY|g" $HOME/.gradle/gradle.properties && 
                 sed -i -r "s|MY_SECRET|$AMAZONKEYS_SECRETKEY|g" $HOME/.gradle/gradle.properties
               - echo "==== DEBUG List all environment variables ====" && printenv
-              - echo $SCRIPTSFROMSRCREPO_STATE
-              - ls -al $SCRIPTSFROMSRCREPO_STATE
               - echo "==== Configure testing environment for testing Alpha, Beta and RC release ====" &&
                 cd $SCRIPTSFROMSRCREPO_STATE &&
-                ls -al &&
-                gradle prepareTF &&
+                gradle planTerraform &&
                 ls -al tf-temp/ &&
-                gradle initTerraform &&
-                ls -al tf-temp/
+                gradle showTerraform
               - echo "==== TODO TODO TODO TODO ===="
               - terraform output | grep $REGION | cut -d'=' -f 2- | sed -e 's/^[ \t]*//'
               - ARN=$(terraform output | grep $REGION | cut -d'=' -f 2- | sed -e 's/^[ \t]*//')
