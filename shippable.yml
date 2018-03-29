@@ -317,11 +317,11 @@ jobs:
       steps:
         - IN: CI_CONTAINER
         - IN: CI_CONTAINER_VERSION
-        - IN: IMAGE_REPOSITORY
-        - IN: IMAGE_VERSION
-        - IN: SRCREPO
-        - IN: BINREPO
-        - IN: SONARQUBE
+        #- IN: IMAGE_REPOSITORY
+        #- IN: IMAGE_VERSION
+        #- IN: SRCREPO
+        #- IN: BINREPO
+        #- IN: SONARQUBE
         #- OUT: jdemoImg
         #- OUT: jdemoImgQA
         
