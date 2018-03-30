@@ -381,6 +381,7 @@ jobs:
         - IN: IMAGE
         - IN: IMAGE_VERSION
         - IN: scripts-from-srcRepo
+        - IN: aws-Integration
         - IN: aws-cliConfig
           scopes:
             - ecr
