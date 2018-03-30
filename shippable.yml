@@ -387,15 +387,15 @@ jobs:
         - TASK:
             name: pullCustomImage
             script:
-              #- docker pull $CI_CONTAINER:$CI_CONTAINER_VERSION
-              - docker pull drydock/u16javall:v6.1.4
+              - docker pull $CI_CONTAINER:$CI_CONTAINER_VERSION
+              #- docker pull drydock/u16javall:v6.1.4
         - TASK:
             name: setupStagingEnvironment
             runtime:                  # optional
               options:
-                #imageName: $CI_CONTAINER
-                imageName: drydock/u16javall
-                imageTag: 'v6.1.4' #'1.0'
+                imageName: $CI_CONTAINER
+                #imageName: drydock/u16javall
+                imageTag: '1.0' #'v6.1.4' #'1.0'
                 pull: false
                 options: '--privileged=false --net=bridge -e FOO=true -e BOO=false'
             script:
