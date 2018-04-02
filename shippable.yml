@@ -381,7 +381,6 @@ jobs:
         - IN: IMAGE
         - IN: IMAGE_VERSION
         - IN: scripts-from-srcRepo
-        - IN: aws-Integration
         - IN: aws-cliConfig
           scopes:
             - ecr
@@ -396,7 +395,7 @@ jobs:
               options:
                 imageName: $CI_CONTAINER
                 #imageName: drydock/u16javall
-                imageTag: '1.0' #'v6.1.4' #'1.0'
+                imageTag: $CI_CONTAINER_VERSION #'v6.1.4' #'1.0'
                 pull: false
                 options: '--privileged=false --net=bridge -e FOO=true -e BOO=false'
             script:
