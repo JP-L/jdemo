@@ -183,7 +183,7 @@ resources:
       type: params
       versionTemplate:
         params:
-          secure: bKMQapNqdCOKOigxPuyLTHV4y+BvBrtSp+e6PhZEcGKkwoSRC0OMA9+3iCDyIOjPGouiYpDD2ShgqVu8CNidp5FjlpdNCqbzT6ovlcmXSkisBIEqio4q1wazOlEYQGdi60lmn+/jRydCAOeLiYbXOZ1wWG3c6hytl4G6f6uB68+kH5BLrWSRUrLnnoQLiUEJb16R7E9kjzpMzYWFzt1ofOH1WMi155GK2eDTY7qcIRDITvEpReJeNMmlTT+ceYyNdsIYQIUWSHjz/d/Vjso9aQ8o4u43r8C/a+TZFUY9t6jf08xbNz+leTkgYmrFvc00DNAUY8FfWYWwVjTiEqJjdg==
+          secure: QRrl5lPJ3n81QyeeC0fEYzmDxwEBjjJizBsuqTIbWql7nndDrsjdnGxNyHS/qzFmLbVCoCRspCG6Wv3BsQ9GSZ0qwfMK8MdPdexsjZL/PNCusRQT0yyqiVRMF+jfo212+zmjxRFqvVvHU4VDSNAy0CTk1gKlIocL4FafveveYLB6lZDy8rtfVjnU8YeXcT5vXKyX6n6jh3YNGmAjhqzSgKI3QjEiil0dRCLpJrra5BCOao7A46Lbk/21heD7MJeMg28BTfwJ+yKDBIeFp/OS+kXl4O83nUgvVElF4ECb4/70tgxInX+WeVAs0GRVBO4UZnkmt11kIA2gOLCg0M7ZCQ==
 
     - name: CI_CONTAINER_VERSION
       type: params
