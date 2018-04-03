@@ -396,11 +396,13 @@ jobs:
                 sed -i -r "s|MY_SECRET|$AWSCLICONFIG_INTEGRATION_SECRETKEY|g" $HOME/.gradle/gradle.properties &&
                 
                 sed -i -r "s|TF_ACCESS_ID|$AWSCISINTEGRATION_INTEGRATION_ACCESSKEY|g" $HOME/.gradle/gradle.properties &&
-                sed -i -r "s|TF_SECRET|$AWSCISINTEGRATION_INTEGRATION_SECRETKEY|g" $HOME/.gradle/gradle.properties &&
-                more $HOME/.gradle/gradle.properties
+                sed -i -r "s|TF_SECRET|$AWSCISINTEGRATION_INTEGRATION_SECRETKEY|g" $HOME/.gradle/gradle.properties
               
               - echo "==== Configure testing environment for testing Alpha, Beta and RC release ====" &&
                 cd $SCRIPTSFROMSRCREPO_STATE &&
+                gradle prepareTF &&
+                ls -al tf-temp/ &&
+                more tf-temp/credentials &&
                 gradle planTerraform &&
                 ls -al tf-temp/ &&
                 gradle showTerraform

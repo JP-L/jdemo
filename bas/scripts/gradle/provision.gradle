@@ -46,7 +46,7 @@ task prepareTF {
     dependsOn copyTFfiles
     doLast {
     	new File("${terraform_workingdir}/credentials").text = """
-[default]
+[terraform]
 aws_access_key_id = "${terraform_accessKeyId}"
 aws_secret_access_key = "${terraform_secretAccessKey}"
 """

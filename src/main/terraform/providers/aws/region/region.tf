@@ -27,7 +27,7 @@
 #
 provider "aws" {
 	shared_credentials_file = "${path.cwd}/tf-temp/credentials"
-	profile = "default"
+	profile = "terraform"
 	region = "${var.region}"
 }
 
