@@ -410,11 +410,11 @@ jobs:
       
                 sed -i -r "s|SRCREPO_KEY|$SRCREPO_USR|g" $HOME/.gradle/gradle.properties &&
       
-                sed -i -r "s|MY_ACCESS_ID|$AMAZONKEYS_ACCESSKEY|g" $HOME/.gradle/gradle.properties && 
-                sed -i -r "s|MY_SECRET|$AMAZONKEYS_SECRETKEY|g" $HOME/.gradle/gradle.properties &&
+                sed -i -r "s|MY_ACCESS_ID|$AWSCLICONFIG_INTEGRATION_ACCESSKEY|g" $HOME/.gradle/gradle.properties && 
+                sed -i -r "s|MY_SECRET|$AWSCLICONFIG_INTEGRATION_SECRETKEY|g" $HOME/.gradle/gradle.properties &&
                 
-                sed -i -r "s|TF_ACCESS_ID|$AMAZONKEYS_SECRETKEY|g" $HOME/.gradle/gradle.properties &&
-                sed -i -r "s|TF_SECRET|$AMAZONKEYS_SECRETKEY|g" $HOME/.gradle/gradle.properties
+                sed -i -r "s|TF_ACCESS_ID|$AWSCISINTEGRATION_INTEGRATION_ACCESSKEY|g" $HOME/.gradle/gradle.properties &&
+                sed -i -r "s|TF_SECRET|$AWSCISINTEGRATION_INTEGRATION_SECRETKEY|g" $HOME/.gradle/gradle.properties
               
               - echo "==== Configure testing environment for testing Alpha, Beta and RC release ====" &&
                 cd $SCRIPTSFROMSRCREPO_STATE &&
