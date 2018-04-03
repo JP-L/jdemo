@@ -163,7 +163,7 @@ integrations:
           on_start: always
 
     hub:
-        - integrationName: AWS
+        - integrationName: AWS-EIS
           type: ecr
           region: eu-west-1
 #          agent_only:
@@ -231,14 +231,14 @@ resources:
     
     - name: jdemoImg
       type: image
-      integration: AWS
+      integration: AWS-EIS
       versionTemplate:
         sourceName: $IMAGE_REPOSITORY
         versionName: $IMAGE_VERSION
         
     - name: jdemoImgQA
       type: image
-      integration: AWS
+      integration: AWS-EIS
       versionTemplate:
         sourceName: $IMAGE_REPOSITORY
         versionName: $IMAGE_VERSION
@@ -268,7 +268,7 @@ resources:
     # Cluster
     - name: EUC1-QA-cluster
       type: cluster
-      integration: AWS
+      integration: AWS-EIS
       versionTemplate:
         sourceName: oz-qa-cluster
         region: eu-central-1
@@ -281,13 +281,13 @@ resources:
         method: application
 
    #### INTEGRATIONS ####
-    - name: aws-Integration
+    - name: aws-CIS-Integration
       type: integration
-      integration: AWS
+      integration: AWS-CIS
 
     - name: aws-cliConfig
       type: cliConfig
-      integration: AWS
+      integration: AWS_EIS
       versionTemplate:
         region: eu-central-1
         
@@ -381,20 +381,20 @@ jobs:
         - IN: IMAGE
         - IN: IMAGE_VERSION
         - IN: scripts-from-srcRepo
+        - IN: aws-CIS-Integration
         - IN: aws-cliConfig
           scopes:
             - ecr
-            - s3
         - TASK:
             name: setupStagingEnvironment
             runtime:                  # optional
               options:
                 imageName: $CI_CONTAINER
-                #imageName: drydock/u16javall
-                imageTag: $CI_CONTAINER_VERSION #'v6.1.4' #'1.0'
+                imageTag: $CI_CONTAINER_VERSION
                 pull: false
                 options: '--privileged=false --net=bridge -e FOO=true -e BOO=false'
             script:
+              - echo "==== DEBUG List all environment variables ====" && printenv
               - echo "==== Prepare container environment ====" &&
                 mkdir -p $HOME/.gradle &&
                 cp IN/scripts-from-srcRepo/gitRepo/bas/resources/gradle/gradle.properties $HOME/.gradle/ &&
@@ -411,8 +411,11 @@ jobs:
                 sed -i -r "s|SRCREPO_KEY|$SRCREPO_USR|g" $HOME/.gradle/gradle.properties &&
       
                 sed -i -r "s|MY_ACCESS_ID|$AMAZONKEYS_ACCESSKEY|g" $HOME/.gradle/gradle.properties && 
-                sed -i -r "s|MY_SECRET|$AMAZONKEYS_SECRETKEY|g" $HOME/.gradle/gradle.properties
-              - echo "==== DEBUG List all environment variables ====" && printenv
+                sed -i -r "s|MY_SECRET|$AMAZONKEYS_SECRETKEY|g" $HOME/.gradle/gradle.properties &&
+                
+                sed -i -r "s|TF_ACCESS_ID|$AMAZONKEYS_SECRETKEY|g" $HOME/.gradle/gradle.properties &&
+                sed -i -r "s|TF_SECRET|$AMAZONKEYS_SECRETKEY|g" $HOME/.gradle/gradle.properties
+              
               - echo "==== Configure testing environment for testing Alpha, Beta and RC release ====" &&
                 cd $SCRIPTSFROMSRCREPO_STATE &&
                 gradle planTerraform &&
@@ -463,17 +466,11 @@ jobs:
           scopes:
             - ecr
         - TASK:
-            name: pullCustomImage
-            script:
-              #- docker pull $CI_CONTAINER:$CI_CONTAINER_VERSION
-              - docker pull drydock/u16javall:v6.1.4
-        - TASK:
             name: runQATests
             runtime:                  # optional
               options:
-                #imageName: $CI_CONTAINER
-                imageName: drydock/u16javall
-                imageTag: 'v6.1.4' #'1.0'
+                imageName: $CI_CONTAINER
+                imageTag: $CI_CONTAINER_VERSION
                 pull: false
                 options: '--privileged=false --net=bridge -e FOO=true -e BOO=false'
             script:
@@ -482,9 +479,7 @@ jobs:
                 mkdir -p $HOME/.gradle &&
                 cp IN/scripts-from-srcRepo/gitRepo/bas/resources/gradle/gradle.properties $HOME/.gradle/ &&
                 printenv | grep BINREPO_PROP | cut -d'=' -f 2- | tr '|' '\n' >> $HOME/.gradle/gradle.properties &&
-                printenv | grep SRCREPO_PROP | cut -d'=' -f 2- | tr '|' '\n' >> $HOME/.gradle/gradle.properties &&
-                sed -i -r "s|MY_ACCESS_ID|$AMAZONKEYS_ACCESSKEY|g" $HOME/.gradle/gradle.properties &&
-                sed -i -r "s|MY_SECRET|$AMAZONKEYS_SECRETKEY|g" $HOME/.gradle/gradle.properties
+                printenv | grep SRCREPO_PROP | cut -d'=' -f 2- | tr '|' '\n' >> $HOME/.gradle/gradle.properties
               - echo "==== run tests for testing Alpha release ====" &&
                 gradle -v
               - echo "==== set Beta release on success ====" &&
