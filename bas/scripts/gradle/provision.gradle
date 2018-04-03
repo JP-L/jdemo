@@ -47,7 +47,7 @@ task prepareTF {
     doLast {
     	new File("${terraform_workingdir}/credentials").text = """
 [default]
-aws_access_key_id = "${terraform_accessKeyI}"
+aws_access_key_id = "${terraform_accessKeyId}"
 aws_secret_access_key = "${terraform_secretAccessKey}"
 """
     }
