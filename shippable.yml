@@ -384,10 +384,10 @@ jobs:
         - IN: aws-cliConfig
           scopes:
             - ecr
-        - TASK:
-            name: pullCustomImage
-            script:
-              - docker pull $CI_CONTAINER:$CI_CONTAINER_VERSION
+        #- TASK:
+        #    name: pullCustomImage
+        #    script:
+        #      - docker pull $CI_CONTAINER:$CI_CONTAINER_VERSION
               #- docker pull drydock/u16javall:v6.1.4
         - TASK:
             name: setupStagingEnvironment
