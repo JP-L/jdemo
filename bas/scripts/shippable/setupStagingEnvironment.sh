@@ -1,7 +1,7 @@
 #!/bin/bash -e
 #
 # Configure the environment(s)
-ARG=&1
+ARG="&1"
 
 function log () {
     if [[ $ARG -eq "--debug" ]]; then
@@ -38,7 +38,7 @@ cd $TERRAFORM_WORKINGDIR
 terraform init -input=false $TERRAFORM_WORKINGDIR
 terraform plan -out $TERRAFORM_WORKINGDIR/$TF_PLAN -input=false $TERRAFORM_WORKINGDIR
 
-if [[ $ARG -eq "--debug" ]]; then
+if [[ "$ARG" -eq "--debug" ]]; then
 	terraform show -module-depth=-1 $TERRAFORM_WORKINGDIR/$TF_PLAN
 else
 	terraform apply -input=false $TERRAFORM_WORKINGDIR/$TF_PLAN

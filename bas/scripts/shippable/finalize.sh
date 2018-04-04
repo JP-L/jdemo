@@ -4,7 +4,7 @@ ARG="&1"
 
 echo "==== Finish CI ===="
 
-if [ $ARG -eq "post_ci" ]; then
+if [ "$ARG" -eq "post_ci" ]; then
 	echo "==== Post CI tasks ==== ";
     if [ "$BRANCH" == "releases" ]; then
     	echo "==== Set $IMAGE_REPOSITORY with $IMAGE_VERSION for $BUILDNUMBER ==== ";
@@ -19,7 +19,7 @@ if [ $ARG -eq "post_ci" ]; then
     	echo "==== No Post CI tasks required ====";
     fi
    
-elif [ $ARG -eq "on_success" ]; then
+elif [ "$ARG" -eq "on_success" ]; then
 	if [ "$BRANCH" == "development" ]; then
 		echo "==== Release the code for Acceptance and Smoke testing ====";
 		gradle releaseDevelopment;
@@ -32,7 +32,7 @@ elif [ $ARG -eq "on_success" ]; then
 	else
 		echo "==== Unknown branch ====";
 	fi
-elif [ $ARG -eq "on_failure" ]; then
+elif [ "$ARG" -eq "on_failure" ]; then
 	echo "==== Build failed ===="
 fi
 
