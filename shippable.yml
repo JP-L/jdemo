@@ -383,7 +383,7 @@ jobs:
                 export TERRAFORM_WORKINGDIR=$SCRIPTSFROMSRCREPO_STATE/tf-temp &&
                 mkdir -p $TERRAFORM_WORKINGDIR &&
                 cp -r IN/scripts-from-srcRepo/gitRepo/src/main/terraform $TERRAFORM_WORKINGDIR &&
-                cp -r IN/scripts-from-srcRepo/gitRepo/src/resources/terraform $TERRAFORM_WORKINGDIR
+                cp -r IN/scripts-from-srcRepo/gitRepo/src/main/resources/terraform $TERRAFORM_WORKINGDIR
               - echo "==== DEBUG List all environment variables ====" && printenv
               - echo "==== Configure testing environment for testing Alpha, Beta and RC release ====" &&  
                 cd $TERRAFORM_WORKINGDIR &&
