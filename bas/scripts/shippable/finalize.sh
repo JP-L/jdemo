@@ -9,17 +9,17 @@ case $key in
     -p|--post)
     POST_CI=1
     shift # past argument
-    shift # past value
+    #shift # past value
     ;;
     -s|--success)
     SUCCESS=1
     shift # past argument
-    shift # past value
+    #shift # past value
     ;;
     -f|--failure)
     FAILURE=1
     shift # past argument
-    shift # past value
+    #shift # past value
     ;;
     --default)
     DEFAULT=YES
@@ -32,9 +32,6 @@ case $key in
 esac
 done
 set -- "${POSITIONAL[@]}" # restore positional parameters
-
-
-echo "==== Finish CI ===="
 
 if [ "$POST_CI" -eq 1 ]; then
 	echo "==== Post CI tasks ==== ";
