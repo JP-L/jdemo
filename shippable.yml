@@ -323,9 +323,9 @@ jobs:
                 pull: false
                 options: '--privileged=false --net=bridge -e FOO=true -e BOO=false'
             script:
-              - ls -l && ls -l ~/IN/
-              - chmod +x ~/IN/scripts-from-srcRepo/gitRepo/bas/scripts/shippable/*
-              - ~/IN/scripts-from-srcRepo/gitRepo/bas/scripts/shippable/setupStagingEnvironment.sh --debug 
+              - ls -l && ls -l IN/ && ls -l IN/scripts-from-srcRepo/ && ls -l IN/scripts-from-srcRepo/gitRepo/
+              - chmod +x IN/scripts-from-srcRepo/gitRepo/bas/scripts/shippable/*
+              - IN/scripts-from-srcRepo/gitRepo/bas/scripts/shippable/setupStagingEnvironment.sh --debug 
       on_failure:
         - NOTIFY: Slack
 

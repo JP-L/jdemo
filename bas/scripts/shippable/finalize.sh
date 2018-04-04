@@ -1,5 +1,9 @@
 #!/bin/bash -e
 #
+POST_CI=0
+SUCCESS=0
+FAILURE=0
+
 POSITIONAL=()
 while [[ $# -gt 0 ]]
 do
