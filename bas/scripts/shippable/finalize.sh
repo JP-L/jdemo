@@ -1,10 +1,42 @@
 #!/bin/bash -e
 #
-ARG="&1"
+POSITIONAL=()
+while [[ $# -gt 0 ]]
+do
+key="$1"
+
+case $key in
+    -p|--post)
+    POST_CI="$2"
+    shift # past argument
+    shift # past value
+    ;;
+    -s|--success)
+    SUCCESS="$2"
+    shift # past argument
+    shift # past value
+    ;;
+    -f|--failure)
+    FAILURE="$2"
+    shift # past argument
+    shift # past value
+    ;;
+    --default)
+    DEFAULT=YES
+    shift # past argument
+    ;;
+    *)    # unknown option
+    POSITIONAL+=("$1") # save it in an array for later
+    shift # past argument
+    ;;
+esac
+done
+set -- "${POSITIONAL[@]}" # restore positional parameters
+
 
 echo "==== Finish CI ===="
 
-if [ "$ARG" -eq "post_ci" ]; then
+if [ -z "$POST_CI" ]; then
 	echo "==== Post CI tasks ==== ";
     if [ "$BRANCH" == "releases" ]; then
     	echo "==== Set $IMAGE_REPOSITORY with $IMAGE_VERSION for $BUILDNUMBER ==== ";
@@ -19,7 +51,7 @@ if [ "$ARG" -eq "post_ci" ]; then
     	echo "==== No Post CI tasks required ====";
     fi
    
-elif [ "$ARG" -eq "on_success" ]; then
+elif [ -z "$SUCCESS" ]; then
 	if [ "$BRANCH" == "development" ]; then
 		echo "==== Release the code for Acceptance and Smoke testing ====";
 		gradle releaseDevelopment;
@@ -32,7 +64,7 @@ elif [ "$ARG" -eq "on_success" ]; then
 	else
 		echo "==== Unknown branch ====";
 	fi
-elif [ "$ARG" -eq "on_failure" ]; then
+elif [ -z "$FAILURE" ]; then
 	echo "==== Build failed ===="
 fi
 

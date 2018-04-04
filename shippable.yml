@@ -83,13 +83,13 @@ build:
     - echo "==== CI completed. Move to post CI ===="
 
   post_ci:
-    - $SHIPPABLE_REPO_DIR/bas/scripts/shippable/finalize.sh post_ci
+    - $SHIPPABLE_REPO_DIR/bas/scripts/shippable/finalize.sh -p
 
   on_success:
-    - $SHIPPABLE_REPO_DIR/bas/scripts/shippable/finalize.sh on_success
+    - $SHIPPABLE_REPO_DIR/bas/scripts/shippable/finalize.sh -s
 
   on_failure:
-    - $SHIPPABLE_REPO_DIR/bas/scripts/shippable/finalize.sh on_failure
+    - $SHIPPABLE_REPO_DIR/bas/scripts/shippable/finalize.sh -f
     
   cache: false
 
