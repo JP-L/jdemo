@@ -375,18 +375,16 @@ jobs:
                 imageTag: $CI_CONTAINER_VERSION
                 pull: false
                 options: '--privileged=false --net=bridge -e FOO=true -e BOO=false'
-            script: >
-                export
-                AWS_ACCESS_KEY_ID=$AWSCLICONFIG_INTEGRATION_AWS_ACCESS_KEY_ID
-                AWS_SECRET_ACCESS_KEY=$AWSCLICONFIG_INTEGRATION_AWS_SECRET_ACCESS_KEY
-                AWS_DEFAULT_REGION=$AWSCLICONFIG_POINTER_REGION
-                TERRAFORM_WORKINGDIR=$SCRIPTSFROMSRCREPO_STATE/tf-temp
             script:
-              - echo "==== DEBUG List all environment variables ====" && printenv
               - echo "==== Prepare container environment ====" &&
+                export AWS_ACCESS_KEY_ID=$AWSCLICONFIG_INTEGRATION_AWS_ACCESS_KEY_ID &&
+                export AWS_SECRET_ACCESS_KEY=$AWSCLICONFIG_INTEGRATION_AWS_SECRET_ACCESS_KEY &&
+                export AWS_DEFAULT_REGION=$AWSCLICONFIG_POINTER_REGION &&
+                export TERRAFORM_WORKINGDIR=$SCRIPTSFROMSRCREPO_STATE/tf-temp &&
                 mkdir -p $TERRAFORM_WORKINGDIR &&
                 cp -r IN/scripts-from-srcRepo/gitRepo/src/main/terraform $TERRAFORM_WORKINGDIR &&
                 cp -r IN/scripts-from-srcRepo/gitRepo/src/resources/terraform $TERRAFORM_WORKINGDIR
+              - echo "==== DEBUG List all environment variables ====" && printenv
               - echo "==== Configure testing environment for testing Alpha, Beta and RC release ====" &&  
                 cd $TERRAFORM_WORKINGDIR &&
                 terraform init -input=false $TERRAFORM_WORKINGDIR &&
