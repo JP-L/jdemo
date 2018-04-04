@@ -387,13 +387,11 @@ jobs:
                 mkdir -p $TERRAFORM_WORKINGDIR &&
                 cp -r IN/scripts-from-srcRepo/gitRepo/src/main/terraform $TERRAFORM_WORKINGDIR &&
                 cp -r IN/scripts-from-srcRepo/gitRepo/src/resources/terraform $TERRAFORM_WORKINGDIR
-            script:
               - echo "==== Configure testing environment for testing Alpha, Beta and RC release ====" &&  
                 cd $TERRAFORM_WORKINGDIR &&
                 terraform init -input=false $TERRAFORM_WORKINGDIR &&
                 terraform plan -out $TERRAFORM_WORKINGDIR/tf-plan -input=false $TERRAFORM_WORKINGDIR &&
                 terraform show -module-depth=-1 $TERRAFORM_WORKINGDIR/tf-plan
-            script:
               - echo "==== Store the LB ARN ====" &&
                 terraform output | grep $REGION | cut -d'=' -f 2- | sed -e 's/^[ \t]*//' &&
                 ARN=$(terraform output | grep $REGION | cut -d'=' -f 2- | sed -e 's/^[ \t]*//') &&
