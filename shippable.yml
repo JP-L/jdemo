@@ -78,41 +78,18 @@ build:
   # in this section can be used to skip default processing for CI.
   ci:
     - chmod +x $SHIPPABLE_REPO_DIR/bas/scripts/shippable/*
-    - ./$SHIPPABLE_REPO_DIR/bas/scripts/shippable/prepareCI.sh
-    - ./$SHIPPABLE_REPO_DIR/bas/scripts/shippable/assembleArtefact.sh
+    - $SHIPPABLE_REPO_DIR/bas/scripts/shippable/prepare.sh
+    - $SHIPPABLE_REPO_DIR/bas/scripts/shippable/assembleArtefact.sh
     - echo "==== CI completed. Move to post CI ===="
 
   post_ci:
-    - echo "==== Post CI tasks ==== ";
-      if [ "$BRANCH" == "releases" ]; then
-           echo "==== Set $IMAGE_REPOSITORY with $IMAGE_VERSION for $BUILDNUMBER ==== ";
-           shipctl put_resource_state jdemoImgQA sourceName $IMAGE_REPOSITORY;
-           shipctl put_resource_state jdemoImgQA versionName $IMAGE_VERSION;
-           shipctl put_resource_state jdemoImgQA buildNumber $BUILD_NUMBER;
-      elif [ "$BRANCH" == "master" ]; then
-           shipctl put_resource_state jdemoImg sourceName $IMAGE_REPOSITORY;
-           shipctl put_resource_state jdemoImg versionName $IMAGE_VERSION;
-           shipctl put_resource_state jdemoImg buildNumber $BUILD_NUMBER;
-      else
-           echo "==== No Post CI tasks required ====";
-      fi
+    - $SHIPPABLE_REPO_DIR/bas/scripts/shippable/finalize.sh post_ci
 
   on_success:
-    - if [ "$BRANCH" == "development" ]; then
-           echo "==== Release the code for Acceptance and Smoke testing ====";
-           gradle releaseDevelopment;
-      elif [ "$BRANCH" == "releases" ]; then
-           echo "==== Tag as alpha release ====";
-           gradle releaseAlpha;
-      elif [ "$BRANCH" == "master" ]; then
-           echo "==== Publish the next Release ====";   
-           gradle publishRelease;
-      else
-           echo "==== Unknown branch ====";
-      fi
+    - $SHIPPABLE_REPO_DIR/bas/scripts/shippable/finalize.sh on_success
 
   on_failure:
-    - echo "==== Build failed ===="
+    - $SHIPPABLE_REPO_DIR/bas/scripts/shippable/finalize.sh on_failure
     
   cache: false
 
@@ -334,7 +311,6 @@ jobs:
         - IN: IMAGE
         - IN: IMAGE_VERSION
         - IN: scripts-from-srcRepo
-        - IN: aws-CIS-Integration
         - IN: aws-cliConfig
           scopes:
             - ecr
@@ -348,7 +324,7 @@ jobs:
                 options: '--privileged=false --net=bridge -e FOO=true -e BOO=false'
             script:
               - chmod +x $SHIPPABLE_REPO_DIR/bas/scripts/shippable/*
-              - ./$SHIPPABLE_REPO_DIR/bas/scripts/shippable/setupStagingEnvironment.sh --debug 
+              - /$SHIPPABLE_REPO_DIR/bas/scripts/shippable/setupStagingEnvironment.sh --debug 
       on_failure:
         - NOTIFY: Slack
 
