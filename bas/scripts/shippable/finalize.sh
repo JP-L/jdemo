@@ -1,6 +1,6 @@
 #!/bin/bash -e
 #
-ARG=&1
+ARG="&1"
 
 echo "==== Finish CI ===="
 
