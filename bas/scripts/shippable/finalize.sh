@@ -7,17 +7,17 @@ key="$1"
 
 case $key in
     -p|--post)
-    POST_CI="$2"
+    POST_CI=1
     shift # past argument
     shift # past value
     ;;
     -s|--success)
-    SUCCESS="$2"
+    SUCCESS=1
     shift # past argument
     shift # past value
     ;;
     -f|--failure)
-    FAILURE="$2"
+    FAILURE=1
     shift # past argument
     shift # past value
     ;;
@@ -36,7 +36,7 @@ set -- "${POSITIONAL[@]}" # restore positional parameters
 
 echo "==== Finish CI ===="
 
-if [ -z "$POST_CI" ]; then
+if [ "$POST_CI" -eq 1 ]; then
 	echo "==== Post CI tasks ==== ";
     if [ "$BRANCH" == "releases" ]; then
     	echo "==== Set $IMAGE_REPOSITORY with $IMAGE_VERSION for $BUILDNUMBER ==== ";
@@ -51,7 +51,7 @@ if [ -z "$POST_CI" ]; then
     	echo "==== No Post CI tasks required ====";
     fi
    
-elif [ -z "$SUCCESS" ]; then
+elif [ "$SUCCESS" -eq 1 ]; then
 	if [ "$BRANCH" == "development" ]; then
 		echo "==== Release the code for Acceptance and Smoke testing ====";
 		gradle releaseDevelopment;
@@ -64,7 +64,7 @@ elif [ -z "$SUCCESS" ]; then
 	else
 		echo "==== Unknown branch ====";
 	fi
-elif [ -z "$FAILURE" ]; then
+elif [ "$FAILURE" -eq 1 ]; then
 	echo "==== Build failed ===="
 fi
 

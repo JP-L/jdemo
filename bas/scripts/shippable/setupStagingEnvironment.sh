@@ -1,7 +1,7 @@
 #!/bin/bash -e
 #
 # Configure the environment(s)
-ARG="&1"
+ARG="$1"
 
 function log () {
     if [[ $ARG -eq "--debug" ]]; then
