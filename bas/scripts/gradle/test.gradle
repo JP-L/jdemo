@@ -75,7 +75,7 @@ task runFunctionalAndIntegrationTests(type: Exec) {
         println "${msg}"
     }
 }
-task runAcceptanceAndSmokeTests(type: Exec) << {
+task runAcceptanceAndSmokeTests(type: Exec) {
 	group "Test"
 	//dependsOn .... releaseCI -> probably this becomes a shippable Job
 }

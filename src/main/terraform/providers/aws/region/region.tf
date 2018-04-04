@@ -26,8 +26,8 @@
 #     https://github.com/..
 #
 provider "aws" {
-	shared_credentials_file = "${path.cwd}/tf-temp/credentials"
-	profile = "terraform"
+	#shared_credentials_file = "${path.cwd}/tf-temp/credentials"
+	profile = "eis"
 	region = "${var.region}"
 }
 

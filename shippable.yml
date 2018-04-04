@@ -375,41 +375,30 @@ jobs:
                 imageTag: $CI_CONTAINER_VERSION
                 pull: false
                 options: '--privileged=false --net=bridge -e FOO=true -e BOO=false'
+            script: >
+                export
+                AWS_ACCESS_KEY_ID=$AWSCLICONFIG_INTEGRATION_AWS_ACCESS_KEY_ID
+                AWS_SECRET_ACCESS_KEY=$AWSCLICONFIG_INTEGRATION_AWS_SECRET_ACCESS_KEY
+                AWS_DEFAULT_REGION=$AWSCLICONFIG_POINTER_REGION
+                TERRAFORM_WORKINGDIR=$SCRIPTSFROMSRCREPO_STATE/tf-temp
             script:
-              #- echo "==== DEBUG List all environment variables ====" && printenv
+              - echo "==== DEBUG List all environment variables ====" && printenv
               - echo "==== Prepare container environment ====" &&
-                mkdir -p $HOME/.gradle &&
-                cp IN/scripts-from-srcRepo/gitRepo/bas/resources/gradle/gradle.properties $HOME/.gradle/ &&
-                sed -i -r "s|BURL|$BINREPO_URL|g" $HOME/.gradle/gradle.properties &&
-                sed -i -r "s|REG_URL|$BINREPO_REGURL|g" $HOME/.gradle/gradle.properties &&
-                sed -i -r "s|USR|$BINREPO_USR|g" $HOME/.gradle/gradle.properties &&
-                sed -i -r "s|PWD|$BINREPO_PWD|g" $HOME/.gradle/gradle.properties &&
-                sed -i -r "s|EMAIL|$BINREPO_EMAIL|g" $HOME/.gradle/gradle.properties &&
-
-                sed -i -r "s|SONAR_URL|$SONAR_URL|g" $HOME/.gradle/gradle.properties &&
-                sed -i -r "s|ORG|$ORGANIZATION|g" $HOME/.gradle/gradle.properties &&
-                sed -i -r "s|SONAR_KEY|$SONAR_KEY|g" $HOME/.gradle/gradle.properties &&
-      
-                sed -i -r "s|SRCREPO_KEY|$SRCREPO_USR|g" $HOME/.gradle/gradle.properties &&
-      
-                sed -i -r "s|MY_ACCESS_ID|$AWSCLICONFIG_INTEGRATION_ACCESSKEY|g" $HOME/.gradle/gradle.properties && 
-                sed -i -r "s|MY_SECRET|$AWSCLICONFIG_INTEGRATION_SECRETKEY|g" $HOME/.gradle/gradle.properties &&
-                
-                sed -i -r "s|TF_ACCESS_ID|$AWSCISINTEGRATION_INTEGRATION_ACCESSKEY|g" $HOME/.gradle/gradle.properties &&
-                sed -i -r "s|TF_SECRET|$AWSCISINTEGRATION_INTEGRATION_SECRETKEY|g" $HOME/.gradle/gradle.properties
-              
-              - echo "==== Configure testing environment for testing Alpha, Beta and RC release ====" &&
-                cd $SCRIPTSFROMSRCREPO_STATE &&
-                gradle prepareTF &&
-                ls -al tf-temp/ &&
-                more tf-temp/credentials &&
-                gradle planTerraform &&
-                ls -al tf-temp/ &&
-                gradle showTerraform
-              - echo "==== TODO TODO TODO TODO ===="
-              - terraform output | grep $REGION | cut -d'=' -f 2- | sed -e 's/^[ \t]*//'
-              - ARN=$(terraform output | grep $REGION | cut -d'=' -f 2- | sed -e 's/^[ \t]*//')
-              - shipctl put_resource_state EUC1-ELB-QA-cluster sourceName $ARN
+                mkdir -p $TERRAFORM_WORKINGDIR &&
+                cp -r IN/scripts-from-srcRepo/gitRepo/src/main/terraform $TERRAFORM_WORKINGDIR &&
+                cp -r IN/scripts-from-srcRepo/gitRepo/src/resources/terraform $TERRAFORM_WORKINGDIR
+            script:
+              - echo "==== Configure testing environment for testing Alpha, Beta and RC release ====" &&  
+                cd $TERRAFORM_WORKINGDIR &&
+                terraform init -input=false $TERRAFORM_WORKINGDIR &&
+                terraform plan -out $TERRAFORM_WORKINGDIR/tf-plan -input=false $TERRAFORM_WORKINGDIR &&
+                terraform show -module-depth=-1 $TERRAFORM_WORKINGDIR/tf-plan
+            script:
+              - echo "==== Store the LB ARN ====" &&
+                terraform output | grep $REGION | cut -d'=' -f 2- | sed -e 's/^[ \t]*//' &&
+                ARN=$(terraform output | grep $REGION | cut -d'=' -f 2- | sed -e 's/^[ \t]*//') &&
+                echo $ARN &&
+                shipctl put_resource_state EUC1-ELB-QA-cluster sourceName $ARN
       on_failure:
         - NOTIFY: Slack
 
