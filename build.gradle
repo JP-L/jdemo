@@ -39,7 +39,7 @@ apply from: "$rootDir/bas/scripts/gradle/repositories.gradle"
 apply from: "$rootDir/bas/scripts/gradle/docker.gradle"
 apply from: "$rootDir/bas/scripts/gradle/release.gradle"
 apply from: "$rootDir/bas/scripts/gradle/test.gradle"
-apply from: "$rootDir/bas/scripts/gradle/provision.gradle"
+#apply from: "$rootDir/bas/scripts/gradle/provision.gradle"
 
 /* 
  * Apply plugins to add support for:

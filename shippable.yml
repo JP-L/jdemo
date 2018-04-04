@@ -77,38 +77,9 @@ build:
   # commands in this section run inside your CI container. In addition, any commands such as ls, 
   # in this section can be used to skip default processing for CI.
   ci:
-    - echo "==== Prepare Gradle environment ====" && 
-      mkdir -p $HOME/.gradle &&
-      cp $SHIPPABLE_REPO_DIR/bas/resources/gradle/gradle.properties $HOME/.gradle/ &&
-
-      sed -i -r "s|BURL|$BINREPO_URL|g" $HOME/.gradle/gradle.properties &&
-      sed -i -r "s|REG_URL|$BINREPO_REGURL|g" $HOME/.gradle/gradle.properties &&
-      sed -i -r "s|USR|$BINREPO_USR|g" $HOME/.gradle/gradle.properties &&
-      sed -i -r "s|PWD|$BINREPO_PWD|g" $HOME/.gradle/gradle.properties &&
-      sed -i -r "s|EMAIL|$BINREPO_EMAIL|g" $HOME/.gradle/gradle.properties &&
-
-      sed -i -r "s|SONAR_URL|$SONAR_URL|g" $HOME/.gradle/gradle.properties &&
-      sed -i -r "s|ORG|$ORGANIZATION|g" $HOME/.gradle/gradle.properties &&
-      sed -i -r "s|SONAR_KEY|$SONAR_KEY|g" $HOME/.gradle/gradle.properties &&
-      
-      sed -i -r "s|SRCREPO_KEY|$SRCREPO_USR|g" $HOME/.gradle/gradle.properties &&
-      
-      sed -i -r "s|MY_ACCESS_ID|$AMAZONKEYS_ACCESSKEY|g" $HOME/.gradle/gradle.properties && 
-      sed -i -r "s|MY_SECRET|$AMAZONKEYS_SECRETKEY|g" $HOME/.gradle/gradle.properties
-
-    - echo "==== Building the Java application ====" &&
-      gradle assemble;
-      if [ "$BRANCH" != "master" ]; then
-           echo "==== Tests and Quality control for the Java application ====";  
-           gradle inspectQuality;
-           gradle runFunctionalAndIntegrationTests;
-      elif [ "$BRANCH" == "master" ]; then
-           echo "==== Tests for the Java application ====";  
-           gradle test;
-           gradle runFunctionalAndIntegrationTests;
-      else
-           echo "==== Unknown branch ====";
-      fi
+    - chmod +x $SHIPPABLE_REPO_DIR/bas/scripts/shippable/*
+    - ./$SHIPPABLE_REPO_DIR/bas/scripts/shippable/prepareCI.sh
+    - ./$SHIPPABLE_REPO_DIR/bas/scripts/shippable/assembleArtefact.sh
     - echo "==== CI completed. Move to post CI ===="
 
   post_ci:
@@ -376,25 +347,8 @@ jobs:
                 pull: false
                 options: '--privileged=false --net=bridge -e FOO=true -e BOO=false'
             script:
-              - echo "==== Prepare container environment ====" &&
-                export AWS_ACCESS_KEY_ID=$AWSCLICONFIG_INTEGRATION_AWS_ACCESS_KEY_ID &&
-                export AWS_SECRET_ACCESS_KEY=$AWSCLICONFIG_INTEGRATION_AWS_SECRET_ACCESS_KEY &&
-                export AWS_DEFAULT_REGION=$AWSCLICONFIG_POINTER_REGION &&
-                export TERRAFORM_WORKINGDIR=$SCRIPTSFROMSRCREPO_STATE/tf-temp &&
-                mkdir -p $TERRAFORM_WORKINGDIR &&
-                cp -r IN/scripts-from-srcRepo/gitRepo/src/main/terraform $TERRAFORM_WORKINGDIR &&
-                cp -r IN/scripts-from-srcRepo/gitRepo/src/main/resources/terraform $TERRAFORM_WORKINGDIR
-              - echo "==== DEBUG List all environment variables ====" && printenv
-              - echo "==== Configure testing environment for testing Alpha, Beta and RC release ====" &&  
-                cd $TERRAFORM_WORKINGDIR &&
-                terraform init -input=false $TERRAFORM_WORKINGDIR &&
-                terraform plan -out $TERRAFORM_WORKINGDIR/tf-plan -input=false $TERRAFORM_WORKINGDIR &&
-                terraform show -module-depth=-1 $TERRAFORM_WORKINGDIR/tf-plan
-              - echo "==== Store the LB ARN ====" &&
-                terraform output | grep $REGION | cut -d'=' -f 2- | sed -e 's/^[ \t]*//' &&
-                ARN=$(terraform output | grep $REGION | cut -d'=' -f 2- | sed -e 's/^[ \t]*//') &&
-                echo $ARN &&
-                shipctl put_resource_state EUC1-ELB-QA-cluster sourceName $ARN
+              - chmod +x $SHIPPABLE_REPO_DIR/bas/scripts/shippable/*
+              - ./$SHIPPABLE_REPO_DIR/bas/scripts/shippable/setupStagingEnvironment.sh --debug 
       on_failure:
         - NOTIFY: Slack
 
