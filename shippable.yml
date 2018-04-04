@@ -302,7 +302,7 @@ jobs:
       on_start:
         - NOTIFY: Slack
       steps:
-        - IN: jdemo_runCI
+        - IN: jdemoImgQA
         - IN: CI_CONTAINER
         - IN: CI_CONTAINER_VERSION
         - IN: Sonar
@@ -323,6 +323,7 @@ jobs:
                 pull: false
                 options: '--privileged=false --net=bridge -e FOO=true -e BOO=false'
             script:
+              - ls -l && ls -l ~/IN/
               - chmod +x ~/IN/scripts-from-srcRepo/gitRepo/bas/scripts/shippable/*
               - ~/IN/scripts-from-srcRepo/gitRepo/bas/scripts/shippable/setupStagingEnvironment.sh --debug 
       on_failure:
@@ -374,7 +375,7 @@ jobs:
                 pull: false
                 options: '--privileged=false --net=bridge -e FOO=true -e BOO=false'
             script:
-              - echo "==== TODO TODO TODO TODO ===="
+              - echo "==== TODO TODO TODO TODO ====" && ls -l && ls -l ~/IN/
               - chmod +x ~/IN/scripts-from-srcRepo/gitRepo/bas/scripts/shippable/*
               - ~/IN/scripts-from-srcRepo/gitRepo/bas/scripts/shippable/prepare.sh
                 
