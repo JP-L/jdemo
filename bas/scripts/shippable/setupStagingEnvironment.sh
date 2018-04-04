@@ -1,55 +1,133 @@
 #!/bin/bash -e
 #
 # Configure the environment(s)
-ARG="$1"
 
-function log () {
-    if [[ $ARG -eq "--debug" ]]; then
+# Script variables
+DEBUG=0
+LOCAL=0
+SRCPATH=""  				#IN/scripts-from-srcRepo/gitRepo/src/main/
+MODULE=""					#terraform
+TF_PLAN="tfplan"
+WORKINGDIR="" 				#$SCRIPTSFROMSRCREPO_STATE/tf-temp
+AWS_ACCESS_KEY_ID="" 		#$AWSCLICONFIG_INTEGRATION_AWS_ACCESS_KEY_ID
+AWS_SECRET_ACCESS_KEY=""	#$AWSCLICONFIG_INTEGRATION_AWS_SECRET_ACCESS_KEY
+AWS_DEFAULT_REGION=""		#$AWSCLICONFIG_POINTER_REGION
+
+# Some helper functions
+function log_debug () {
+    if [[ "$DEBUG" -eq 1 ]]; then
         echo "$@"
     fi
 }
+function log_info () {
+    echo "$@"
+}
 
-echo "==== Prepare container environment ===="
+# Reading the commandline arguments
+POSITIONAL=()
+while [[ $# -gt 0 ]]
+do
+key="$1"
 
-BASE_SRCDIR=IN/scripts-from-srcRepo/gitRepo/src/main
+case $key in
+    -d|--debug)
+    DEBUG=1
+    shift # past argument
+    #shift # past value
+    ;;
+    -l|--local)
+    LOCAL=1
+    shift # past argument
+    #shift # past value
+    ;;
+    -src|--source)
+    SRCPATH="$2"
+    shift # past argument
+    shift # past value
+    ;;
+    -w|--workingdir)
+    WORKINGDIR="$2"
+    shift # past argument
+    shift # past value
+    ;;
+    -m|--module)
+    MODULE="$2"
+    shift # past argument
+    shift # past value
+    ;;
+    -ak|--accessKey)
+    AWS_ACCESS_KEY_ID="$2"
+    shift # past argument
+    shift # past value
+    ;;
+    -sk|--secretKey)
+    AWS_SECRET_ACCESS_KEY_ID="$2"
+    shift # past argument
+    shift # past value
+    ;;
+    -r|--region)
+    AWS_DEFAULT_REGION="$2"
+    shift # past argument
+    shift # past value
+    ;;
+    --default)
+    DEFAULT=YES
+    shift # past argument
+    ;;
+    *)    # unknown option
+    POSITIONAL+=("$1") # save it in an array for later
+    shift # past argument
+    ;;
+esac
+done
+set -- "${POSITIONAL[@]}" # restore positional parameters
 
-TF_DIR=tf-temp
-TF_PLAN=tf_plan
-TERRAFORM_WORKINGDIR=$SCRIPTSFROMSRCREPO_STATE/$TF_DIR
-
-export AWS_ACCESS_KEY_ID=$AWSCLICONFIG_INTEGRATION_AWS_ACCESS_KEY_ID
-export AWS_SECRET_ACCESS_KEY=$AWSCLICONFIG_INTEGRATION_AWS_SECRET_ACCESS_KEY
-export AWS_DEFAULT_REGION=$AWSCLICONFIG_POINTER_REGION
-
-
-mkdir -p $TERRAFORM_WORKINGDIR
-if [ -d "$BASE_SRCDIR/terraform" ]; then
-	cp -r "$BASE_SRCDIR/terraform" $TERRAFORM_WORKINGDIR
+log_info "==== Prepare container environment ===="
+if [ "$LOCAL" -eq 0 ]; then
+	export AWS_ACCESS_KEY_ID=$AWSCLICONFIG_INTEGRATION_AWS_ACCESS_KEY_ID
+	export AWS_SECRET_ACCESS_KEY=$AWSCLICONFIG_INTEGRATION_AWS_SECRET_ACCESS_KEY
+	export AWS_DEFAULT_REGION=$AWSCLICONFIG_POINTER_REGION
 fi
 
-if [ -d "$BASE_SRCDIR/resources/terraform" ]; then
-	cp -r "$BASE_SRCDIR/resources/terraform" $TERRAFORM_WORKINGDIR
-fi
-
-log "==== DEBUG List all environment variables ====" && printenv               
-              - 
-echo "==== Configure testing environment for testing Alpha, Beta and RC release ===="  
-cd $TERRAFORM_WORKINGDIR
-terraform init -input=false $TERRAFORM_WORKINGDIR
-terraform plan -out $TERRAFORM_WORKINGDIR/$TF_PLAN -input=false $TERRAFORM_WORKINGDIR
-
-if [[ "$ARG" -eq "--debug" ]]; then
-	terraform show -module-depth=-1 $TERRAFORM_WORKINGDIR/$TF_PLAN
+if [ ! -d "$WORKINGDIR" ]; then
+	mkdir -p $WORKINGDIR
 else
-	terraform apply -input=false $TERRAFORM_WORKINGDIR/$TF_PLAN
+	# clean the working dir
+	rm -R $WORKINGDIR/
+fi
+if [ -d "$SRCPATH/$MODULE" ]; then
+	log_debug "==== Copy $SRCPATH/$MODULE/. into $WORKINGDIR ===="
+	cp -R "$SRCPATH/$MODULE/." "$WORKINGDIR"
+fi
+if [ -d "$SRCPATH/resources/$MODULE" ]; then
+	log_debug "==== Copy $SRCPATH/resources/$MODULE/. into $WORKINGDIR ===="
+	cp -R "$SRCPATH/resources/$MODULE/." "$WORKINGDIR"
 fi
 
-echo "==== Store the LB ARN ===="
-terraform output | grep $REGION | cut -d'=' -f 2- | sed -e 's/^[ \t]*//'
-ARN=$(terraform output | grep $REGION | cut -d'=' -f 2- | sed -e 's/^[ \t]*//') &&
+log_debug "==== DEBUG List all environment variables ====" && printenv               
+ 
+log_info "==== Configure testing environment for testing Alpha, Beta and RC release ===="  
+cd $WORKINGDIR
+log_info "==== init ===="
+terraform init -input=false $WORKINGDIR
+log_info "==== plan ===="
+terraform plan -out $WORKINGDIR/$TF_PLAN -input=false $WORKINGDIR
 
-log "$ARN"
+if [[ "$DEBUG" -eq 1 ]]; then
+	log_debug "==== show ===="
+	terraform show -module-depth=-1 $WORKINGDIR/$TF_PLAN
+	log_debug "==== output ===="
+	terraform output | grep "$AWS_DEFAULT_REGION" | cut -d'=' -f 2- | sed -e 's/^[ \t]*//'
+else
+	log_info "==== apply ===="
+	terraform apply -input=false $WORKINGDIR/$TF_PLAN
+fi
 
-shipctl put_resource_state EUC1-ELB-QA-cluster sourceName $ARN
+log_info "==== Store the LB ARN ===="
+ARN=$(terraform output | grep "AWS_DEFAULT_REGION" | cut -d'=' -f 2- | sed -e 's/^[ \t]*//') &&
+log_debug "$ARN"
+if [ "$LOCAL" -eq 0 ]; then
+	shipctl put_resource_state EUC1-ELB-QA-cluster sourceName $ARN
+fi
 
 exit 0;

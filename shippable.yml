@@ -78,7 +78,7 @@ build:
   # in this section can be used to skip default processing for CI.
   ci:
     - chmod +x $SHIPPABLE_REPO_DIR/bas/scripts/shippable/*
-    - $SHIPPABLE_REPO_DIR/bas/scripts/shippable/prepare.sh
+    - $SHIPPABLE_REPO_DIR/bas/scripts/shippable/prepare.sh -src $SHIPPABLE_REPO_DIR/bas/resources/gradle/gradle.properties
     - $SHIPPABLE_REPO_DIR/bas/scripts/shippable/assembleArtefact.sh
     - echo "==== CI completed. Move to post CI ===="
 
@@ -323,9 +323,8 @@ jobs:
                 pull: false
                 options: '--privileged=false --net=bridge -e FOO=true -e BOO=false'
             script:
-              - ls -l && ls -l IN/ && ls -l IN/scripts-from-srcRepo/ && ls -l IN/scripts-from-srcRepo/gitRepo/
               - chmod +x IN/scripts-from-srcRepo/gitRepo/bas/scripts/shippable/*
-              - IN/scripts-from-srcRepo/gitRepo/bas/scripts/shippable/setupStagingEnvironment.sh --debug 
+              - IN/scripts-from-srcRepo/gitRepo/bas/scripts/shippable/setupStagingEnvironment.sh -d -src IN/scripts-from-srcRepo/gitRepo/src/main/ -w $SCRIPTSFROMSRCREPO_STATE/tf-temp -m terraform -ak $AWSCLICONFIG_INTEGRATION_AWS_ACCESS_KEY_ID -sk $AWSCLICONFIG_INTEGRATION_AWS_SECRET_ACCESS_KEY -r $AWSCLICONFIG_POINTER_REGION
       on_failure:
         - NOTIFY: Slack
 

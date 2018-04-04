@@ -29,6 +29,7 @@ provider "aws" {
 	#shared_credentials_file = "${path.cwd}/tf-temp/credentials"
 	profile = "eis"
 	region = "${var.region}"
+	version = "~> 1.13"
 }
 
 #
