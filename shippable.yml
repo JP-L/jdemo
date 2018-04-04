@@ -323,8 +323,8 @@ jobs:
                 pull: false
                 options: '--privileged=false --net=bridge -e FOO=true -e BOO=false'
             script:
-              - chmod +x IN/scripts-from-srcRepo/gitRepo/bas/scripts/shippable/*
-              - /IN/scripts-from-srcRepo/gitRepo/bas/scripts/shippable/setupStagingEnvironment.sh --debug 
+              - chmod +x ~/IN/scripts-from-srcRepo/gitRepo/bas/scripts/shippable/*
+              - ~/IN/scripts-from-srcRepo/gitRepo/bas/scripts/shippable/setupStagingEnvironment.sh --debug 
       on_failure:
         - NOTIFY: Slack
 
@@ -375,8 +375,8 @@ jobs:
                 options: '--privileged=false --net=bridge -e FOO=true -e BOO=false'
             script:
               - echo "==== TODO TODO TODO TODO ===="
-              - chmod +x IN/scripts-from-srcRepo/gitRepo/bas/scripts/shippable/*
-              - IN/scripts-from-srcRepo/gitRepo/bas/scripts/shippable/prepare.sh
+              - chmod +x ~/IN/scripts-from-srcRepo/gitRepo/bas/scripts/shippable/*
+              - ~/IN/scripts-from-srcRepo/gitRepo/bas/scripts/shippable/prepare.sh
                 
               - echo "==== run tests for testing Alpha release ====" &&
                 gradle -v
