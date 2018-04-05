@@ -78,7 +78,9 @@ build:
   # in this section can be used to skip default processing for CI.
   ci:
     - chmod +x $SHIPPABLE_REPO_DIR/bas/scripts/shippable/*
-    - $SHIPPABLE_REPO_DIR/bas/scripts/shippable/prepare.sh -src $SHIPPABLE_REPO_DIR/bas/resources/gradle/gradle.properties $DEBUG
+    - $SHIPPABLE_REPO_DIR/bas/scripts/shippable/prepare.sh 
+        -src $SHIPPABLE_REPO_DIR/bas/resources/gradle/gradle.properties 
+        $DEBUG
     - $SHIPPABLE_REPO_DIR/bas/scripts/shippable/assembleArtefact.sh
     - echo "==== CI completed. Move to post CI ===="
 
@@ -330,13 +332,14 @@ jobs:
             script:
               - echo "=== list of envs ====" && printenv
               - export SHIPPABLE_REPO_DIR=IN/scripts-from-srcRepo/gitRepo && chmod +x $SHIPPABLE_REPO_DIR/bas/scripts/shippable/*
-              - $SHIPPABLE_REPO_DIR/bas/scripts/shippable/setupStagingEnvironment.sh \
-                   -src $SHIPPABLE_REPO_DIR/src/main/ \
-                   -w $SCRIPTSFROMSRCREPO_STATE/tf-temp \
-                   -m terraform \
-                   -ak $AWSCLICONFIG_INTEGRATION_AWS_ACCESS_KEY_ID \
-                   -sk $AWSCLICONFIG_INTEGRATION_AWS_SECRET_ACCESS_KEY \
+              - $SHIPPABLE_REPO_DIR/bas/scripts/shippable/setupStagingEnvironment.sh
+                   -src $SHIPPABLE_REPO_DIR/src/main/
+                   -w $SCRIPTSFROMSRCREPO_STATE/tf-temp
+                   -m terraform
+                   -ak $AWSCLICONFIG_INTEGRATION_AWS_ACCESS_KEY_ID
+                   -sk $AWSCLICONFIG_INTEGRATION_AWS_SECRET_ACCESS_KEY
                    -r $AWSCLICONFIG_POINTER_REGION
+                   $DEBUG
       on_failure:
         - NOTIFY: Slack
 
@@ -387,8 +390,11 @@ jobs:
                 options: '--privileged=false --net=bridge -e FOO=true -e BOO=false'
             script:
               - echo "==== TODO TODO TODO TODO ===="
-              - chmod +x IN/scripts-from-srcRepo/gitRepo/bas/scripts/shippable/*
-              - IN/scripts-from-srcRepo/gitRepo/bas/scripts/shippable/prepare.sh -src IN/scripts-from-srcRepo/gitRepo/bas/resources/gradle/gradle.properties
+              - echo "=== list of envs ====" && printenv
+              - export SHIPPABLE_REPO_DIR=IN/scripts-from-srcRepo/gitRepo && chmod +x $SHIPPABLE_REPO_DIR/bas/scripts/shippable/*
+              - $SHIPPABLE_REPO_DIR/bas/scripts/shippable/prepare.sh
+                   -src $SHIPPABLE_REPO_DIR/bas/resources/gradle/gradle.properties
+                   $DEBUG
               - echo "==== run tests for testing Alpha release ====" &&
                 gradle -v
               - echo "==== set Beta release on success ====" &&
