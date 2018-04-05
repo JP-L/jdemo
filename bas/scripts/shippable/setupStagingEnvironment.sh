@@ -1,4 +1,4 @@
-#!/bin/bash -ex
+#!/bin/bash -e
 #
 # Configure the environment(s)
 
@@ -82,11 +82,16 @@ esac
 done
 set -- "${POSITIONAL[@]}" # restore positional parameters
 
+if [[ "$DEBUG" -eq 1 ]]; then
+	set -o xtrace
+fi
+
+
 log_info "==== Prepare container environment ===="
 if [ "$LOCAL" -eq 0 ]; then
-	export AWS_ACCESS_KEY_ID
-	export AWS_SECRET_ACCESS_KEY
-	export AWS_DEFAULT_REGION
+	if [ ! -z "$AWS_ACCESS_KEY_ID" ]; then export AWS_ACCESS_KEY_ID="$AWS_ACCESS_KEY_ID"; fi
+	if [ ! -z "$AWS_SECRET_ACCESS_KEY" ]; then export AWS_SECRET_ACCESS_KEY="$AWS_SECRET_ACCESS_KEY"; fi
+	if [ ! -z "$AWS_DEFAULT_REGION" ]; then export AWS_DEFAULT_REGION="$AWS_DEFAULT_REGION"; fi
 fi
 
 if [ ! -d "$WORKINGDIR" ]; then

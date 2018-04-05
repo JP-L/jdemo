@@ -1,5 +1,6 @@
-#!/bin/bash -ex
+#!/bin/bash -e
 #
+DEBUG=0
 POST_CI=0
 SUCCESS=0
 FAILURE=0
@@ -10,6 +11,11 @@ do
 key="$1"
 
 case $key in
+    -d|--debug)
+    DEBUG=1
+    shift # past argument
+    #shift # past value
+    ;;
     -p|--post)
     POST_CI=1
     shift # past argument
@@ -36,6 +42,10 @@ case $key in
 esac
 done
 set -- "${POSITIONAL[@]}" # restore positional parameters
+
+if [[ "$DEBUG" -eq 1 ]]; then
+	set -o xtrace
+fi
 
 if [ "$POST_CI" -eq 1 ]; then
 	echo "==== Post CI tasks ==== ";

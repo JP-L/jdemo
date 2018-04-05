@@ -1,4 +1,4 @@
-#!/bin/bash -ex
+#!/bin/bash -e
 #
 DEBUG=0
 LOCAL=0
@@ -47,6 +47,10 @@ case $key in
 esac
 done
 set -- "${POSITIONAL[@]}" # restore positional parameters
+
+if [[ "$DEBUG" -eq 1 ]]; then
+	set -o xtrace
+fi
 
 log_info "==== Building the Java application ===="
 
