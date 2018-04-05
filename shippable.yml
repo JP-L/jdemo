@@ -330,13 +330,12 @@ jobs:
                 pull: false
                 options: '--privileged=false --net=bridge -e FOO=true -e BOO=false'
             script:
-              - echo "=== list of envs ====" && printenv
               - chmod +x $SCRIPTSFROMSRCREPO_STATE/bas/scripts/shippable/*
               - $SCRIPTSFROMSRCREPO_STATE/bas/scripts/shippable/setupStagingEnvironment.sh 
                   -src $SCRIPTSFROMSRCREPO_STATE/src/main/
                   -w $SCRIPTSFROMSRCREPO_STATE/tf-temp
                   -m terraform
-                  -ak $AWSCLICONFIG_INTEGRATION_AWS_ACCESS_KEY_ID
+                  -ak $AWSCLICONFIG_INTEGRATION_ACCESSKEY
                   -sk $AWSCLICONFIG_INTEGRATION_AWS_SECRET_ACCESS_KEY
                   $DEBUG
       on_failure:
