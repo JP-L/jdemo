@@ -84,9 +84,9 @@ set -- "${POSITIONAL[@]}" # restore positional parameters
 
 log_info "==== Prepare container environment ===="
 if [ "$LOCAL" -eq 0 ]; then
-	export AWS_ACCESS_KEY_ID=$AWSCLICONFIG_INTEGRATION_AWS_ACCESS_KEY_ID
-	export AWS_SECRET_ACCESS_KEY=$AWSCLICONFIG_INTEGRATION_AWS_SECRET_ACCESS_KEY
-	export AWS_DEFAULT_REGION=$AWSCLICONFIG_POINTER_REGION
+	export AWS_ACCESS_KEY_ID="$AWSCLICONFIG_INTEGRATION_AWS_ACCESS_KEY_ID"
+	export AWS_SECRET_ACCESS_KEY="$AWSCLICONFIG_INTEGRATION_AWS_SECRET_ACCESS_KEY"
+	export AWS_DEFAULT_REGION="$AWSCLICONFIG_POINTER_REGION"
 fi
 
 if [ ! -d "$WORKINGDIR" ]; then
@@ -130,7 +130,7 @@ fi
 ARN=$(terraform output | grep "$AWS_DEFAULT_REGION" | cut -d'=' -f 2- | sed -e 's/^[ \t]*//')
 log_debug "LB ARN $ARN"
 if [ "$LOCAL" -eq 0 ]; then
-	shipctl put_resource_state EUC1-ELB-QA-cluster sourceName $ARN
+	shipctl put_resource_state EUC1-ELB-QA-cluster sourceName "$ARN"
 fi
 
 exit 0;
