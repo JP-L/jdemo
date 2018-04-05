@@ -90,10 +90,11 @@ if [ "$LOCAL" -eq 0 ]; then
 fi
 
 if [ ! -d "$WORKINGDIR" ]; then
-	mkdir -p $WORKINGDIR
+	log_debug "==== Create working dir $WORKINGDIR ===="
+	mkdir -p "$WORKINGDIR"
 else
 	# clean the working dir
-	rm -R $WORKINGDIR/
+	rm -R "$WORKINGDIR/"
 fi
 if [ -d "$SRCPATH/$MODULE" ]; then
 	log_debug "==== Copy $SRCPATH/$MODULE/. into $WORKINGDIR ===="
@@ -107,19 +108,19 @@ fi
 log_debug "==== DEBUG List all environment variables ====" && printenv               
  
 log_info "==== Configure testing environment for testing Alpha, Beta and RC release ===="  
-cd $WORKINGDIR
+cd "$WORKINGDIR"
 log_info "==== init ===="
-terraform init -input=false $WORKINGDIR
+terraform init -input=false "$WORKINGDIR"
 log_info "==== plan ===="
-terraform plan -out $WORKINGDIR/$TF_PLAN -input=false $WORKINGDIR
+terraform plan -out "$WORKINGDIR/$TF_PLAN" -input=false "$WORKINGDIR"
 
 if [[ "$DEBUG" -eq 1 ]]; then
 	log_debug "==== show ===="
-	terraform show -module-depth=-1 $WORKINGDIR/$TF_PLAN
+	terraform show -module-depth=-1 "$WORKINGDIR/$TF_PLAN"
 fi
 
 log_info "==== apply ===="
-terraform apply -input=false $WORKINGDIR/$TF_PLAN
+terraform apply -input=false "$WORKINGDIR/$TF_PLAN"
 
 log_info "==== Store the LB ARN ===="
 if [[ "$DEBUG" -eq 1 ]]; then

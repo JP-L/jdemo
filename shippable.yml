@@ -78,7 +78,9 @@ build:
   # in this section can be used to skip default processing for CI.
   ci:
     - chmod +x $SHIPPABLE_REPO_DIR/bas/scripts/shippable/*
-    - $SHIPPABLE_REPO_DIR/bas/scripts/shippable/prepare.sh -src $SHIPPABLE_REPO_DIR/bas/resources/gradle/gradle.properties
+    - $SHIPPABLE_REPO_DIR/bas/scripts/shippable/prepare.sh \
+        -src $SHIPPABLE_REPO_DIR/bas/resources/gradle/gradle.properties \
+        $DEBUG
     - $SHIPPABLE_REPO_DIR/bas/scripts/shippable/assembleArtefact.sh
     - echo "==== CI completed. Move to post CI ===="
 
@@ -233,6 +235,10 @@ resources:
       type: integration
       integration: SRep
       
+    - name: RunMode
+      type: integration
+      integration: RunMode
+      
     #### NOTIFICATIONS ####
     - name: Slack
       type: notification
@@ -268,6 +274,7 @@ jobs:
     - name: jdemo_runCI
       type: runCI
       steps:
+        - IN: RunMode
         - IN: CI_CONTAINER
         - IN: CI_CONTAINER_VERSION
         - IN: IMAGE
