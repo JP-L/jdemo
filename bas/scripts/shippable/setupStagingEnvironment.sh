@@ -1,4 +1,4 @@
-#!/bin/bash -e
+#!/bin/bash -ex
 #
 # Configure the environment(s)
 
@@ -61,7 +61,7 @@ case $key in
     shift # past value
     ;;
     -sk|--secretKey)
-    AWS_SECRET_ACCESS_KEY_ID="$2"
+    AWS_SECRET_ACCESS_KEY="$2"
     shift # past argument
     shift # past value
     ;;
@@ -84,9 +84,9 @@ set -- "${POSITIONAL[@]}" # restore positional parameters
 
 log_info "==== Prepare container environment ===="
 if [ "$LOCAL" -eq 0 ]; then
-	export AWS_ACCESS_KEY_ID="$AWSCLICONFIG_INTEGRATION_AWS_ACCESS_KEY_ID"
-	export AWS_SECRET_ACCESS_KEY="$AWSCLICONFIG_INTEGRATION_AWS_SECRET_ACCESS_KEY"
-	export AWS_DEFAULT_REGION="$AWSCLICONFIG_POINTER_REGION"
+	export AWS_ACCESS_KEY_ID
+	export AWS_SECRET_ACCESS_KEY
+	export AWS_DEFAULT_REGION
 fi
 
 if [ ! -d "$WORKINGDIR" ]; then
@@ -120,7 +120,7 @@ if [[ "$DEBUG" -eq 1 ]]; then
 fi
 
 log_info "==== apply ===="
-terraform apply -input=false "$WORKINGDIR/$TF_PLAN"
+#terraform apply -input=false "$WORKINGDIR/$TF_PLAN"
 
 log_info "==== Store the LB ARN ===="
 if [[ "$DEBUG" -eq 1 ]]; then
