@@ -44,7 +44,7 @@ variable "applications" {
 		jdemo.ingressPort			= "80"
 		jdemo.egressPort			= ""
 		jdemo.allowIPv4Ingress		= "138.199.75.60/32"				#"0.0.0.0/0"
-		jdemo.allowIPv6Ingress		= "0:0:0:0:0:ffff:8ac7:4b3c/64"		#"::/0"
+		jdemo.allowIPv6Ingress		= "2002:8ac7:4b3c::/128"			#"::/0"
 		jdemo.allowIPv4Egress		= "0.0.0.0/0"
 		jdemo.allowIPv6Egress		= "::/0"
 		
