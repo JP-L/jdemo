@@ -16,11 +16,11 @@ AWS_DEFAULT_REGION=""		#$AWSCLICONFIG_POINTER_REGION
 # Some helper functions
 function log_debug () {
     if [[ "$DEBUG" -eq 1 ]]; then
-        echo "$@"
+        echo "DEBUG $@"
     fi
 }
 function log_info () {
-    echo "$@"
+    echo "INFO $@"
 }
 
 # Reading the commandline arguments
@@ -116,16 +116,18 @@ terraform plan -out $WORKINGDIR/$TF_PLAN -input=false $WORKINGDIR
 if [[ "$DEBUG" -eq 1 ]]; then
 	log_debug "==== show ===="
 	terraform show -module-depth=-1 $WORKINGDIR/$TF_PLAN
-	log_debug "==== output ===="
-	terraform output | grep "$AWS_DEFAULT_REGION" | cut -d'=' -f 2- | sed -e 's/^[ \t]*//'
-else
-	log_info "==== apply ===="
-	terraform apply -input=false $WORKINGDIR/$TF_PLAN
 fi
 
+log_info "==== apply ===="
+terraform apply -input=false $WORKINGDIR/$TF_PLAN
+
 log_info "==== Store the LB ARN ===="
-ARN=$(terraform output | grep "AWS_DEFAULT_REGION" | cut -d'=' -f 2- | sed -e 's/^[ \t]*//') &&
-log_debug "$ARN"
+if [[ "$DEBUG" -eq 1 ]]; then
+	log_debug "==== output ===="
+	terraform output | grep "$AWS_DEFAULT_REGION" | cut -d'=' -f 2- | sed -e 's/^[ \t]*//'
+fi
+ARN=$(terraform output | grep "$AWS_DEFAULT_REGION" | cut -d'=' -f 2- | sed -e 's/^[ \t]*//')
+log_debug "LB ARN $ARN"
 if [ "$LOCAL" -eq 0 ]; then
 	shipctl put_resource_state EUC1-ELB-QA-cluster sourceName $ARN
 fi

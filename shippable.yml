@@ -324,7 +324,7 @@ jobs:
                 options: '--privileged=false --net=bridge -e FOO=true -e BOO=false'
             script:
               - chmod +x IN/scripts-from-srcRepo/gitRepo/bas/scripts/shippable/*
-              - IN/scripts-from-srcRepo/gitRepo/bas/scripts/shippable/setupStagingEnvironment.sh -d -src IN/scripts-from-srcRepo/gitRepo/src/main/ -w $SCRIPTSFROMSRCREPO_STATE/tf-temp -m terraform -ak $AWSCLICONFIG_INTEGRATION_AWS_ACCESS_KEY_ID -sk $AWSCLICONFIG_INTEGRATION_AWS_SECRET_ACCESS_KEY -r $AWSCLICONFIG_POINTER_REGION
+              - IN/scripts-from-srcRepo/gitRepo/bas/scripts/shippable/setupStagingEnvironment.sh -src IN/scripts-from-srcRepo/gitRepo/src/main/ -w $SCRIPTSFROMSRCREPO_STATE/tf-temp -m terraform -ak $AWSCLICONFIG_INTEGRATION_AWS_ACCESS_KEY_ID -sk $AWSCLICONFIG_INTEGRATION_AWS_SECRET_ACCESS_KEY -r $AWSCLICONFIG_POINTER_REGION
       on_failure:
         - NOTIFY: Slack
 
