@@ -1,6 +1,7 @@
 #!/bin/bash -e
 #
 DEBUG=0
+LOCAL=0
 GRADLE_PROPS=""		#$SHIPPABLE_REPO_DIR/bas/resources/gradle/gradle.properties
 
 # Some helper functions
@@ -25,6 +26,11 @@ case $key in
     shift # past argument
     #shift # past value
     ;;
+    -l|--local)
+    LOCAL=1
+    shift # past argument
+    #shift # past value
+    ;;
     -src|--source)
     GRADLE_PROPS="$2"
     shift # past argument
@@ -46,27 +52,32 @@ log_info "==== Prepare Gradle environment ===="
 
 # Create folder structure and prepare the property file
 BASE="$HOME"
-if [ "$DEBUG" -eq 1 ]; then
+if [ "$LOCAL" -eq 1 ]; then
 	BASE="/tmp"
 fi
 
-mkdir -p $BASE/.gradle
-cp $GRADLE_PROPS $BASE/.gradle/
+mkdir -p "$BASE/.gradle"
+cp "$GRADLE_PROPS" "$BASE/.gradle/"
 
-sed -i -r "s|BURL|$BINREPO_URL|g" $BASE/.gradle/gradle.properties
-sed -i -r "s|REG_URL|$BINREPO_REGURL|g" $BASE/.gradle/gradle.properties
-sed -i -r "s|USR|$BINREPO_USR|g" $BASE/.gradle/gradle.properties
-sed -i -r "s|PWD|$BINREPO_PWD|g" $BASE/.gradle/gradle.properties
-sed -i -r "s|EMAIL|$BINREPO_EMAIL|g" $BASE/.gradle/gradle.properties
+log_debug "==== Set props in $BASE/.gradle/gradle.properties ===="
+sed -i -r "s|BURL|$BINREPO_URL|g" "$BASE/.gradle/gradle.properties"
+sed -i -r "s|REG_URL|$BINREPO_REGURL|g" "$BASE/.gradle/gradle.properties"
+sed -i -r "s|USR|$BINREPO_USR|g" "$BASE/.gradle/gradle.properties"
+sed -i -r "s|PWD|$BINREPO_PWD|g" "$BASE/.gradle/gradle.properties"
+sed -i -r "s|EMAIL|$BINREPO_EMAIL|g" "$BASE/.gradle/gradle.properties"
 
-sed -i -r "s|SONAR_URL|$SONAR_URL|g" $BASE/.gradle/gradle.properties
-sed -i -r "s|ORG|$ORGANIZATION|g" $BASE/.gradle/gradle.properties
-sed -i -r "s|SONAR_KEY|$SONAR_KEY|g" $BASE/.gradle/gradle.properties
+sed -i -r "s|SONAR_URL|$SONAR_URL|g" "$BASE/.gradle/gradle.properties"
+sed -i -r "s|ORG|$ORGANIZATION|g" "$BASE/.gradle/gradle.properties"
+sed -i -r "s|SONAR_KEY|$SONAR_KEY|g" "$BASE/.gradle/gradle.properties"
       
-sed -i -r "s|SRCREPO_KEY|$SRCREPO_USR|g" $BASE/.gradle/gradle.properties
+sed -i -r "s|SRCREPO_KEY|$SRCREPO_USR|g" "$BASE/.gradle/gradle.properties"
       
-sed -i -r "s|MY_ACCESS_ID|$AMAZONKEYS_ACCESSKEY|g" $BASE/.gradle/gradle.properties 
-sed -i -r "s|MY_SECRET|$AMAZONKEYS_SECRETKEY|g" $BASE/.gradle/gradle.properties
-	
+sed -i -r "s|MY_ACCESS_ID|$AMAZONKEYS_ACCESSKEY|g" "$BASE/.gradle/gradle.properties" 
+sed -i -r "s|MY_SECRET|$AMAZONKEYS_SECRETKEY|g" "$BASE/.gradle/gradle.properties"
+log_info "==== Gradle environment prepared ===="	
+
+if [ "$DEBUG" -eq 1 ]; then
+	printf "%s" "$(<$BASE/.gradle/gradle.properties)"
+fi
 
 exit 0;
