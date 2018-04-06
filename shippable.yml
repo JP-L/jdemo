@@ -309,6 +309,7 @@ jobs:
       on_start:
         - NOTIFY: Slack
       steps:
+        - IN: RunMode
         - IN: jdemoImgQA
         - IN: CI_CONTAINER
         - IN: CI_CONTAINER_VERSION
