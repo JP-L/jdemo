@@ -1,6 +1,7 @@
 #!/bin/bash -e
 #
 DEBUG=0
+DEBUG_OPTION=""
 LOCAL=0
 GRADLE_PROPS=""		#$SHIPPABLE_REPO_DIR/bas/resources/gradle/gradle.properties
 
@@ -23,6 +24,7 @@ key="$1"
 case $key in
     -d|--debug)
     DEBUG=1
+    DEBUG_OPTION="--debug"
     shift # past argument
     #shift # past value
     ;;
@@ -54,15 +56,15 @@ fi
 
 log_info "==== Building the Java application ===="
 
-gradle assemble;
+gradle assemble "$DEBUG_OPTION";
 if [ "$BRANCH" != "master" ]; then
 	log_info "==== Tests and Quality control for the Java application ====";  
-    gradle inspectQuality;
-    gradle runFunctionalAndIntegrationTests;
+    gradle inspectQuality "$DEBUG_OPTION";
+    gradle runFunctionalAndIntegrationTests "$DEBUG_OPTION";
 elif [ "$BRANCH" == "master" ]; then
 	log_info "==== Tests for the Java application ====";  
-    gradle test;
-    gradle runFunctionalAndIntegrationTests;
+    gradle test "$DEBUG_OPTION";
+    gradle runFunctionalAndIntegrationTests "$DEBUG_OPTION";
 else
 	log_info "==== Unknown branch ====";
 fi

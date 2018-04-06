@@ -1,6 +1,7 @@
 #!/bin/bash -e
 #
 DEBUG=0
+DEBUG_OPTION=""
 POST_CI=0
 SUCCESS=0
 FAILURE=0
@@ -13,6 +14,7 @@ key="$1"
 case $key in
     -d|--debug)
     DEBUG=1
+    DEBUG_OPTION="--debug"
     shift # past argument
     #shift # past value
     ;;
@@ -65,13 +67,13 @@ if [ "$POST_CI" -eq 1 ]; then
 elif [ "$SUCCESS" -eq 1 ]; then
 	if [ "$BRANCH" == "development" ]; then
 		echo "==== Release the code for Acceptance and Smoke testing ====";
-		gradle releaseDevelopment;
+		gradle releaseDevelopment "$DEBUG_OPTION";
 	elif [ "$BRANCH" == "releases" ]; then
 		echo "==== Tag as alpha release ====";
-		gradle releaseAlpha;
+		gradle releaseAlpha "$DEBUG_OPTION";
 	elif [ "$BRANCH" == "master" ]; then
 		echo "==== Publish the next Release ====";
-		gradle publishRelease;
+		gradle publishRelease "$DEBUG_OPTION";
 	else
 		echo "==== Unknown branch ====";
 	fi

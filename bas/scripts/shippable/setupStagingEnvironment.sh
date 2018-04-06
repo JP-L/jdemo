@@ -5,13 +5,14 @@
 # Script variables
 DEBUG=0
 LOCAL=0
-SRCPATH=""  				#IN/scripts-from-srcRepo/gitRepo/src/main/
-MODULE=""					#terraform
+SRCPATH=""  				
+MODULE="terraform"			#defaults to terraform
 TF_PLAN="tfplan"
-WORKINGDIR="" 				#$SCRIPTSFROMSRCREPO_STATE/tf-temp
-AWS_ACCESS_KEY_ID="" 		#$AWSCLICONFIG_INTEGRATION_AWS_ACCESS_KEY_ID
-AWS_SECRET_ACCESS_KEY=""	#$AWSCLICONFIG_INTEGRATION_AWS_SECRET_ACCESS_KEY
-AWS_DEFAULT_REGION=""		#$AWSCLICONFIG_POINTER_REGION
+WORKINGDIR="" 				
+AWS_ACCESS_KEY_ID="" 		
+AWS_SECRET_ACCESS_KEY=""	
+AWS_DEFAULT_REGION=""		
+LB_RSC_NAME=""				#name of the LB resource as configured in shippable.yml
 
 # Some helper functions
 function log_debug () {
@@ -55,6 +56,11 @@ case $key in
     shift # past argument
     shift # past value
     ;;
+    -lb|--loadbalancer)
+    LB_RSC_NAME="$2"
+    shift # past argument
+    shift # past value
+    ;;
     -ak|--accessKey)
     AWS_ACCESS_KEY_ID="$2"
     shift # past argument
@@ -83,7 +89,7 @@ done
 set -- "${POSITIONAL[@]}" # restore positional parameters
 
 if [[ "$DEBUG" -eq 1 ]]; then
-	set -o xtrace
+	set -o xtrace;
 fi
 
 
@@ -95,22 +101,25 @@ if [ "$LOCAL" -eq 0 ]; then
 fi
 
 if [ ! -d "$WORKINGDIR" ]; then
-	log_debug "==== Create working dir $WORKINGDIR ===="
-	mkdir -p "$WORKINGDIR"
+	log_debug "==== Create working dir $WORKINGDIR ====";
+	mkdir -p "$WORKINGDIR";
 else
 	# clean the working dir
-	rm -R "$WORKINGDIR/"
+	rm -R "$WORKINGDIR/";
 fi
 if [ -d "$SRCPATH/$MODULE" ]; then
-	log_debug "==== Copy $SRCPATH/$MODULE/. into $WORKINGDIR ===="
-	cp -R "$SRCPATH/$MODULE/." "$WORKINGDIR"
+	log_debug "==== Copy $SRCPATH/$MODULE/. into $WORKINGDIR ====";
+	cp -R "$SRCPATH/$MODULE/." "$WORKINGDIR";
 fi
 if [ -d "$SRCPATH/resources/$MODULE" ]; then
-	log_debug "==== Copy $SRCPATH/resources/$MODULE/. into $WORKINGDIR ===="
-	cp -R "$SRCPATH/resources/$MODULE/." "$WORKINGDIR"
+	log_debug "==== Copy $SRCPATH/resources/$MODULE/. into $WORKINGDIR ====";
+	cp -R "$SRCPATH/resources/$MODULE/." "$WORKINGDIR";
 fi
 
-log_debug "==== DEBUG List all environment variables ====" && printenv               
+if [[ "$DEBUG" -eq 1 ]]; then
+	log_debug "==== DEBUG List all environment variables ====";
+	printenv;
+fi               
  
 log_info "==== Configure testing environment for testing Alpha, Beta and RC release ===="  
 cd "$WORKINGDIR"
@@ -120,8 +129,8 @@ log_info "==== plan ===="
 terraform plan -out "$WORKINGDIR/$TF_PLAN" -input=false "$WORKINGDIR"
 
 if [[ "$DEBUG" -eq 1 ]]; then
-	log_debug "==== show ===="
-	terraform show -module-depth=-1 "$WORKINGDIR/$TF_PLAN"
+	log_debug "==== show ====";
+	terraform show -module-depth=-1 "$WORKINGDIR/$TF_PLAN";
 fi
 
 log_info "==== apply ===="
@@ -129,14 +138,14 @@ terraform apply -input=false "$WORKINGDIR/$TF_PLAN"
 
 log_info "==== Store the LB ARN ===="
 if [[ "$DEBUG" -eq 1 ]]; then
-	log_debug "==== Show files and TF output ===="
-	ls -l "$WORKINGDIR"
-	terraform output | grep "$AWS_DEFAULT_REGION" | cut -d'=' -f 2- | sed -e 's/^[ \t]*//'
+	log_debug "==== Show files and TF output ====";
+	ls -l "$WORKINGDIR";
+	terraform output | grep "$AWS_DEFAULT_REGION" | cut -d'=' -f 2- | sed -e 's/^[ \t]*//';
 fi
 ARN=$(terraform output | grep "$AWS_DEFAULT_REGION" | cut -d'=' -f 2- | sed -e 's/^[ \t]*//')
 log_debug "LB ARN $ARN"
 if [ "$LOCAL" -eq 0 ]; then
-	shipctl put_resource_state EUC1-ELB-QA-cluster sourceName "$ARN"
+	shipctl put_resource_state "$LB_RSC_NAME" sourceName "$ARN";
 fi
 
 exit 0;

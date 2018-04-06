@@ -81,7 +81,7 @@ build:
     - $SHIPPABLE_REPO_DIR/bas/scripts/shippable/prepare.sh 
         -src $SHIPPABLE_REPO_DIR/bas/resources/gradle/gradle.properties 
         $DEBUG
-    - $SHIPPABLE_REPO_DIR/bas/scripts/shippable/assembleArtefact.sh
+    - $SHIPPABLE_REPO_DIR/bas/scripts/shippable/package.sh
     - echo "==== CI completed. Move to post CI ===="
 
   post_ci:
@@ -182,7 +182,7 @@ resources:
         memory: 1024                        #in MiB
         #cpuShares: 10
         portMappings:
-            - "8080:8080/tcp"
+            - "80:8080/tcp"
         logConfig:
             type: awslogs
             options:
@@ -336,6 +336,7 @@ jobs:
                   -src "$SCRIPTSFROMSRCREPO_STATE/src/main/"
                   -w "$SCRIPTSFROMSRCREPO_STATE/tf-temp"
                   -m terraform
+                  -lb EUC1-ELB-QA-cluster
                   -ak "$AWSCLICONFIG_INTEGRATION_ACCESSKEY"
                   -sk "$AWSCLICONFIG_INTEGRATION_SECRETKEY"
                   "$DEBUG"
@@ -360,11 +361,11 @@ jobs:
         - IN: jdemoManifestQA    # manifest
         - IN: configureStagingEnvironment
         - IN: EUC1-QA-cluster
-        #- IN: elbQA
-        #  applyTo:
-        #    - manifest: jdemoManifest
-        #      image: jdemo
-        #      port: 8080
+        - IN: EUC1-ELB-QA-cluster
+          applyTo:
+            - manifest: jdemoManifestQA
+              image: jdemoImgQA
+              port: 8080
       on_failure:
         - NOTIFY: Slack
 
@@ -388,24 +389,13 @@ jobs:
                 pull: false
                 options: '--privileged=false --net=bridge -e FOO=true -e BOO=false'
             script:
-              - echo "==== TODO TODO TODO TODO ===="
               - echo "=== list of envs ====" && printenv
-              - export SHIPPABLE_REPO_DIR=IN/scripts-from-srcRepo/gitRepo && chmod +x $SHIPPABLE_REPO_DIR/bas/scripts/shippable/*
-              - $SHIPPABLE_REPO_DIR/bas/scripts/shippable/prepare.sh
+              - chmod +x $SCRIPTSFROMSRCREPO_STATE/bas/scripts/shippable/*
+              - $SCRIPTSFROMSRCREPO_STATE/bas/scripts/shippable/prepare.sh
                    -src $SHIPPABLE_REPO_DIR/bas/resources/gradle/gradle.properties
                    $DEBUG
-              - echo "==== run tests for testing Alpha release ====" &&
-                gradle -v
-              - echo "==== set Beta release on success ====" &&
-                gradle releaseBeta
-              - echo "==== run tests for testing Beta release ====" &&
-                gradle -v
-              - echo "==== set RC release on success ====" &&
-                gradle releaseCandidate
-              - echo "==== run RC tests if any ===="
-              - echo "==== clean up deployed image and test env ===="
-              - echo "==== Release the next version ====" &&
-                gradle releaseVersion
+              - $SCRIPTSFROMSRCREPO_STATE/bas/scripts/shippable/approval.sh
+                   $DEBUG
               - echo "==== TODO TODO TODO TODO ===="
       on_failure:
         - NOTIFY: Slack
