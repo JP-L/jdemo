@@ -322,6 +322,10 @@ jobs:
           scopes:
             - ecr
         - TASK:
+            name: pullPrivateImage
+            script:
+              - docker pull $CI_CONTAINER:$CI_CONTAINER_VERSION
+        - TASK:
             name: setupStagingEnvironment
             runtime:                  # optional
               options:
@@ -386,6 +390,10 @@ jobs:
         - IN: aws-cliConfig
           scopes:
             - ecr
+        - TASK:
+            name: pullPrivateImage
+            script:
+              - docker pull $CI_CONTAINER:$CI_CONTAINER_VERSION
         - TASK:
             name: runQATests
             runtime:                  # optional
