@@ -81,7 +81,8 @@ build:
     - $SHIPPABLE_REPO_DIR/bas/scripts/shippable/prepare.sh 
         -src $SHIPPABLE_REPO_DIR/bas/resources/gradle/gradle.properties 
         $DEBUG
-    - $SHIPPABLE_REPO_DIR/bas/scripts/shippable/package.sh
+    - $SHIPPABLE_REPO_DIR/bas/scripts/shippable/package.sh 
+        $DEBUG
     - echo "==== CI completed. Move to post CI ===="
 
   post_ci:
