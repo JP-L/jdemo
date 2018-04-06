@@ -1,7 +1,7 @@
 #!/bin/bash -e
 #
 DEBUG=0
-DEBUG_OPTION=
+DEBUG_OPTION="--info"
 LOCAL=0
 GRADLE_PROPS=""		#$SHIPPABLE_REPO_DIR/bas/resources/gradle/gradle.properties
 
