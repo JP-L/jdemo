@@ -1,4 +1,4 @@
-#!/bin/bash -e
+#!/bin/bash -ex
 #
 # Configure the environment(s)
 
@@ -25,7 +25,7 @@ function log_info () {
 
 # Reading the commandline arguments
 POSITIONAL=()
-while [[ $# -gt 0 ]]
+while [[ "$#" -gt 0 ]]
 do
 key="$1"
 
