@@ -306,8 +306,6 @@ jobs:
       type: runSh
       triggerMode: serial
       dependencyMode: strict   # optional
-      on_start:
-        - NOTIFY: Slack
       steps:
         - IN: RunMode
         - IN: jdemoImgQA
@@ -353,8 +351,6 @@ jobs:
       type: deploy
       dependencyMode: strict   # optional
       method: replace
-      on_start:
-        - NOTIFY: Slack
       flags:
        - jdemo
       steps: 
@@ -375,8 +371,17 @@ jobs:
       on_start:
         - NOTIFY: Slack
       steps:
+        - IN: RunMode
         - IN: deployImage-EUC1
           switch: off
+        - IN: CI_CONTAINER
+        - IN: CI_CONTAINER_VERSION
+        - IN: Sonar
+        - IN: BRep
+        - IN: SRep
+        - IN: IMAGE
+        - IN: IMAGE_VERSION
+        - IN: scripts-from-srcRepo
         - IN: aws-cliConfig
           scopes:
             - ecr
@@ -396,7 +401,6 @@ jobs:
                    $DEBUG
               - $SCRIPTSFROMSRCREPO_STATE/bas/scripts/shippable/approval.sh
                    $DEBUG
-              - echo "==== TODO TODO TODO TODO ===="
       on_failure:
         - NOTIFY: Slack
 
