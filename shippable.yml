@@ -336,7 +336,7 @@ jobs:
                   -w "$SCRIPTSFROMSRCREPO_STATE/tf-temp"
                   -m terraform
                   -ak "$AWSCLICONFIG_INTEGRATION_ACCESSKEY"
-                  -sk "$AWSCLICONFIG_INTEGRATION_AWS_SECRET_ACCESS_KEY"
+                  -sk "$AWSCLICONFIG_INTEGRATION_SECRETKEY"
                   "$DEBUG"
       on_failure:
         - NOTIFY: Slack
