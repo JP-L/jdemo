@@ -86,7 +86,7 @@ build:
     - echo "==== CI completed. Move to post CI ===="
 
   post_ci:
-    - $SHIPPABLE_REPO_DIR/bas/scripts/shippable/finalize.sh -p
+    - $SHIPPABLE_REPO_DIR/bas/scripts/shippable/finalize.sh -p -r jdemoImgQA
 
   on_success:
     - $SHIPPABLE_REPO_DIR/bas/scripts/shippable/finalize.sh -s
@@ -368,6 +368,9 @@ jobs:
             - manifest: jdemoManifestQA
               image: jdemoImgQA
               port: 8080
+        - TASK:
+          - script:
+             - printenv
       on_failure:
         - NOTIFY: Slack
 

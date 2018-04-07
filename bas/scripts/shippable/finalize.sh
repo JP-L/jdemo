@@ -5,6 +5,7 @@ DEBUG_OPTION="--info"
 POST_CI=0
 SUCCESS=0
 FAILURE=0
+RESOURCE=""
 
 POSITIONAL=()
 while [[ $# -gt 0 ]]
@@ -32,6 +33,10 @@ case $key in
     FAILURE=1
     shift # past argument
     #shift # past value
+    -r|--resource)
+    FAILURE=1
+    shift # past argument
+    shift # past value
     ;;
     --default)
     DEFAULT=YES
@@ -53,13 +58,13 @@ if [ "$POST_CI" -eq 1 ]; then
 	echo "==== Post CI tasks ==== ";
     if [ "$BRANCH" == "releases" ]; then
     	echo "==== Set $IMAGE_REPOSITORY with $IMAGE_VERSION for $BUILDNUMBER ==== ";
-    	shipctl put_resource_state jdemoImgQA sourceName "$IMAGE_REPOSITORY";
-    	shipctl put_resource_state jdemoImgQA versionName "$IMAGE_VERSION";
-    	shipctl put_resource_state jdemoImgQA buildNumber "$BUILD_NUMBER";
+    	shipctl put_resource_state "$RESOURCE" sourceName "$IMAGE_REPOSITORY";
+    	shipctl put_resource_state "$RESOURCE" versionName "$IMAGE_VERSION";
+    	shipctl put_resource_state "$RESOURCE" buildNumber "$BUILD_NUMBER";
     elif [ "$BRANCH" == "master" ]; then
-    	shipctl put_resource_state jdemoImg sourceName "$IMAGE_REPOSITORY";
-    	shipctl put_resource_state jdemoImg versionName "$IMAGE_VERSION";
-    	shipctl put_resource_state jdemoImg buildNumber "$BUILD_NUMBER";
+    	shipctl put_resource_state "$RESOURCE" sourceName "$IMAGE_REPOSITORY";
+    	shipctl put_resource_state "$RESOURCE" versionName "$IMAGE_VERSION";
+    	shipctl put_resource_state "$RESOURCE" buildNumber "$BUILD_NUMBER";
     else
     	echo "==== No Post CI tasks required ====";
     fi
