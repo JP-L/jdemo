@@ -317,6 +317,7 @@ jobs:
         - IN: SRep
         - IN: IMAGE
         - IN: IMAGE_VERSION
+        - IN: EUC1-ELB-QA-cluster
         - IN: scripts-from-srcRepo
         - IN: aws-cliConfig
           scopes:
