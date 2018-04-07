@@ -325,7 +325,6 @@ jobs:
         - TASK:
             name: pullPrivateImage
             script:
-              - printenv
               - docker pull $CI_CONTAINER:$CI_CONTAINER_VERSION
         - TASK:
             name: setupStagingEnvironment
@@ -345,6 +344,7 @@ jobs:
                   -ak "$AWSCLICONFIG_INTEGRATION_ACCESSKEY"
                   -sk "$AWSCLICONFIG_INTEGRATION_SECRETKEY"
                   "$DEBUG"
+              - printenv
       on_failure:
         - NOTIFY: Slack
 
