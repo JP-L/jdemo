@@ -33,8 +33,9 @@ case $key in
     FAILURE=1
     shift # past argument
     #shift # past value
+    ;;
     -r|--resource)
-    FAILURE=1
+    RESOURCE="$2"
     shift # past argument
     shift # past value
     ;;
