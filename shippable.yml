@@ -222,7 +222,7 @@ resources:
       type: cliConfig
       integration: AWS-EIS
       versionTemplate:
-        region: eu-central-1
+        region: eu-west-1
         
     - name: Sonar
       type: integration
@@ -324,6 +324,7 @@ jobs:
         - TASK:
             name: pullPrivateImage
             script:
+              - printenv
               - docker pull $CI_CONTAINER:$CI_CONTAINER_VERSION
         - TASK:
             name: setupStagingEnvironment
