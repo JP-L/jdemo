@@ -321,7 +321,7 @@ jobs:
         - IN: aws-cliConfig
           scopes:
             - ecr
-        #- OUT: EUC1-ELB-QA-cluster
+        - OUT: EUC1-ELB-QA-cluster
         - TASK:
             name: pullPrivateImage
             script:
