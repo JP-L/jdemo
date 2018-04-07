@@ -317,11 +317,11 @@ jobs:
         - IN: SRep
         - IN: IMAGE
         - IN: IMAGE_VERSION
-        - IN: EUC1-ELB-QA-cluster
         - IN: scripts-from-srcRepo
         - IN: aws-cliConfig
           scopes:
             - ecr
+        - OUT: EUC1-ELB-QA-cluster
         - TASK:
             name: pullPrivateImage
             script:
@@ -369,9 +369,6 @@ jobs:
             - manifest: jdemoManifestQA
               image: jdemoImgQA
               port: 8080
-        - TASK:
-          - script:
-             - printenv
       on_failure:
         - NOTIFY: Slack
 

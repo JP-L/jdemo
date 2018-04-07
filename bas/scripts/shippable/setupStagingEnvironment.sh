@@ -145,6 +145,7 @@ fi
 ARN=$(terraform output | grep -Eoi 'arn:.*') # grep "$AWS_DEFAULT_REGION" | cut -d'=' -f 2- | sed -e 's/^[ \t]*//')
 log_debug "LB ARN $ARN"
 if [ "$LOCAL" -eq 0 ]; then
+	export "$ARN"
 	shipctl post_resource_state "$LB_RSC_NAME" sourceName "$ARN";
 fi
 
