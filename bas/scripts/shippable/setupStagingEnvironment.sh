@@ -140,9 +140,9 @@ log_info "==== Store the LB ARN ===="
 if [[ "$DEBUG" -eq 1 ]]; then
 	log_debug "==== Show files and TF output ====";
 	ls -l "$WORKINGDIR";
-	terraform output | grep "$AWS_DEFAULT_REGION" | cut -d'=' -f 2- | sed -e 's/^[ \t]*//';
+	terraform output | grep -Eoi 'arn:[^/]+' #grep "$AWS_DEFAULT_REGION" | cut -d'=' -f 2- | sed -e 's/^[ \t]*//';
 fi
-ARN=$(terraform output | grep "$AWS_DEFAULT_REGION" | cut -d'=' -f 2- | sed -e 's/^[ \t]*//')
+ARN=$(terraform output | grep -Eoi 'arn:[^/]+') # grep "$AWS_DEFAULT_REGION" | cut -d'=' -f 2- | sed -e 's/^[ \t]*//')
 log_debug "LB ARN $ARN"
 if [ "$LOCAL" -eq 0 ]; then
 	shipctl put_resource_state "$LB_RSC_NAME" sourceName "$ARN";
