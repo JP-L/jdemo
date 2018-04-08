@@ -140,9 +140,9 @@ log_info "==== Store the LB ARN ===="
 if [[ "$DEBUG" -eq 1 ]]; then
 	log_debug "==== Show files and TF output ====";
 	ls -l "$WORKINGDIR";
-	terraform output | grep -Eoi 'arn:[^/]+' #grep "$AWS_DEFAULT_REGION" | cut -d'=' -f 2- | sed -e 's/^[ \t]*//';
+	terraform output | grep -Eoi 'arn:[^/]+'
 fi
-ARN=$(terraform output | grep -Eoi 'arn:.*') # grep "$AWS_DEFAULT_REGION" | cut -d'=' -f 2- | sed -e 's/^[ \t]*//')
+ARN=$(terraform output | grep -Eoi 'arn:.*')
 log_debug "LB ARN $ARN"
 if [ "$LOCAL" -eq 0 ]; then
 	export ARN="$ARN"

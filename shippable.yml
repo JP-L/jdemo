@@ -344,7 +344,6 @@ jobs:
                   -ak "$AWSCLICONFIG_INTEGRATION_ACCESSKEY"
                   -sk "$AWSCLICONFIG_INTEGRATION_SECRETKEY"
                   "$DEBUG"
-              - printenv
       on_failure:
         - NOTIFY: Slack
 
@@ -410,6 +409,7 @@ jobs:
               - $SCRIPTSFROMSRCREPO_STATE/bas/scripts/shippable/prepare.sh
                    -src $SCRIPTSFROMSRCREPO_STATE/bas/resources/gradle/gradle.properties
                    $DEBUG
+              - cd $SCRIPTSFROMSRCREPO_STATE
               - $SCRIPTSFROMSRCREPO_STATE/bas/scripts/shippable/approval.sh
                    $DEBUG
       on_failure:

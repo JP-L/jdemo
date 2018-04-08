@@ -3,7 +3,6 @@
 DEBUG=0
 DEBUG_OPTION="--info"
 LOCAL=0
-GRADLE_PROPS=""		#$SHIPPABLE_REPO_DIR/bas/resources/gradle/gradle.properties
 
 # Some helper functions
 function log_debug () {
@@ -32,11 +31,6 @@ case $key in
     LOCAL=1
     shift # past argument
     #shift # past value
-    ;;
-    -src|--source)
-    GRADLE_PROPS="$2"
-    shift # past argument
-    shift # past value
     ;;
     --default)
     DEFAULT=YES
