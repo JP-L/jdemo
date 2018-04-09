@@ -61,6 +61,7 @@ war.archiveName = "${name}.war"
 
 eclipse {
     project.natures 'org.eclipse.buildship.core.gradleprojectnature'
+    eclipse.classpath.plusConfigurations += [configurations.seleniumCompile] 
 }
 
 /*

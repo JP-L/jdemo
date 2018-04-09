@@ -1,4 +1,3 @@
-<!--
 /*
  * Copyright (c) 2018 JP-L, https://www.jp-l.org/
  *
@@ -21,33 +20,37 @@
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
--->
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"   
-"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">  
-  
-<html xmlns="http://www.w3.org/1999/xhtml"  
-    xmlns:ui="http://java.sun.com/jsf/facelets"  
-    xmlns:h="http://java.sun.com/jsf/html"  
-    xmlns:f="http://java.sun.com/jsf/core">  
+package org.jpl.jdemo;
 
-<h:head>  
-    <title>jdemo</title>
-	<p><h:outputText value="#{msg['welcomeTitle']}" /></p> 
-</h:head>  
-<h:body>  
-    <f:view>  
-        <p><h:outputText value="#{msg['signInSuccess']}" /></p>  
-        <p>
-        	<h:outputFormat value="#{msg.signInWelcome}" >
-        		<f:param value="#{user.firstName}" />
-        	</h:outputFormat>
-        </p>  
+import org.junit.Test;
+import static org.junit.Assert.*;
 
-        <h:form>  
-            <p>  
-                <h:commandLink value="#{msg['logOut']}" action="#{user.logout}" />  
-            </p>  
-        </h:form>  
-    </f:view>  
-</h:body>  
-</html>
+import org.openqa.selenium.remote.*;
+
+/**
+ * Selenium test for jdemo.
+ * @author limpens
+ *
+ */
+public class IETests extends AbstractTest {
+	/**
+	 * @see org.jpl.jdemo.AbstractTest#configure()
+	 */
+	public DesiredCapabilities configure() {
+		final DesiredCapabilities capabilities = new DesiredCapabilities();
+		capabilities.setCapability("platform", "WIN10");
+		capabilities.setCapability("version", "11");
+		capabilities.setCapability("browserName", "internet explorer");
+		capabilities.setCapability("name", "IE - Selenium Testing");
+		return capabilities;
+	}
+
+    /**
+     * Simple test to validate if the web application is available.
+     */
+	@Test
+    public final void isAvailable() throws Exception {
+		this.getDriver().get(URL_TO_TEST);
+		assertEquals("jdemo", this.getDriver().getTitle());
+    }
+}
