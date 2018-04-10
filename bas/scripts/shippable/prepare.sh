@@ -2,6 +2,7 @@
 #
 DEBUG=0
 LOCAL=0
+REMOTE=0
 GRADLE_PROPS=""		#$SHIPPABLE_REPO_DIR/bas/resources/gradle/gradle.properties
 
 # Some helper functions
@@ -26,13 +27,13 @@ case $key in
     shift # past argument
     #shift # past value
     ;;
-    -l|--local|--ci)
+    -l|--local)
     LOCAL=1
     shift # past argument
     #shift # past value
     ;;
     --remote)
-    LOCAL=2
+    REMOTE=1
     shift # past argument
     ;;
     -src|--source)
@@ -86,7 +87,7 @@ sed -i -r "s|MY_SECRET|$AMAZONKEYS_SECRETKEY|g" "$BASE/.gradle/gradle.properties
 sed -i -r "s|TB_ACCESS_ID|$TESTINGBOT_ACCESSKEY|g" "$BASE/.gradle/gradle.properties" 
 sed -i -r "s|TB_SECRET|$TESTINGBOT_SECRETKEY|g" "$BASE/.gradle/gradle.properties"
 
-if [[ "$LOCAL" -eq 1 ]]; then
+if [[ "$REMOTE" -eq 0 ]]; then
 	sed -i -r "s|RUNMODE|local|g" "$BASE/.gradle/gradle.properties"
 	sed -i -r "s|WEBAPP_URL|$LOCAL_WEBAPP_URL|g" "$BASE/.gradle/gradle.properties"
 else
