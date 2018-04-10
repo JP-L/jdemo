@@ -239,7 +239,7 @@ resources:
       
     - name: TBot
       type: integration
-      integration: TestingBot
+      integration: TBot
         
     - name: RunMode
       type: integration
