@@ -20,29 +20,31 @@
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
-package org.jpl.jdemo;
+package org.jpl.jdemo.docker;
 
-enum RunMode {
-	/** Remote and local run mode supported. */
-	LOCAL("@localhost:4445/wd/hub"),
-	REMOTE("@hub.testingbot.com/wd/hub");
+public enum Stage {
+	/** Stages supported. */
+	DEVELOPMENT(1),
+	ALPHA(9),
+	BETA(18),
+	RC(81);
 	
-	/** The url to use. */
-	private final String url;
+	/** The number of parallel threads. */
+	private final Integer numberOfThreads;
 	
 	/**
 	 * Set the URL
 	 * @param url
 	 */
-	RunMode(final String postfix) {
-        this.url = postfix;
+	Stage(final Integer threads) {
+        this.numberOfThreads = threads;
     }
 	
 	/**
-	 * Return the postfix url
-	 * @return url
+	 * Return the number of parallel threads to run
+	 * @return numberOfThreads
 	 */
-	public String getUrlPostfix() {
-		return this.url;
+	public int getNumberOfThreads() {
+		return this.numberOfThreads;
 	}
 }

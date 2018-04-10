@@ -22,7 +22,7 @@
  * 
  * Most of this code comes from https://testingbot.com/support/getting-started/parallel-junit.html#clients
  */
-package org.jpl.jdemo;
+package org.jpl.jdemo.docker;
 
 import static org.junit.Assert.assertEquals;
 
@@ -40,6 +40,10 @@ import org.openqa.selenium.Platform;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
+
+import org.jpl.jdemo.docker.Browser;
+import org.jpl.jdemo.docker.RunMode;
+import org.jpl.jdemo.docker.ParallelizedTesting;
 
 /**
  * Test class for parallel Selenium tests.

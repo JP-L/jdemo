@@ -19,48 +19,30 @@
  * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
- */
-package org.jpl.jdemo;
+*/
+package org.jpl.jdemo.docker;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
-public enum Browser {
-	/** Browsers supported. */
-	CHROME("chrome", Arrays.asList(60,61,62,63,64,65)),
-	FIREFOX("firefox", Arrays.asList(56,57,58,59)),
-	INTERNET_EXPLORER("ie", Arrays.asList(10,11)),
-	SAFARI("safari", Arrays.asList(10,11));
+public enum RunMode {
+	/** Remote and local run mode supported. */
+	LOCAL("@localhost:4445/wd/hub"),
+	REMOTE("@hub.testingbot.com/wd/hub");
 	
-	private final String name;
-	private final List<Integer> supportedVersions;
+	/** The url to use. */
+	private final String url;
+	
 	/**
-	 * Constructor
-	 * @param name
+	 * Set the URL
+	 * @param url
 	 */
-	private Browser(final String browser, List<Integer> versions) {
-		name = browser;
-		supportedVersions = versions;
-	}
+	RunMode(final String postfix) {
+        this.url = postfix;
+    }
+	
 	/**
-	 * Return the name of the user
-	 * @return
+	 * Return the postfix url
+	 * @return url
 	 */
-	public String getName() {
-		return name;
-	}
-	public String getMinorVersion() {
-		Integer minValue = Collections.min(supportedVersions);
-		return minValue.toString();
-	}
-	public String getMajorVersion() {
-		Integer maxValue = Collections.max(supportedVersions);
-		return maxValue.toString();
-	}
-	public String getRandomVersion() {
-		Collections.shuffle(supportedVersions);
-		Integer value = supportedVersions.get(0);
-		return value.toString();
+	public String getUrlPostfix() {
+		return this.url;
 	}
 }

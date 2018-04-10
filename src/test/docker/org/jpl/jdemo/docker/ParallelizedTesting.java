@@ -22,15 +22,15 @@
  * 
  * Most of this code comes from https://testingbot.com/support/getting-started/parallel-junit.html#clients
  */
-package org.jpl.jdemo;
+package org.jpl.jdemo.docker;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
+import org.jpl.jdemo.docker.Stage;
 import org.junit.runners.Parameterized;
 import org.junit.runners.model.RunnerScheduler;
-
 /**
  * Base class for parallel Selenium tests.
  * @author Testingbot

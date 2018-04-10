@@ -49,7 +49,7 @@ apply plugin: "org.sonarqube"
 /* ==== Add Selenium ==== */
 sourceSets {
 	selenium {
-		java.srcDirs = ["src/test/docker"]
+		java.srcDirs = ["${projectDir}/src/test/docker"]
     	// So that we can compile against the libs used by the unit test classes
         compileClasspath += test.compileClasspath
         // So that test- and business classes can be used at runtime:
@@ -166,6 +166,7 @@ task runFunctionalAndIntegrationTests(type: Test, dependsOn: ['startDockerContai
     	systemProperty "secret", project.getProperty("testbot_secret")
     	systemProperty "runMode", project.getProperty("runMode")
     	systemProperty "stage", project.getProperty("stage")
+    	println "Testing URL ${webapp_url}"
     }
     testClassesDir = sourceSets.selenium.output.classesDir
     classpath = sourceSets.selenium.runtimeClasspath

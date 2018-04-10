@@ -19,32 +19,48 @@
  * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
-package org.jpl.jdemo;
+ */
+package org.jpl.jdemo.docker;
 
-enum Stage {
-	/** Stages supported. */
-	DEVELOPMENT(1),
-	ALPHA(9),
-	BETA(18),
-	RC(81);
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
+public enum Browser {
+	/** Browsers supported. */
+	CHROME("chrome", Arrays.asList(60,61,62,63,64,65)),
+	FIREFOX("firefox", Arrays.asList(56,57,58,59)),
+	INTERNET_EXPLORER("ie", Arrays.asList(10,11)),
+	SAFARI("safari", Arrays.asList(10,11));
 	
-	/** The number of parallel threads. */
-	private final Integer numberOfThreads;
-	
+	private final String name;
+	private final List<Integer> supportedVersions;
 	/**
-	 * Set the URL
-	 * @param url
+	 * Constructor
+	 * @param name
 	 */
-	Stage(final Integer threads) {
-        this.numberOfThreads = threads;
-    }
-	
+	private Browser(final String browser, List<Integer> versions) {
+		name = browser;
+		supportedVersions = versions;
+	}
 	/**
-	 * Return the number of parallel threads to run
-	 * @return numberOfThreads
+	 * Return the name of the user
+	 * @return
 	 */
-	public int getNumberOfThreads() {
-		return this.numberOfThreads;
+	public String getName() {
+		return name;
+	}
+	public String getMinorVersion() {
+		Integer minValue = Collections.min(supportedVersions);
+		return minValue.toString();
+	}
+	public String getMajorVersion() {
+		Integer maxValue = Collections.max(supportedVersions);
+		return maxValue.toString();
+	}
+	public String getRandomVersion() {
+		Collections.shuffle(supportedVersions);
+		Integer value = supportedVersions.get(0);
+		return value.toString();
 	}
 }
