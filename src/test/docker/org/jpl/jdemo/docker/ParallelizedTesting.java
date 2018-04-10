@@ -40,7 +40,7 @@ public class ParallelizedTesting extends Parameterized {
 
 	private static class ThreadPoolScheduler implements RunnerScheduler {
 		/** The Release stage which defines how many threads to use. See Stage for all stages. Set through a system property. */
-		private static final String STAGE = System.getProperty("stage", "DEVELOPMENT").toUpperCase();
+		private static final String RELEASE_STAGE = System.getProperty("stage", "DEVELOPMENT").toUpperCase();
 		/** The executor. */
 		private ExecutorService executor;
 
@@ -48,7 +48,7 @@ public class ParallelizedTesting extends Parameterized {
 		 * The Thread pool scheduler which sets the number of parallel threads
 		 */
 		public ThreadPoolScheduler() {
-			final Stage releaseStage = Stage.valueOf(STAGE);
+			final Stage releaseStage = Stage.valueOf(RELEASE_STAGE);
 			executor = Executors.newFixedThreadPool(releaseStage.getNumberOfThreads());
 		}
 

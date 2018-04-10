@@ -49,11 +49,11 @@ gradle assemble "$DEBUG_OPTION";
 if [ "$BRANCH" != "master" ]; then
 	log_info "==== Tests and Quality control for the Java application ====";  
     gradle inspectQuality "$DEBUG_OPTION";
-    gradle runFunctionalAndIntegrationTests "$DEBUG_OPTION";
+    gradle runFunctionalAndIntegrationTests "$DEBUG_OPTION" -Pstage=DEVELOPMENT;
 elif [ "$BRANCH" == "master" ]; then
 	log_info "==== Tests for the Java application ====";  
     gradle test "$DEBUG_OPTION";
-    gradle runFunctionalAndIntegrationTests "$DEBUG_OPTION";
+    gradle runFunctionalAndIntegrationTests "$DEBUG_OPTION" -Pstage=FINAL;
 else
 	log_info "==== Unknown branch ====";
 fi

@@ -27,7 +27,8 @@ public enum Stage {
 	DEVELOPMENT(1),
 	ALPHA(9),
 	BETA(18),
-	RC(81);
+	RC(81),
+	FINAL(1);
 	
 	/** The number of parallel threads. */
 	private final Integer numberOfThreads;
