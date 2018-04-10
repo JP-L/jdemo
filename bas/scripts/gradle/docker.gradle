@@ -100,6 +100,7 @@ task createDockerContainer(type: DockerCreateContainer) {
     dependsOn createDockerImage
     targetImageId { createDockerImage.getImageId() }
     portBindings = ['8080:8080']
+    containerName = "jdemo-container"
 }
 task startDockerContainer(type: DockerStartContainer) {
 	group "Docker"
