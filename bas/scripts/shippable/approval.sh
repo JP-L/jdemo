@@ -50,17 +50,20 @@ if [[ "$DEBUG" -eq 1 ]]; then
 fi
 
 log_info "==== run tests for testing Alpha release ===="
-gradle -v "$DEBUG_OPTION"
+gradle runFunctionalAndIntegrationTests "$DEBUG_OPTION" -Pstage=ALPHA;
+gradle runAcceptanceAndSmokeTests "$DEBUG_OPTION" -Pstage=ALPHA;
 log_info "==== set Beta release on success ===="
 gradle releaseBeta "$DEBUG_OPTION"
 log_info "==== run tests for testing Beta release ===="
-gradle -v "$DEBUG_OPTION"
+gradle runFunctionalAndIntegrationTests "$DEBUG_OPTION" -Pstage=BETA;
+gradle runAcceptanceAndSmokeTests "$DEBUG_OPTION" -Pstage=BETA;
 log_info "==== set RC release on success ===="
 gradle releaseCandidate "$DEBUG_OPTION"
 log_info "==== run RC tests if any ===="
-#gradle -v "$DEBUG_OPTION" or something else
+gradle runFunctionalAndIntegrationTests "$DEBUG_OPTION" -Pstage=RC;
+gradle runAcceptanceAndSmokeTests "$DEBUG_OPTION" -Pstage=RC;
 log_info "==== clean up deployed image and test env ===="
-#Need to fin out how
+#Need to find out how
 log_info "==== Release the next version ===="
 gradle releaseVersion "$DEBUG_OPTION"
 

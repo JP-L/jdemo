@@ -22,16 +22,11 @@
 */
 package org.jpl.jdemo;
 
-import java.net.MalformedURLException;
-import java.net.URL;
-
 enum RunMode {
 	/** Remote and local run mode supported. */
-	LOCAL("LOCAL", "@localhost:4445/wd/hub"),
-	REMOTE("REMOTE", "@hub.testingbot.com/wd/hub");
+	LOCAL("@localhost:4445/wd/hub"),
+	REMOTE("@hub.testingbot.com/wd/hub");
 	
-	/** The run mode name. */
-	private final String name;
 	/** The url to use. */
 	private final String url;
 	
@@ -39,9 +34,8 @@ enum RunMode {
 	 * Set the URL
 	 * @param url
 	 */
-	RunMode(final String name, final String url) {
-		this.name = name;
-        this.url = url;
+	RunMode(final String postfix) {
+        this.url = postfix;
     }
 	
 	/**
@@ -51,16 +45,4 @@ enum RunMode {
 	public String getUrlPostfix() {
 		return this.url;
 	}
-
-	/**
-	 * Return the runmode
-	 * @return name
-	 */
-    public static URL getUrl(final String name, final String key, final String secret) 
-    	throws MalformedURLException
-    {
-    	final String prefix = "http://" + key + ":" + secret;
-    	final String postfix = (LOCAL.name.equalsIgnoreCase(name)) ? LOCAL.getUrlPostfix() : REMOTE.getUrlPostfix();
-    	return new URL(prefix.concat(postfix));
-    }
 }

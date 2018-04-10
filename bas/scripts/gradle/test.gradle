@@ -166,6 +166,7 @@ task runFunctionalAndIntegrationTests(type: Test, dependsOn: ['startDockerContai
     	systemProperty "key", project.getProperty("testbot_key")
     	systemProperty "secret", project.getProperty("testbot_secret")
     	systemProperty "runMode", project.getProperty("runMode")
+    	systemProperty "stage", project.getProperty("stage")
     }
     testClassesDir = sourceSets.selenium.output.classesDir
     classpath = sourceSets.selenium.runtimeClasspath
@@ -184,7 +185,9 @@ dependencies {
     // TestNG is also supported by the Gradle Test task. Just change the
     // testCompile dependency to testCompile 'org.testng:testng:6.8.1' and add
     // 'test.useTestNG()' to your build script.
-    testCompile group: 'junit', name: 'junit', version: '4.+'
+    testCompile 'org.junit.jupiter:junit-jupiter-api:5.1.0'
+    testCompile 'org.junit.jupiter:junit-jupiter-engine:5.1.0'
+    
     testCompile 'org.hamcrest:hamcrest-junit:2.0.0.0'
     /* Cucumber */
     testCompile group: 'info.cukes', name: 'cucumber-java', version: '1.2.+'

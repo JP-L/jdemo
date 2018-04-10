@@ -19,38 +19,48 @@
  * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
+ */
 package org.jpl.jdemo;
 
-import org.junit.Test;
-import static org.junit.Assert.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
-import org.openqa.selenium.remote.*;
-
-/**
- * Selenium test for jdemo.
- * @author limpens
- *
- */
-public class FFTests extends AbstractTest {
-	/**
-	 * @see org.jpl.jdemo.AbstractTest#configure()
-	 */
-	public DesiredCapabilities configure() {
-		final DesiredCapabilities capabilities = new DesiredCapabilities();
-		capabilities.setCapability("platform", "WIN10");
-		capabilities.setCapability("version", "59");
-		capabilities.setCapability("browserName", "firefox");
-		capabilities.setCapability("name", "FF - Selenium Testing");
-		return capabilities;
-	}
+public enum Browser {
+	/** Browsers supported. */
+	CHROME("chrome", Arrays.asList(60,61,62,63,64,65)),
+	FIREFOX("firefox", Arrays.asList(56,57,58,59)),
+	INTERNET_EXPLORER("ie", Arrays.asList(10,11)),
+	SAFARI("safari", Arrays.asList(10,11));
 	
-    /**
-     * Simple test to validate if the web application is available.
-     */
-	@Test
-    public final void isAvailable() throws Exception {
-		this.getDriver().get(URL_TO_TEST);
-		assertEquals("jdemo", this.getDriver().getTitle());
-    }
+	private final String name;
+	private final List<Integer> supportedVersions;
+	/**
+	 * Constructor
+	 * @param name
+	 */
+	private Browser(final String browser, List<Integer> versions) {
+		name = browser;
+		supportedVersions = versions;
+	}
+	/**
+	 * Return the name of the user
+	 * @return
+	 */
+	public String getName() {
+		return name;
+	}
+	public String getMinorVersion() {
+		Integer minValue = Collections.min(supportedVersions);
+		return minValue.toString();
+	}
+	public String getMajorVersion() {
+		Integer maxValue = Collections.max(supportedVersions);
+		return maxValue.toString();
+	}
+	public String getRandomVersion() {
+		Collections.shuffle(supportedVersions);
+		Integer value = supportedVersions.get(0);
+		return value.toString();
+	}
 }

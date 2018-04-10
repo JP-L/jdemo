@@ -78,10 +78,11 @@ build:
   # in this section can be used to skip default processing for CI.
   ci:
     - chmod +x $SHIPPABLE_REPO_DIR/bas/scripts/shippable/*
-    - $SHIPPABLE_REPO_DIR/bas/scripts/shippable/prepare.sh 
+    - $SHIPPABLE_REPO_DIR/bas/scripts/shippable/prepare.sh
+        --ci
         -src $SHIPPABLE_REPO_DIR/bas/resources/gradle/gradle.properties 
         $DEBUG
-    - $SHIPPABLE_REPO_DIR/bas/scripts/shippable/package.sh 
+    - $SHIPPABLE_REPO_DIR/bas/scripts/shippable/package.sh
         $DEBUG
     - echo "==== CI completed. Move to post CI ===="
 
@@ -124,6 +125,7 @@ integrations:
         - integrationName: Sonar
         - integrationName: BRep
         - integrationName: SRep
+        - integrationName: TBot
     
 #### END CI CONFIG
 
@@ -236,6 +238,10 @@ resources:
       type: integration
       integration: SRep
       
+    - name: TBot
+      type: integration
+      integration: TestingBot
+        
     - name: RunMode
       type: integration
       integration: RunMode
@@ -385,6 +391,7 @@ jobs:
         - IN: Sonar
         - IN: BRep
         - IN: SRep
+        - IN: TBot
         - IN: IMAGE
         - IN: IMAGE_VERSION
         - IN: scripts-from-srcRepo
@@ -407,6 +414,7 @@ jobs:
               - echo "=== list of envs ====" && printenv
               - chmod +x $SCRIPTSFROMSRCREPO_STATE/bas/scripts/shippable/*
               - $SCRIPTSFROMSRCREPO_STATE/bas/scripts/shippable/prepare.sh
+                   --remote
                    -src $SCRIPTSFROMSRCREPO_STATE/bas/resources/gradle/gradle.properties
                    $DEBUG
               - cd $SCRIPTSFROMSRCREPO_STATE

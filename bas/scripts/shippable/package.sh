@@ -27,11 +27,6 @@ case $key in
     shift # past argument
     #shift # past value
     ;;
-    -l|--local)
-    LOCAL=1
-    shift # past argument
-    #shift # past value
-    ;;
     --default)
     DEFAULT=YES
     shift # past argument

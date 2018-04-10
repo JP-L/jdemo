@@ -22,35 +22,29 @@
 */
 package org.jpl.jdemo;
 
-import org.junit.Test;
-import static org.junit.Assert.*;
-
-import org.openqa.selenium.remote.*;
-
-/**
- * Selenium test for jdemo.
- * @author limpens
- *
- */
-public class IETests extends AbstractTest {
+enum Stage {
+	/** Stages supported. */
+	DEVELOPMENT(1),
+	ALPHA(9),
+	BETA(18),
+	RC(81);
+	
+	/** The number of parallel threads. */
+	private final Integer numberOfThreads;
+	
 	/**
-	 * @see org.jpl.jdemo.AbstractTest#configure()
+	 * Set the URL
+	 * @param url
 	 */
-	public DesiredCapabilities configure() {
-		final DesiredCapabilities capabilities = new DesiredCapabilities();
-		capabilities.setCapability("platform", "WIN10");
-		capabilities.setCapability("version", "11");
-		capabilities.setCapability("browserName", "internet explorer");
-		capabilities.setCapability("name", "IE - Selenium Testing");
-		return capabilities;
-	}
-
-    /**
-     * Simple test to validate if the web application is available.
-     */
-	@Test
-    public final void isAvailable() throws Exception {
-		this.getDriver().get(URL_TO_TEST);
-		assertEquals("jdemo", this.getDriver().getTitle());
+	Stage(final Integer threads) {
+        this.numberOfThreads = threads;
     }
+	
+	/**
+	 * Return the number of parallel threads to run
+	 * @return numberOfThreads
+	 */
+	public int getNumberOfThreads() {
+		return this.numberOfThreads;
+	}
 }

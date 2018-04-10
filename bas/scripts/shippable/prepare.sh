@@ -26,10 +26,14 @@ case $key in
     shift # past argument
     #shift # past value
     ;;
-    -l|--local)
+    -l|--local|--ci)
     LOCAL=1
     shift # past argument
     #shift # past value
+    ;;
+    --remote)
+    LOCAL=2
+    shift # past argument
     ;;
     -src|--source)
     GRADLE_PROPS="$2"
@@ -78,6 +82,18 @@ sed -i -r "s|SRCREPO_KEY|$SRCREPO_USR|g" "$BASE/.gradle/gradle.properties"
       
 sed -i -r "s|MY_ACCESS_ID|$AMAZONKEYS_ACCESSKEY|g" "$BASE/.gradle/gradle.properties" 
 sed -i -r "s|MY_SECRET|$AMAZONKEYS_SECRETKEY|g" "$BASE/.gradle/gradle.properties"
+
+sed -i -r "s|TB_ACCESS_ID|$TESTINGBOT_ACCESSKEY|g" "$BASE/.gradle/gradle.properties" 
+sed -i -r "s|TB_SECRET|$TESTINGBOT_SECRETKEY|g" "$BASE/.gradle/gradle.properties"
+
+if [[ "$LOCAL" -eq 1 ]]; then
+	sed -i -r "s|RUNMODE|local|g" "$BASE/.gradle/gradle.properties"
+	sed -i -r "s|WEBAPP_URL|$LOCAL_WEBAPP_URL|g" "$BASE/.gradle/gradle.properties"
+else
+	sed -i -r "s|RUNMODE|remote|g" "$BASE/.gradle/gradle.properties"
+	sed -i -r "s|WEBAPP_URL|$REMOTE_WEBAPP_URL|g" "$BASE/.gradle/gradle.properties"
+fi
+
 log_info "==== Gradle environment prepared ===="	
 
 if [ "$DEBUG" -eq 1 ]; then
