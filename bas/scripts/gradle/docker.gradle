@@ -107,6 +107,9 @@ task startDockerContainer(type: DockerStartContainer, dependsOn: createDockerCon
 }
 task inspectDockerContainer(type: DockerInspectContainer, dependsOn: startDockerContainer) {
 	group "Docker"
+	onlyIf {
+        project.getProperty("runMode") == "local"
+    }
 	targetContainerId { createDockerContainer.getContainerId() }
     onNext {
         def networkSettings = it.networkSettings

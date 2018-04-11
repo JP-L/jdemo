@@ -71,7 +71,7 @@ public class ParallelizedTesting extends Parameterized {
 		@Override
 		public void schedule(Runnable childStatement) {
 			executor.submit(childStatement);
-		}
+		}		
 	}
 
 	/**
@@ -81,4 +81,5 @@ public class ParallelizedTesting extends Parameterized {
 		super(klass);
 		setScheduler(new ThreadPoolScheduler());
 	}
+
 }

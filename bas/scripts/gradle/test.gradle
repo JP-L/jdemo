@@ -143,21 +143,41 @@ task runFunctionalAndIntegrationTests(type: Test, dependsOn: ['inspectDockerCont
 	group "Quality"
     finalizedBy stopDockerContainer, stopTestingBotTunnel
     doFirst {
-    	def webUrl = project.getProperty("webapp_url").replaceAll('localhost', project.getProperty("localIpAddress"))
-    	systemProperty "webapp_url", webUrl
-    	systemProperty "key", project.getProperty("testbot_key")
-    	systemProperty "secret", project.getProperty("testbot_secret")
-    	systemProperty "runMode", project.getProperty("runMode")
-    	systemProperty "stage", project.getProperty("stage")
-    	println "Testing URL ${webUrl}"
-    }
+		// Set system properties for the Tests
+   		systemProperty "runMode", project.getProperty("runMode")
+   		systemProperty "key", project.getProperty("testbot_key")
+   		systemProperty "secret", project.getProperty("testbot_secret")
+   		systemProperty "stage", project.getProperty("stage")
+
+		webUrl = project.getProperty("webapp_url")
+		if (project.getProperty("runMode") == "local") {
+   			webUrl = webUrl.replaceAll('localhost', project.getProperty("localIpAddress"))
+   		} 
+   		systemProperty "webapp_url", webUrl
+   		println "Testing URL ${webUrl}"
+	}
     testClassesDir = sourceSets.selenium.output.classesDir
     classpath = sourceSets.selenium.runtimeClasspath
 }
 
-task runAcceptanceAndSmokeTests(type: Exec) {
+task runAcceptanceAndSmokeTests(type: Test) {
 	group "Quality"
-	//dependsOn .... releaseCI -> probably this becomes a shippable Job
+    doFirst {
+		// Set system properties for the Tests
+   		systemProperty "runMode", project.getProperty("runMode")
+   		systemProperty "key", project.getProperty("testbot_key")
+   		systemProperty "secret", project.getProperty("testbot_secret")
+   		systemProperty "stage", project.getProperty("stage")
+
+		webUrl = project.getProperty("webapp_url")
+		if (project.getProperty("runMode") == "local") {
+   			webUrl = webUrl.replaceAll('localhost', project.getProperty("localIpAddress"))
+   		} 
+   		systemProperty "webapp_url", webUrl
+   		println "Testing URL ${webUrl}"
+	}
+    testClassesDir = sourceSets.selenium.output.classesDir
+    classpath = sourceSets.selenium.runtimeClasspath
 }
 
 /*

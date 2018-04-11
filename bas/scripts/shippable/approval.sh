@@ -48,20 +48,20 @@ set -- "${POSITIONAL[@]}" # restore positional parameters
 if [[ "$DEBUG" -eq 1 ]]; then
 	set -o xtrace
 fi
-
+# Handle Alpha releases
 log_info "==== run tests for testing Alpha release ===="
-gradle runFunctionalAndIntegrationTests "$DEBUG_OPTION" -Pstage=ALPHA
 gradle runAcceptanceAndSmokeTests "$DEBUG_OPTION" -Pstage=ALPHA
 log_info "==== set Beta release on success ===="
 gradle releaseBeta "$DEBUG_OPTION"
+# Handle Beta releases
 log_info "==== run tests for testing Beta release ===="
-gradle runFunctionalAndIntegrationTests "$DEBUG_OPTION" -Pstage=BETA
 gradle runAcceptanceAndSmokeTests "$DEBUG_OPTION" -Pstage=BETA
 log_info "==== set RC release on success ===="
 gradle releaseCandidate "$DEBUG_OPTION"
+# Handle RC releases
 log_info "==== run RC tests if any ===="
-gradle runFunctionalAndIntegrationTests "$DEBUG_OPTION" -Pstage=RC
 gradle runAcceptanceAndSmokeTests "$DEBUG_OPTION" -Pstage=RC
+# Clean up and release the new version
 log_info "==== clean up deployed image and test env ===="
 #Need to find out how
 log_info "==== Release the next version ===="

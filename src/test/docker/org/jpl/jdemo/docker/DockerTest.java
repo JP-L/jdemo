@@ -52,6 +52,8 @@ import org.jpl.jdemo.docker.ParallelizedTesting;
  */
 @RunWith(ParallelizedTesting.class)
 public class DockerTest {
+	/** The Release stage which defines how many threads to use. See Stage for all stages. Set through a system property. */
+	private static final String RELEASE_STAGE = System.getProperty("stage", "DEVELOPMENT").toUpperCase();
 	/** The key and secret to access Testingbot. */
 	private static final String KEY = System.getProperty("key");
 	private static final String SECRET = System.getProperty("secret");
@@ -114,7 +116,7 @@ public class DockerTest {
 		capabilities.setCapability("platform", platform);
 		capabilities.setCapability("browser", browserName);
 		capabilities.setCapability("browserVersion", browserVersion);
-		capabilities.setCapability("name", browserName + " - Selenium Parllel Testing");
+		capabilities.setCapability("name", RELEASE_STAGE + " - " + browserName + " - Selenium Parallel Testing");
 		
 		driver = new RemoteWebDriver(getUrl(), capabilities);
 		driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
