@@ -138,17 +138,18 @@ task stopTestingBotTunnel(type: Exec) {
 	}
 }
 
-task runFunctionalAndIntegrationTests(type: Test, dependsOn: ['startDockerContainer', 'startTestingBotTunnel']) {
+task runFunctionalAndIntegrationTests(type: Test, dependsOn: ['inspectDockerContainer', 'startTestingBotTunnel']) {
 	description "Run functional and integration tests"
 	group "Quality"
     finalizedBy stopDockerContainer, stopTestingBotTunnel
     doFirst {
-    	systemProperty "webapp_url", project.getProperty("webapp_url")
+    	def webUrl = project.getProperty("webapp_url").replaceAll('localhost', project.getProperty("localIpAddress"))
+    	systemProperty "webapp_url", webUrl
     	systemProperty "key", project.getProperty("testbot_key")
     	systemProperty "secret", project.getProperty("testbot_secret")
     	systemProperty "runMode", project.getProperty("runMode")
     	systemProperty "stage", project.getProperty("stage")
-    	println "Testing URL ${webapp_url}"
+    	println "Testing URL ${webUrl}"
     }
     testClassesDir = sourceSets.selenium.output.classesDir
     classpath = sourceSets.selenium.runtimeClasspath
