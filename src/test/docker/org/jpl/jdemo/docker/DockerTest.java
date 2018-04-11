@@ -24,7 +24,8 @@
  */
 package org.jpl.jdemo.docker;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
+import static org.hamcrest.CoreMatchers.startsWith;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -40,7 +41,6 @@ import org.openqa.selenium.Platform;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
-
 import org.jpl.jdemo.docker.Browser;
 import org.jpl.jdemo.docker.RunMode;
 import org.jpl.jdemo.docker.ParallelizedTesting;
@@ -136,7 +136,8 @@ public class DockerTest {
 	@Test
 	public void testSimple() throws Exception {
 		driver.get(URL_TO_TEST);
-		assertEquals("jdemo", driver.getTitle());		
+		assertThat(driver.getTitle(), startsWith("jdemo"));
+		//assertEquals("jdemo", driver.getTitle());		
 	}
 
 	/**
