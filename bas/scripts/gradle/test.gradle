@@ -149,7 +149,7 @@ task runFunctionalAndIntegrationTests(type: Test, dependsOn: ['inspectDockerCont
    		systemProperty "secret", project.getProperty("testbot_secret")
    		systemProperty "stage", project.getProperty("stage")
 
-		webUrl = project.getProperty("webapp_url")
+		def webUrl = project.getProperty("webapp_url")
 		if (project.getProperty("runMode") == "local") {
    			webUrl = webUrl.replaceAll('localhost', project.getProperty("localIpAddress"))
    		} 
@@ -169,7 +169,7 @@ task runAcceptanceAndSmokeTests(type: Test) {
    		systemProperty "secret", project.getProperty("testbot_secret")
    		systemProperty "stage", project.getProperty("stage")
 
-		webUrl = project.getProperty("webapp_url")
+		def webUrl = project.getProperty("webapp_url")
 		if (project.getProperty("runMode") == "local") {
    			webUrl = webUrl.replaceAll('localhost', project.getProperty("localIpAddress"))
    		} 
