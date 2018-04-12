@@ -125,6 +125,7 @@ integrations:
         - integrationName: BRep
         - integrationName: SRep
         - integrationName: TBot
+        - integrationName: WebApp_JDemo
     
 #### END CI CONFIG
 
@@ -244,6 +245,10 @@ resources:
     - name: RunMode
       type: integration
       integration: RunMode
+      
+    - name: WebApp_JDemo
+      type: integration
+      integration: WebApp_JDemo
       
     #### NOTIFICATIONS ####
     - name: Slack
@@ -373,7 +378,7 @@ jobs:
           applyTo:
             - manifest: jdemoManifestQA
               image: jdemoImgQA
-              port: 8080
+              port: 80
       on_failure:
         - NOTIFY: Slack
 
@@ -385,16 +390,17 @@ jobs:
       steps:
         - IN: RunMode
         - IN: deployImage-EUC1
-          switch: off
         - IN: CI_CONTAINER
         - IN: CI_CONTAINER_VERSION
         - IN: Sonar
         - IN: BRep
         - IN: SRep
         - IN: TBot
+        - IN: WebApp_JDemo
         - IN: IMAGE
         - IN: IMAGE_VERSION
         - IN: scripts-from-srcRepo
+          switch: off
         - IN: aws-cliConfig
           scopes:
             - ecr
