@@ -21,29 +21,37 @@
 # * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #*/
 
-#Release properties
-release.useAutomaticVersion=true
-release_dryrun=false
-#
-systemProp.org.ajoberstar.grgit.auth.username=SRCREPO_KEY
-repo_key=org.ajoberstar.grgit.auth.username
-#
-binrepo_url=BURL
-binrepo_registryUrl=REG_URL
-binrepo_user=USR
-binrepo_password=PWD
-binrepo_email=EMAIL
-#
-systemProp.sonar.host.url=SONAR_URL
-systemProp.sonar.organization=ORG
-systemProp.sonar.login=SONAR_KEY
-#
-awsAccessKeyId=MY_ACCESS_ID
-awsSecretAccessKey=MY_SECRET
-#
-webapp_url=WEBAPP_URL
-testbot_jar=/usr/testingbot-tunnel/testingbot-tunnel.jar
-testbot_key=TB_ACCESS_ID
-testbot_secret=TB_SECRET
-runMode=RUNMODE
+# ==== Region and AV ====
+variable "default_region" {
+	description = "Default region to setup"
+	default = "eu-central-1"
+}
+variable "regions" {
+	description = "Regions to setup"
+	default = ["eu-west-1","eu-west-2","eu-west-3"]
+}	
+variable "default_ip_range" {
+	description = "PZ IP range from my IP range"
+	default = "138.199.69.187/32"
+}
 
+# ==== Applications ====
+variable "applications" {
+	description = "The load balancer configuration for the application"
+	type = "map"
+	default = {
+		jdemo.protocol	 			= "HTTP"
+		jdemo.ingressPort			= "80"
+		jdemo.egressPort			= ""
+		jdemo.allowIPv4Ingress		= "0.0.0.0/0"
+		jdemo.allowIPv6Ingress		= "::/0"
+		jdemo.allowIPv4Egress		= "0.0.0.0/0"
+		jdemo.allowIPv6Egress		= "::/0"
+		
+		jdemo.deregistration_delay  = "300"
+		jdemo.health_check_path	 	= "/"
+		jdemo.action_type			= "forward"
+	}
+}
+
+	

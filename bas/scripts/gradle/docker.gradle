@@ -95,18 +95,33 @@ task pushDockerImage(type: DockerPushImage) {
 }
 
 /* ===== Docker Container tasks ==== */
-task createDockerContainer(type: DockerCreateContainer) {
+task createDockerContainer(type: DockerCreateContainer, dependsOn: createDockerImage) {
 	group "Docker"
-    dependsOn createDockerImage
     targetImageId { createDockerImage.getImageId() }
     portBindings = ['8080:8080']
+    containerName = "jdemo-container"
 }
-task startDockerContainer(type: DockerStartContainer) {
+task startDockerContainer(type: DockerStartContainer, dependsOn: createDockerContainer) {
 	group "Docker"
-    dependsOn createDockerContainer
+    targetContainerId { createDockerContainer.getContainerId() }
+}
+task inspectDockerContainer(type: DockerInspectContainer, dependsOn: startDockerContainer) {
+	group "Docker"
+	onlyIf {
+        project.getProperty("runMode") == "local"
+    }
+	targetContainerId { createDockerContainer.getContainerId() }
+    onNext {
+        def networkSettings = it.networkSettings
+        project.ext.setProperty("localIpAddress", networkSettings.ipAddress)
+    }
+}
+task removeDockerContainer(type: DockerRemoveContainer) {
+	group "Docker"
     targetContainerId { createDockerContainer.getContainerId() }
 }
 task stopDockerContainer(type: DockerStopContainer) {
 	group "Docker"
+	finalizedBy removeDockerContainer
     targetContainerId { createDockerContainer.getContainerId() }
 }

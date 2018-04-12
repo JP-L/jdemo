@@ -21,29 +21,15 @@
 # * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #*/
 
-#Release properties
-release.useAutomaticVersion=true
-release_dryrun=false
+# Note: This file is based upon the awslabs terraform demo, located at:
 #
-systemProp.org.ajoberstar.grgit.auth.username=SRCREPO_KEY
-repo_key=org.ajoberstar.grgit.auth.username
+#     https://github.com/awslabs/apn-blog/blob/tf_blog_v1.0/terraform_demo/
 #
-binrepo_url=BURL
-binrepo_registryUrl=REG_URL
-binrepo_user=USR
-binrepo_password=PWD
-binrepo_email=EMAIL
-#
-systemProp.sonar.host.url=SONAR_URL
-systemProp.sonar.organization=ORG
-systemProp.sonar.login=SONAR_KEY
-#
-awsAccessKeyId=MY_ACCESS_ID
-awsSecretAccessKey=MY_SECRET
-#
-webapp_url=WEBAPP_URL
-testbot_jar=/usr/testingbot-tunnel/testingbot-tunnel.jar
-testbot_key=TB_ACCESS_ID
-testbot_secret=TB_SECRET
-runMode=RUNMODE
 
+module "aws" {
+  source = "./providers/aws"
+}
+
+terraform {
+	required_version = "> 0.7.0"
+}

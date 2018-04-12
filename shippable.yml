@@ -26,7 +26,7 @@ language: java
 
 # Set language version. This is only required if you use the default Shippable image for your build
 jdk:
-  - oraclejdk8
+  - openjdk8
 
 # use this to control what branches get built.
 # http://docs.shippable.com/ci/advancedOptions/branches/
@@ -45,17 +45,6 @@ env:
     - CODE_COVERAGE_DIR=$SHIPPABLE_REPO_DIR/shippable/codecoverage
     - TESTS_LOC_DIR=$SHIPPABLE_REPO_DIR/src/test
     - MOD_LOC=$SHIPPABLE_REPO_DIR/node_modules/.bin/
-    # Shippable required
-    # Container
-    - secure: bKMQapNqdCOKOigxPuyLTHV4y+BvBrtSp+e6PhZEcGKkwoSRC0OMA9+3iCDyIOjPGouiYpDD2ShgqVu8CNidp5FjlpdNCqbzT6ovlcmXSkisBIEqio4q1wazOlEYQGdi60lmn+/jRydCAOeLiYbXOZ1wWG3c6hytl4G6f6uB68+kH5BLrWSRUrLnnoQLiUEJb16R7E9kjzpMzYWFzt1ofOH1WMi155GK2eDTY7qcIRDITvEpReJeNMmlTT+ceYyNdsIYQIUWSHjz/d/Vjso9aQ8o4u43r8C/a+TZFUY9t6jf08xbNz+leTkgYmrFvc00DNAUY8FfWYWwVjTiEqJjdg==
-    - CI_CONTAINER_VERSION='1.0'
-    # Image
-    - secure: QeuzsKzHkuajVJZRzot2eMFbi5yxqjsdsSkOfVoPU8vS5GWeZkK9aUyvUSxPiQVSstDXJhifFYlrTFJ9zwkvjReSpEKd7Yq0OyX+aLFG7oLmqxplyqUIQcM77pEguBRO2ohQnu0j838RZW3xvQc1CBYfvINEorDPF+hVti9T96oS+E2XRVGo3b+HYLAMQ0jjj8LDetDSK/rEHRhcjNh0YLWHemrBelwr114EtPLdqsharqSPdwsTPhQMYjZdnrOemEg7yfCxku+br7ZHudgKCWL+jpxPWrn3zR0CRlYSlVc/YDYycjU9EPRNZgwO3hXBBxDOkzAykUHjvF3R/Sotkg==
-    - IMAGE_VERSION="latest"
-    # Secure Gradle props
-    - secure: Qk6NKicUfeWMIPcA5HGJebxUzVUV4SPTV6Oq47G2GgC1TjrFMcwrrZTzrHGJ1q2jP1el+M0OmcuTmQjgUIHGXWZACkvw/y6F3Y0yOLUGJhAHRIN2JHsj5c3PjMoz4U/wYM2eKOiZwiaFsI2sm455wU2jHo6+9cgCJdEfMPX2rBM6w9Uy9VpWbZ/FUzBRxuDakVoErtJ63frGKEcQ0nbNrbqETARQJfsrLw/zY65tNW6+EOpEunQOMTaZfpQ5yY6CEFMDxN2AsdBfmTpfD4x5houhSOvWXSm1zyDmavYlO+aXjq/WzuZymCmfGhjDUfDj0CMAw/E1hMpMrJ5f8zWdEg==
-    - secure: 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
-    - secure: bzzevaPxwwIxFbyR2ik3xILewufFDzVxlDxB5lcPRGzIUjXpe3pFxaHtoBX3NO/1mcqURCWvavMHccyHaP8/IywDVvjql3PB/au3ql2/bW8c+E4ylncFt1f7a07QrZQaZVa5ZBQoWgpWhIjNxxHiy4Stcm7YfJGauvsX6sDwk49WfiJlva6TzSPl0PXayesjeSjznOoFu2d++lFpwkwt7YazD/+nAbVVmu+boBHFFjy3wwaKtlVRq9WtTq7xOU+YhpMKkLA3ZO2/ixmad1SzSbjHBnunWgr5byzK3Zmuc2JbFMydiwQwlrUebKmSr6I+jKJaixAapygzuRmZU3xhPQ==
 
 #matrix:
 
@@ -63,10 +52,11 @@ env:
 build:
   # commands in this section run on your build machine and not inside your CI container.
   pre_ci:
-    - echo "==== Prepare environment ===="
-    - mkdir -p $TEST_RESULTS_DIR && mkdir -p $CODE_COVERAGE_DIR
-    - pushd $TESTS_LOC_DIR
-    - if [ "$BRANCH" == "development" ]; then
+    - echo "==== Prepare environment ====" &&
+      mkdir -p $TEST_RESULTS_DIR && 
+      mkdir -p $CODE_COVERAGE_DIR && 
+      pushd $TESTS_LOC_DIR;
+      if [ "$BRANCH" == "development" ]; then
            echo "==== Development branch ====";
       elif [ "$BRANCH" == "release" ]; then
            echo "==== Release branch ====";
@@ -76,7 +66,7 @@ build:
            echo "==== Unknown branch ====";
       fi
     #- echo "==== Kill any old containers which might be running ====" && docker ps -a | grep -v 'reqProc' | cut -d ' ' -f1 #| xargs docker stop"
-    - echo "==== DEBUG List all environment variables ====" && printenv
+    #- echo "==== DEBUG List all environment variables ====" && printenv
 
   pre_ci_boot:
     image_name: $CI_CONTAINER
@@ -87,51 +77,22 @@ build:
   # commands in this section run inside your CI container. In addition, any commands such as ls, 
   # in this section can be used to skip default processing for CI.
   ci:
-    - echo "==== Prepare Gradle environment ===="
-    - mkdir -p $HOME/.gradle
-    - cp $SHIPPABLE_REPO_DIR/bas/resources/gradle/gradle.properties $HOME/.gradle/
-    - printenv | grep SONARQUBE_PROP | cut -d'=' -f 2- | tr '|' '\n' >> $HOME/.gradle/gradle.properties
-    - printenv | grep BINREPO_PROP | cut -d'=' -f 2- | tr '|' '\n' >> $HOME/.gradle/gradle.properties
-    - printenv | grep SRCREPO_PROP | cut -d'=' -f 2- | tr '|' '\n' >> $HOME/.gradle/gradle.properties
-    - sed -i -r "s|MY_ACCESS_ID|$AMAZONKEYS_ACCESSKEY|g" $HOME/.gradle/gradle.properties 
-    - sed -i -r "s|MY_SECRET|$AMAZONKEYS_SECRETKEY|g" $HOME/.gradle/gradle.properties
-    
-    - echo "==== Building the Java application ===="
-    - gradle assemble
-    - if [ "$BRANCH" != "master" ]; then
-           echo "==== Tests and Quality control for the Java application ====";  
-           gradle inspectQuality;
-           gradle runFunctionalAndIntegrationTests;
-      elif [ "$BRANCH" == "master" ]; then
-           echo "==== Tests for the Java application ====";  
-           gradle test;
-           gradle runFunctionalAndIntegrationTests;
-      else
-           echo "==== Unknown branch ====";
-      fi
+    - chmod +x $SHIPPABLE_REPO_DIR/bas/scripts/shippable/*
+    - $SHIPPABLE_REPO_DIR/bas/scripts/shippable/prepare.sh
+        -src $SHIPPABLE_REPO_DIR/bas/resources/gradle/gradle.properties 
+        $DEBUG
+    - $SHIPPABLE_REPO_DIR/bas/scripts/shippable/package.sh
+        $DEBUG
     - echo "==== CI completed. Move to post CI ===="
 
   post_ci:
-    - echo "==== Post CI tasks==== "
-    - if [ "$BRANCH" == "master" ]; then shipctl post_resource_state jdemoImg versionName $BRANCH.$BUILD_NUMBER; fi
-    - if [ "$BRANCH" == "releases" ]; then shipctl post_resource_state QA_jdemoImg versionName $BRANCH.$BUILD_NUMBER; fi
+    - $SHIPPABLE_REPO_DIR/bas/scripts/shippable/finalize.sh -p -r jdemoImgQA
 
   on_success:
-    - if [ "$BRANCH" == "development" ]; then
-           echo "==== Release the code for Acceptance and Smoke testing ====";
-           gradle releaseDevelopment;
-      elif [ "$BRANCH" == "releases" ]; then
-           echo "==== Tag as alpha release ====";
-           gradle releaseAlpha;
-      elif [ "$BRANCH" == "master" ]; then
-           echo "==== Publish the next Release ====";   
-           gradle publishRelease;
-      else
-           echo "==== Unknown branch ====";
-      fi
+    - $SHIPPABLE_REPO_DIR/bas/scripts/shippable/finalize.sh -s
 
   on_failure:
-    - echo "==== Build failed ===="
+    - $SHIPPABLE_REPO_DIR/bas/scripts/shippable/finalize.sh -f
     
   cache: false
 
@@ -153,26 +114,66 @@ integrations:
           on_start: always
 
     hub:
-        - integrationName: AWS
+        - integrationName: AWS-EIS
           type: ecr
           region: eu-west-1
 #          agent_only:
 #          branches:
-  
+
+    generic:     
+        - integrationName: Sonar
+        - integrationName: BRep
+        - integrationName: SRep
+        - integrationName: TBot
+        - integrationName: WebApp_JDemo
+    
 #### END CI CONFIG
 
 #### RESOURCES CONFIG (GLOBAL ACROSS SUBSCRIPTION)
 resources:
+    # Params
+    - name: CI_CONTAINER
+      type: params
+      versionTemplate:
+        params:
+          secure: QRrl5lPJ3n81QyeeC0fEYzmDxwEBjjJizBsuqTIbWql7nndDrsjdnGxNyHS/qzFmLbVCoCRspCG6Wv3BsQ9GSZ0qwfMK8MdPdexsjZL/PNCusRQT0yyqiVRMF+jfo212+zmjxRFqvVvHU4VDSNAy0CTk1gKlIocL4FafveveYLB6lZDy8rtfVjnU8YeXcT5vXKyX6n6jh3YNGmAjhqzSgKI3QjEiil0dRCLpJrra5BCOao7A46Lbk/21heD7MJeMg28BTfwJ+yKDBIeFp/OS+kXl4O83nUgvVElF4ECb4/70tgxInX+WeVAs0GRVBO4UZnkmt11kIA2gOLCg0M7ZCQ==
+
+    - name: CI_CONTAINER_VERSION
+      type: params
+      versionTemplate:
+        params:
+          CI_CONTAINER_VERSION: '1.0'
+    
+    - name: IMAGE
+      type: params
+      versionTemplate:
+        params:
+          secure: QeuzsKzHkuajVJZRzot2eMFbi5yxqjsdsSkOfVoPU8vS5GWeZkK9aUyvUSxPiQVSstDXJhifFYlrTFJ9zwkvjReSpEKd7Yq0OyX+aLFG7oLmqxplyqUIQcM77pEguBRO2ohQnu0j838RZW3xvQc1CBYfvINEorDPF+hVti9T96oS+E2XRVGo3b+HYLAMQ0jjj8LDetDSK/rEHRhcjNh0YLWHemrBelwr114EtPLdqsharqSPdwsTPhQMYjZdnrOemEg7yfCxku+br7ZHudgKCWL+jpxPWrn3zR0CRlYSlVc/YDYycjU9EPRNZgwO3hXBBxDOkzAykUHjvF3R/Sotkg==
+
+    - name: IMAGE_VERSION
+      type: params
+      versionTemplate:
+        params:
+          IMAGE_VERSION: 'latest'
+
+    # Job resources
+    - name: scripts-from-srcRepo
+      type: gitRepo
+      integration: GitHub
+      versionTemplate:
+        sourceName: "JP-L/jdemo"
+        branch: "releases"
+    
     - name: jdemoImg
       type: image
-      integration: AWS
+      integration: AWS-EIS
       versionTemplate:
         sourceName: $IMAGE_REPOSITORY
         versionName: $IMAGE_VERSION
         
-    - name: QA_jdemoImg
+    - name: jdemoImgQA
       type: image
-      integration: AWS
+      integration: AWS-EIS
       versionTemplate:
         sourceName: $IMAGE_REPOSITORY
         versionName: $IMAGE_VERSION
@@ -184,7 +185,7 @@ resources:
         memory: 1024                        #in MiB
         #cpuShares: 10
         portMappings:
-            - "8080:8080/tcp"
+            - "80:8080/tcp"
         logConfig:
             type: awslogs
             options:
@@ -200,24 +201,55 @@ resources:
         count: 1
         
     # Cluster
-    - name: QA-cluster
+    - name: EUC1-QA-cluster
       type: cluster
-      integration: AWS
+      integration: AWS-EIS
       versionTemplate:
         sourceName: oz-qa-cluster
         region: eu-central-1
+    
+    # Elastic Loadbalancers
+    - name: EUC1-ELB-QA-cluster
+      type: loadBalancer
+      versionTemplate:
+        sourceName: $ARN
+        method: application
 
    #### INTEGRATIONS ####
-    - name: aws-Integration
+    - name: aws-CIS-Integration
       type: integration
-      integration: AWS
+      integration: AWS-CIS
 
     - name: aws-cliConfig
       type: cliConfig
-      integration: AWS
+      integration: AWS-EIS
       versionTemplate:
-        region: eu-central-1
+        region: eu-west-1
+        
+    - name: Sonar
+      type: integration
+      integration: Sonar
+      
+    - name: BRep
+      type: integration
+      integration: BRep
 
+    - name: SRep
+      type: integration
+      integration: SRep
+      
+    - name: TBot
+      type: integration
+      integration: TBot
+        
+    - name: RunMode
+      type: integration
+      integration: RunMode
+      
+    - name: WebApp_JDemo
+      type: integration
+      integration: WebApp_JDemo
+      
     #### NOTIFICATIONS ####
     - name: Slack
       type: notification
@@ -253,8 +285,13 @@ jobs:
     - name: jdemo_runCI
       type: runCI
       steps:
+        - IN: RunMode
+        - IN: CI_CONTAINER
+        - IN: CI_CONTAINER_VERSION
+        - IN: IMAGE
+        - IN: IMAGE_VERSION
         - OUT: jdemoImg
-        - OUT: QA_jdemoImg
+        - OUT: jdemoImgQA
         
     - name: jdemoManifest
       type: manifest
@@ -272,40 +309,52 @@ jobs:
       flags:
         - jdemo
       steps:
-        - IN: QA_jdemoImg
+        - IN: jdemoImgQA
         - IN: dockerOptions
         - IN: replicas
         
-    - name: genericSetupStagingEnvironment
+    - name: configureStagingEnvironment
       type: runSh
       triggerMode: serial
       dependencyMode: strict   # optional
-      on_start:
-        - NOTIFY: Slack
       steps:
-        #- IN: QA_jdemoImg
+        - IN: RunMode
+        - IN: jdemoImgQA
+        - IN: CI_CONTAINER
+        - IN: CI_CONTAINER_VERSION
+        - IN: Sonar
+        - IN: BRep
+        - IN: SRep
+        - IN: IMAGE
+        - IN: IMAGE_VERSION
+        - IN: scripts-from-srcRepo
         - IN: aws-cliConfig
           scopes:
             - ecr
+        - OUT: EUC1-ELB-QA-cluster
         - TASK:
-            name: pullCustomImage
+            name: pullPrivateImage
             script:
-              #- docker pull $CI_CONTAINER:$CI_CONTAINER_VERSION
-              - docker pull drydock/u16javall:v6.1.4
+              - docker pull $CI_CONTAINER:$CI_CONTAINER_VERSION
         - TASK:
             name: setupStagingEnvironment
             runtime:                  # optional
               options:
-                #imageName: $CI_CONTAINER
-                imageName: drydock/u16javall
-                imageTag: 'v6.1.4' #'1.0'
+                imageName: $CI_CONTAINER
+                imageTag: $CI_CONTAINER_VERSION
                 pull: false
                 options: '--privileged=false --net=bridge -e FOO=true -e BOO=false'
-            script: 
-              - echo "==== TODO TODO TODO TODO ===="
-              - echo "==== Setup testing environment for testing Alpha, Beta and RC release ===="
-              - gradle -v
-              - echo "==== TODO TODO TODO TODO ===="
+            script:
+              - chmod +x $SCRIPTSFROMSRCREPO_STATE/bas/scripts/shippable/*
+              - $SCRIPTSFROMSRCREPO_STATE/bas/scripts/shippable/setupStagingEnvironment.sh
+                  --remote
+                  -src "$SCRIPTSFROMSRCREPO_STATE/src/main/"
+                  -w "$SCRIPTSFROMSRCREPO_STATE/tf-temp"
+                  -m terraform
+                  -lb EUC1-ELB-QA-cluster
+                  -ak "$AWSCLICONFIG_INTEGRATION_ACCESSKEY"
+                  -sk "$AWSCLICONFIG_INTEGRATION_SECRETKEY"
+                  "$DEBUG"
       on_failure:
         - NOTIFY: Slack
 
@@ -315,23 +364,21 @@ jobs:
      # *                                                 D. Run QA tests                                              *
      # *                                                 E. Merge Release branch into Master branch                   *
      # ****************************************************************************************************************
-    - name: genericDeployImage
+    - name: deployImage-EUC1
       type: deploy
       dependencyMode: strict   # optional
       method: replace
-      on_start:
-        - NOTIFY: Slack
       flags:
        - jdemo
       steps: 
         - IN: jdemoManifestQA    # manifest
-        - IN: genericSetupStagingEnvironment
-        - IN: QA-cluster
-        #- IN: elbQA
-        #  applyTo:
-        #    - manifest: jdemoManifest
-        #      image: jdemo
-        #      port: 8080
+        - IN: configureStagingEnvironment
+        - IN: EUC1-QA-cluster
+        - IN: EUC1-ELB-QA-cluster
+          applyTo:
+            - manifest: jdemoManifestQA
+              image: jdemoImgQA
+              port: 80
       on_failure:
         - NOTIFY: Slack
 
@@ -341,7 +388,54 @@ jobs:
       on_start:
         - NOTIFY: Slack
       steps:
-        - IN: genericDeployImage
+        - IN: RunMode
+        - IN: deployImage-EUC1
+        - IN: CI_CONTAINER
+        - IN: CI_CONTAINER_VERSION
+        - IN: Sonar
+        - IN: BRep
+        - IN: SRep
+        - IN: TBot
+        - IN: WebApp_JDemo
+        - IN: IMAGE
+        - IN: IMAGE_VERSION
+        - IN: scripts-from-srcRepo
+          switch: off
+        - IN: aws-cliConfig
+          scopes:
+            - ecr
+        - TASK:
+            name: pullPrivateImage
+            script:
+              - docker pull $CI_CONTAINER:$CI_CONTAINER_VERSION
+        - TASK:
+            name: runQATests
+            runtime:                  # optional
+              options:
+                imageName: $CI_CONTAINER
+                imageTag: $CI_CONTAINER_VERSION
+                pull: false
+                options: '--privileged=false --net=bridge -e FOO=true -e BOO=false'
+            script:
+              - echo "=== list of envs ====" && printenv
+              - chmod +x $SCRIPTSFROMSRCREPO_STATE/bas/scripts/shippable/*
+              - $SCRIPTSFROMSRCREPO_STATE/bas/scripts/shippable/prepare.sh
+                   --remote
+                   -src $SCRIPTSFROMSRCREPO_STATE/bas/resources/gradle/gradle.properties
+                   $DEBUG
+              - cd $SCRIPTSFROMSRCREPO_STATE
+              - $SCRIPTSFROMSRCREPO_STATE/bas/scripts/shippable/approval.sh
+                   $DEBUG
+      on_failure:
+        - NOTIFY: Slack
+
+    - name: verify
+      type: runSh
+      dependencyMode: strict   # optional
+      on_start:
+        - NOTIFY: Slack
+      steps:
+        - IN: jdemoManifest
           switch: off
         - IN: aws-cliConfig
           scopes:
@@ -349,29 +443,18 @@ jobs:
         - TASK:
             name: pullCustomImage
             script:
-              #- docker pull $CI_CONTAINER:$CI_CONTAINER_VERSION
-              - docker pull drydock/u16javall:v6.1.4
+              - docker pull $CI_CONTAINER:$CI_CONTAINER_VERSION
         - TASK:
-            name: runQATests
+            name: checkHealth
             runtime:                  # optional
               options:
-                #imageName: $CI_CONTAINER
-                imageName: drydock/u16javall
-                imageTag: 'v6.1.4' #'1.0'
+                imageName: $CI_CONTAINER
+                imageTag: $CI_CONTAINER_VERSION
                 pull: false
                 options: '--privileged=false --net=bridge -e FOO=true -e BOO=false'
             script:
               - echo "==== TODO TODO TODO TODO ===="
-              - echo "==== run tests for testing Alpha release ===="
-              - gradle -v
-              - echo "==== set Beta release on success ===="
-              - echo "==== run tests for testing Beta release ===="
-              - echo "==== set RC release on success ===="
-              - echo "==== run RC tests if any ===="
-              - echo "==== clean up deployed image and test env ===="
-              - echo "==== merge into master ===="
-              - echo "==== TODO TODO TODO TODO ===="
       on_failure:
         - NOTIFY: Slack
-
+        
 #### END JOBS CONFIG

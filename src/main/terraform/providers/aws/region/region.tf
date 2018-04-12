@@ -1,4 +1,3 @@
-#!/bin/bash
 #/*
 # * Copyright (c) 2018 JP-L, https://www.jp-l.org/
 # *
@@ -21,23 +20,27 @@
 # * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #*/
-# 
-# Start two tomcat containers.
+
+# Note: This file is based upon the ecs ..:
 #
+#     https://github.com/..
+#
+provider "aws" {
+	#shared_credentials_file = "${path.cwd}/tf-temp/credentials"
+	profile = "eis"
+	region = "${var.region}"
+	version = "~> 1.13"
+}
 
-HOST=http://localhost
-CONTEXT_PATH=jdemo
-CONTAINER_PORT_1=8080
+#
+# ESSENTIAL INFRASTUCTURE
+#
+module "essential-infrastructure" {
+	source = "./essential-infrastructure"
 
-# sleep a couple of seconds to let the second container start
-sleep 30
+	region			= "${var.region}"
+	vpc_id			= "${var.vpc_id}"
+	alb_config		= "${var.alb_config}"
+	applications	= "${var.applications}"
+}
 
-# Verify if the application deployed correctly
-echo "URL TO TEST: " $HOST:$CONTAINER_PORT_1/$CONTEXT_PATH/
-if wget $HOST:$CONTAINER_PORT_1/$CONTEXT_PATH/ --timeout 30 -O - 2>/dev/null; then
-        echo "1- TEST SUCCEEDED";
-else
-        echo "1- TEST FAILED";
-fi
-
-exit 0;

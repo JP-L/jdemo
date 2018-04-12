@@ -21,29 +21,30 @@
 # * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #*/
 
-#Release properties
-release.useAutomaticVersion=true
-release_dryrun=false
 #
-systemProp.org.ajoberstar.grgit.auth.username=SRCREPO_KEY
-repo_key=org.ajoberstar.grgit.auth.username
+# LOAD BALANCERS
 #
-binrepo_url=BURL
-binrepo_registryUrl=REG_URL
-binrepo_user=USR
-binrepo_password=PWD
-binrepo_email=EMAIL
-#
-systemProp.sonar.host.url=SONAR_URL
-systemProp.sonar.organization=ORG
-systemProp.sonar.login=SONAR_KEY
-#
-awsAccessKeyId=MY_ACCESS_ID
-awsSecretAccessKey=MY_SECRET
-#
-webapp_url=WEBAPP_URL
-testbot_jar=/usr/testingbot-tunnel/testingbot-tunnel.jar
-testbot_key=TB_ACCESS_ID
-testbot_secret=TB_SECRET
-runMode=RUNMODE
+module "alb_paz" {
+	source = "./alb"
+
+	# Available from environment
+	vpc_id					= "${var.vpc_id}"
+	alb_id					= "${var.alb_config[format("%s_%s_%s",var.region,"alb","id")]}"
+	alb_name				= "${var.alb_config[format("%s_%s_%s",var.region,"alb","name")]}"
+	sg_alb_id				= "${var.alb_config[format("%s_%s_%s",var.region,"alb","sg_id")]}"
+	
+	# Application specific stuff
+	ingressPort				= "${var.applications["jdemo.ingressPort"]}"
+	protocol				= "${var.applications["jdemo.protocol"]}"
+	
+	allowIPv4Ingress		= "${var.applications["jdemo.allowIPv4Ingress"]}"
+	allowIPv6Ingress		= "${var.applications["jdemo.allowIPv6Ingress"]}"
+	allowIPv4Egress			= "${var.applications["jdemo.allowIPv4Egress"]}"
+	allowIPv6Egress			= "${var.applications["jdemo.allowIPv6Egress"]}"
+	
+	deregistration_delay	= "${var.applications["jdemo.deregistration_delay"]}"
+	health_check_path		= "${var.applications["jdemo.health_check_path"]}"
+	action_type				= "${var.applications["jdemo.action_type"]}"
+	
+}
 
