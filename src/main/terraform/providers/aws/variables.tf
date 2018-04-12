@@ -49,7 +49,7 @@ variable "applications" {
 		jdemo.allowIPv6Egress		= "::/0"
 		
 		jdemo.deregistration_delay  = "300"
-		jdemo.health_check_path	 	= "/jdemo"
+		jdemo.health_check_path	 	= "/"
 		jdemo.action_type			= "forward"
 	}
 }
