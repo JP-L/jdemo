@@ -32,7 +32,7 @@ jdk:
 # http://docs.shippable.com/ci/advancedOptions/branches/
 branches:
   only:
-    #- master
+    - master
     - releases
     - development
 
