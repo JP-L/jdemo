@@ -89,7 +89,7 @@ def merge(def branchFrom, def branchTo, def stage) {
     	println "called by " + stackTraceElements[2].getMethodName()
     return tasks.create("merge${stage}") {
     	doLast {
-		    // Check if the release branch exists
+		    // Check if the branch to merge to exists
 	    	if ( grgit.branch.list().find{it.name == "${branchTo}"} != null ) {
 	    		println "Checkout branch ${branchTo}"
 	    		grgit.checkout(branch: "${branchTo}")
