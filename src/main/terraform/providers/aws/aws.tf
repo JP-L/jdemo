@@ -21,29 +21,34 @@
 # * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #*/
 
-#Release properties
-release.useAutomaticVersion=true
-release_dryrun=false
-#
-systemProp.org.ajoberstar.grgit.auth.username=SRCREPO_KEY
-repo_key=org.ajoberstar.grgit.auth.username
-#
-binrepo_url=BURL
-binrepo_registryUrl=REG_URL
-binrepo_user=USR
-binrepo_password=PWD
-binrepo_email=EMAIL
-#
-systemProp.sonar.host.url=SONAR_URL
-systemProp.sonar.organization=ORG
-systemProp.sonar.login=SONAR_KEY
-#
-awsAccessKeyId=MY_ACCESS_ID
-awsSecretAccessKey=MY_SECRET
-#
-webapp_url=WEBAPP_URL
-testbot_jar=/usr/testingbot-tunnel/testingbot-tunnel.jar
-testbot_key=TB_ACCESS_ID
-testbot_secret=TB_SECRET
-runMode=RUNMODE
+data "terraform_remote_state" "environment" {
+	backend = "s3"
+	workspace = "${terraform.workspace}"
+	
+	config {
+		bucket = "jpl-tfstate"
+		key    = "terraform/state"
+		region = "eu-west-1"
+	}
+}
+
+module "default_region" {
+	source = "./region"
+	
+	region			= "${data.terraform_remote_state.environment.default_region}"
+	
+	#vpc_id			= "${data.terraform_remote_state.environment.vpc_ids[format("%s_%s", data.terraform_remote_state.environment.region["default_region"],"vpc_id")]}"
+	vpc_id			= "${data.terraform_remote_state.environment.vpc_ids[format("%s_%s", data.terraform_remote_state.environment.default_region,"vpc_id")]}"
+
+#	vpc_id			= "${data.terraform_remote_state.environment.vpc_ids[format("%s_%s", "eu-central-1","vpc_id")]}"
+	alb_config		= "${data.terraform_remote_state.environment.alb_config}"
+	applications	= "${var.applications}"
+}
+
+#module "region_eu_west_1" {
+#	source = "./region"
+
+#	region			= "${element(var.regions, 0)}"
+#	applications	= "${var.applications}"	
+#}
 

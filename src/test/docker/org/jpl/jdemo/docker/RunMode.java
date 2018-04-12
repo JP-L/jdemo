@@ -1,4 +1,3 @@
-<!--
 /*
  * Copyright (c) 2018 JP-L, https://www.jp-l.org/
  *
@@ -21,33 +20,29 @@
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
--->
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"   
-"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">  
-  
-<html xmlns="http://www.w3.org/1999/xhtml"  
-    xmlns:ui="http://java.sun.com/jsf/facelets"  
-    xmlns:h="http://java.sun.com/jsf/html"  
-    xmlns:f="http://java.sun.com/jsf/core">  
+package org.jpl.jdemo.docker;
 
-<h:head>  
-    <title>jdemo</title>
-	<p><h:outputText value="#{msg['welcomeTitle']}" /></p> 
-</h:head>  
-<h:body>  
-    <f:view>  
-        <p><h:outputText value="#{msg['signInSuccess']}" /></p>  
-        <p>
-        	<h:outputFormat value="#{msg.signInWelcome}" >
-        		<f:param value="#{user.firstName}" />
-        	</h:outputFormat>
-        </p>  
-
-        <h:form>  
-            <p>  
-                <h:commandLink value="#{msg['logOut']}" action="#{user.logout}" />  
-            </p>  
-        </h:form>  
-    </f:view>  
-</h:body>  
-</html>
+public enum RunMode {
+	/** Remote and local run mode supported. */
+	LOCAL("@localhost:4445/wd/hub"),
+	REMOTE("@hub.testingbot.com/wd/hub");
+	
+	/** The url to use. */
+	private final String url;
+	
+	/**
+	 * Set the URL
+	 * @param url
+	 */
+	RunMode(final String postfix) {
+        this.url = postfix;
+    }
+	
+	/**
+	 * Return the postfix url
+	 * @return url
+	 */
+	public String getUrlPostfix() {
+		return this.url;
+	}
+}

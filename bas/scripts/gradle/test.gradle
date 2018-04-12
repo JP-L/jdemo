@@ -27,30 +27,48 @@
 apply plugin: "net.saliman.cobertura"
 apply plugin: "org.sonarqube"
 
+/* ==== Add Selenium ==== */
+sourceSets {
+	selenium {
+		java.srcDirs = ["${projectDir}/src/test/docker"]
+    	// So that we can compile against the libs used by the unit test classes
+        compileClasspath += test.compileClasspath
+        // So that test- and business classes can be used at runtime:
+        runtimeClasspath += test.runtimeClasspath
+  	}
+}
+
 /* ===== Unit testing ===== */
 test {
-    reports.junitXml.destination = "${projectDir}/shippable/testresults"  
-    reports.html.destination = "${projectDir}/shippable/testresults"
+	reports {
+    	junitXml.destination = file("${projectDir}/shippable/testresults")  
+    	html.destination = file("${projectDir}/shippable/testresults")
+    }
 }
 // ===== Code Coverage Analysis =====
 cobertura {
     coverageFormats = ['html', 'xml']				
-    coverageReportDir = file("${projectDir}/shippable/codecoverage")	
+    coverageReportDir = file("${projectDir}/shippable/codecoverage")
+    //coverageTestTasks { test }	
 }
-test.finalizedBy(project.tasks.cobertura)
+test.finalizedBy(project.tasks.coberturaReport)
 
 /* ===== Static Code Analysis ===== */
 sonarqube {
-  properties {
-    property "sonar.projectName", "${name}"
-    property "sonar.projectKey", "org.sonarqube:jdemo"
-    property "sonar.cobertura.reportPath","${projectDir}/shippable/codecoverage/coverage.xml"
-    property "sonar.junit.reportsPath","${projectDir}/shippable/testresults"
-  }
+	description "Analyze static code"
+	group "Quality"
+	properties {
+		property "sonar.projectName", "${name}"
+    	property "sonar.projectKey", "org.sonarqube:jdemo"
+    	property "sonar.cobertura.reportPath","${projectDir}/shippable/codecoverage/coverage.xml"
+    	property "sonar.junit.reportsPath","${projectDir}/shippable/testresults"
+  	}
 }
 
 /* ===== CodeCoverage.io ===== */
 task codeCovIO(type: Exec) {
+	description "Upload code coverage results to CodeCov"
+	group "Quality"
     commandLine "/bin/bash", "-c", "bash <(curl -s https://codecov.io/bash) -f ./shippable/codecoverage/coverage.xml"
     ignoreExitValue true
     doLast {
@@ -58,26 +76,108 @@ task codeCovIO(type: Exec) {
         println "${msg}"
     }
 }
-
+/* ==== Tasks ==== */
 task inspectQuality(type: GradleBuild) {
-	group "Test"
-    tasks = ['test', 'cobertura', 'sonarqube', 'codeCovIO']
+	group "Quality"
+    tasks = [ 'test', 'sonarqube', 'codeCovIO']
 }
 
-task runFunctionalAndIntegrationTests(type: Exec) {
-	group "Test"
-    dependsOn startDockerContainer
-    finalizedBy stopDockerContainer
-    commandLine "/bin/bash", "-c", "${projectDir}/src/test/docker/dockerFunctionalTests.sh"
-	ignoreExitValue true
-	doLast {
-    	def msg = (execResult == 0) ? "SUCCESS: Functional tests" : "FAILED: Functional tests"
-        println "${msg}"
+/* ==== Testingbot tasks ==== */
+class ExecWait extends DefaultTask {
+	String command
+    String ready
+    String directory
+    Boolean runMode
+ 
+    @TaskAction
+    def spawnProcess() {
+ 
+ 		if (runMode) {
+        	ProcessBuilder builder = new ProcessBuilder(command.split(' '))
+        	builder.redirectErrorStream(true)
+        	println "${directory}"
+	        builder.directory(new File(directory))
+	        Process process = builder.start()
+	 
+	        InputStream stdout = process.getInputStream()
+	        BufferedReader reader = new BufferedReader(new InputStreamReader(stdout))
+	 
+	        def line
+	        while ((line = reader.readLine()) != null) {
+	            println line
+	            if (line.contains(ready)) {
+	                println "$command is ready"
+	                break;
+	            }
+	        }
+		}
     }
 }
-task runAcceptanceAndSmokeTests(type: Exec) << {
-	group "Test"
-	//dependsOn .... releaseCI -> probably this becomes a shippable Job
+
+task startTestingBotTunnel(type: ExecWait) {
+	description "Start TestingBot Tunnel to provide a secure way to run tests against staged/internal webapps."
+	group "Quality"
+	command "java -jar ${testbot_jar} ${testbot_key} ${testbot_secret}"
+    ready "INFO: To stop the tunnel, press CTRL+C"
+    directory "${getRootProject().getRootDir()}"
+    runMode project.getProperty("runMode") == "local"
+}
+task stopTestingBotTunnel(type: Exec) {
+	description "stop TestingBot Tunnel."
+	group "Quality"
+	onlyIf {
+        project.getProperty("runMode") == "local"
+    }
+    
+    commandLine "/bin/bash", "-c", "rm testingbot-tunnel.pid"
+    //ignoreExitValue true
+    
+    standardOutput = new ByteArrayOutputStream()
+    ext.output = {
+		return standardOutput.toString()
+	}
+}
+
+task runFunctionalAndIntegrationTests(type: Test, dependsOn: ['inspectDockerContainer', 'startTestingBotTunnel']) {
+	description "Run functional and integration tests"
+	group "Quality"
+    finalizedBy stopDockerContainer, stopTestingBotTunnel
+    doFirst {
+		// Set system properties for the Tests
+   		systemProperty "runMode", project.getProperty("runMode")
+   		systemProperty "key", project.getProperty("testbot_key")
+   		systemProperty "secret", project.getProperty("testbot_secret")
+   		systemProperty "stage", project.getProperty("stage")
+
+		def webUrl = project.getProperty("webapp_url")
+		if (project.getProperty("runMode") == "local") {
+   			webUrl = webUrl.replaceAll('localhost', project.getProperty("localIpAddress"))
+   		} 
+   		systemProperty "webapp_url", webUrl
+   		println "Testing URL ${webUrl}"
+	}
+    testClassesDir = sourceSets.selenium.output.classesDir
+    classpath = sourceSets.selenium.runtimeClasspath
+}
+
+task runAcceptanceAndSmokeTests(type: Test) {
+	group "Quality"
+    doFirst {
+		// Set system properties for the Tests
+   		systemProperty "runMode", project.getProperty("runMode")
+   		systemProperty "key", project.getProperty("testbot_key")
+   		systemProperty "secret", project.getProperty("testbot_secret")
+   		systemProperty "stage", project.getProperty("stage")
+
+		def webUrl = project.getProperty("webapp_url")
+		if (project.getProperty("runMode") == "local") {
+   			webUrl = webUrl.replaceAll('localhost', project.getProperty("localIpAddress"))
+   		} 
+   		systemProperty "webapp_url", webUrl
+   		println "Testing URL ${webUrl}"
+	}
+    testClassesDir = sourceSets.selenium.output.classesDir
+    classpath = sourceSets.selenium.runtimeClasspath
 }
 
 /*
@@ -88,8 +188,13 @@ dependencies {
     // TestNG is also supported by the Gradle Test task. Just change the
     // testCompile dependency to testCompile 'org.testng:testng:6.8.1' and add
     // 'test.useTestNG()' to your build script.
-    testCompile group: 'junit', name: 'junit', version: '4.+'
+    testCompile 'org.junit.jupiter:junit-jupiter-api:5.1.0'
+    testCompile 'org.junit.jupiter:junit-jupiter-engine:5.1.0'
+    
     testCompile 'org.hamcrest:hamcrest-junit:2.0.0.0'
+    /* Cucumber */
     testCompile group: 'info.cukes', name: 'cucumber-java', version: '1.2.+'
-    testCompile group: 'info.cukes', name: 'cucumber-junit', version: '1.2.+'	    
+    testCompile group: 'info.cukes', name: 'cucumber-junit', version: '1.2.+'
+    /* Selenium */
+    seleniumCompile 'org.seleniumhq.selenium:selenium-java:2.33.0'
 }

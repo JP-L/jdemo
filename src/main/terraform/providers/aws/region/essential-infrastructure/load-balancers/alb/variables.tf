@@ -1,4 +1,3 @@
-#!/bin/bash
 #/*
 # * Copyright (c) 2018 JP-L, https://www.jp-l.org/
 # *
@@ -21,48 +20,48 @@
 # * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #*/
-# 
-# Start two tomcat containers.
+
 #
+# ALB variables
+#
+variable "vpc_id" {
+  description = "VPC ID generated on creation of the VPC"
+}
+variable "alb_id" {
+  description = ""
+}
+variable "alb_name" {
+  description = ""
+}
+variable "sg_alb_id" {
+  description = ""
+}
 
-HOST=http://localhost
-CONTEXT_PATH=jdemo
-IMAGE="$1"
-CONTAINER_PORT_1=8888
-CONTAINER_PORT_2=8887
-
-docker run --tty=false --rm \
-           -p $CONTAINER_PORT_1:8080 \
-           -v /var/cache/webapps:/var/cache/webapps \
-           $IMAGE \
-     > tomcat-container1.out &
-
-# sleep a couple of seconds to let the first container start
-sleep 5
-
-docker run --tty=false --rm \
-           -p $CONTAINER_PORT_2:8080 \
-           -v /var/cache/webapps:/var/cache/webapps \
-           $IMAGE \
-     > tomcat-container2.out &
-
-# sleep a couple of seconds to let the second container start
-sleep 30
-
-# Verify if the application deployed correctly
-echo "URL TO TEST: " $HOST:$CONTAINER_PORT_1/$CONTEXT_PATH/
-if wget $HOST:$CONTAINER_PORT_1/$CONTEXT_PATH/ --timeout 30 -O - 2>/dev/null; then
-        echo "1- TEST SUCCEEDED";
-else
-        echo "1- TEST FAILED";
-fi
-
-if wget $HOST:$CONTAINER_PORT_2/$CONTEXT_PATH/ --timeout 30 -O - 2>/dev/null; then
-        echo "2- TEST SUCCEEDED";
-else
-        echo "2-TEST FAILED";
-fi
-
-docker stop $(docker ps -a -q)
-
-exit 0;
+# Application specific
+variable "ingressPort" {
+	description = ""
+}
+variable "protocol" {
+	description = ""
+}
+variable "allowIPv4Ingress" {
+	description = ""
+}
+variable "allowIPv6Ingress" {
+	description = ""
+}
+variable "allowIPv4Egress" {
+	description = ""
+}
+variable "allowIPv6Egress" {
+	description = ""
+}
+variable "deregistration_delay" {
+	description = ""
+}
+variable "health_check_path" {
+	description = ""
+}
+variable "action_type" {
+	description = ""
+}

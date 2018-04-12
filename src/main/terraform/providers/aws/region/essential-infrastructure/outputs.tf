@@ -21,29 +21,10 @@
 # * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #*/
 
-#Release properties
-release.useAutomaticVersion=true
-release_dryrun=false
 #
-systemProp.org.ajoberstar.grgit.auth.username=SRCREPO_KEY
-repo_key=org.ajoberstar.grgit.auth.username
+# Root outputs
 #
-binrepo_url=BURL
-binrepo_registryUrl=REG_URL
-binrepo_user=USR
-binrepo_password=PWD
-binrepo_email=EMAIL
-#
-systemProp.sonar.host.url=SONAR_URL
-systemProp.sonar.organization=ORG
-systemProp.sonar.login=SONAR_KEY
-#
-awsAccessKeyId=MY_ACCESS_ID
-awsSecretAccessKey=MY_SECRET
-#
-webapp_url=WEBAPP_URL
-testbot_jar=/usr/testingbot-tunnel/testingbot-tunnel.jar
-testbot_key=TB_ACCESS_ID
-testbot_secret=TB_SECRET
-runMode=RUNMODE
-
+output "lb_tg_arn" {
+	description = "The AWS load balancer target group arn"
+	value = "${module.load_balancers.lb_tg_arn}"
+}

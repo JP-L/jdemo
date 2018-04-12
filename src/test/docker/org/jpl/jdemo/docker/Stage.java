@@ -1,4 +1,3 @@
-<!--
 /*
  * Copyright (c) 2018 JP-L, https://www.jp-l.org/
  *
@@ -21,33 +20,32 @@
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
--->
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"   
-"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">  
-  
-<html xmlns="http://www.w3.org/1999/xhtml"  
-    xmlns:ui="http://java.sun.com/jsf/facelets"  
-    xmlns:h="http://java.sun.com/jsf/html"  
-    xmlns:f="http://java.sun.com/jsf/core">  
+package org.jpl.jdemo.docker;
 
-<h:head>  
-    <title>jdemo</title>
-	<p><h:outputText value="#{msg['welcomeTitle']}" /></p> 
-</h:head>  
-<h:body>  
-    <f:view>  
-        <p><h:outputText value="#{msg['signInSuccess']}" /></p>  
-        <p>
-        	<h:outputFormat value="#{msg.signInWelcome}" >
-        		<f:param value="#{user.firstName}" />
-        	</h:outputFormat>
-        </p>  
-
-        <h:form>  
-            <p>  
-                <h:commandLink value="#{msg['logOut']}" action="#{user.logout}" />  
-            </p>  
-        </h:form>  
-    </f:view>  
-</h:body>  
-</html>
+public enum Stage {
+	/** Stages supported. */
+	DEVELOPMENT(1),
+	ALPHA(9),
+	BETA(18),
+	RC(81),
+	FINAL(1);
+	
+	/** The number of parallel threads. */
+	private final Integer numberOfThreads;
+	
+	/**
+	 * Set the URL
+	 * @param url
+	 */
+	Stage(final Integer threads) {
+        this.numberOfThreads = threads;
+    }
+	
+	/**
+	 * Return the number of parallel threads to run
+	 * @return numberOfThreads
+	 */
+	public int getNumberOfThreads() {
+		return this.numberOfThreads;
+	}
+}
