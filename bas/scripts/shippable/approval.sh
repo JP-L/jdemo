@@ -3,7 +3,7 @@
 DEBUG=0
 LOCAL=0
 GRADLE_PROPS=""		#$SHIPPABLE_REPO_DIR/bas/resources/gradle/gradle.properties
-OPTIONS="--info"
+OPTIONS=()
 
 # Some helper functions
 function log_debug () {
@@ -24,14 +24,12 @@ key="$1"
 case $key in
     -d|--debug)
     set -o xtrace
-    OPTIONS="--debug"
-    OPTIONS+=" "
+    OPTIONS+=("--debug")
     shift # past argument
     #shift # past value
     ;;
     -s|--stacktrace)
-	OPTIONS+="--stacktrace"
-    OPTIONS+=" "
+	OPTIONS+=("--stacktrace")
     shift # past argument
     #shift # past value
     ;;
@@ -54,21 +52,21 @@ set -- "${POSITIONAL[@]}" # restore positional parameters
 
 # Handle Alpha releases
 log_info "==== run tests for testing Alpha release ===="
-gradle runAcceptanceAndSmokeTests "$OPTIONS" -Pstage=ALPHA
+gradle runAcceptanceAndSmokeTests "${OPTIONS[@]}" -Pstage=ALPHA
 log_info "==== set Beta release on success ===="
-gradle releaseBeta "$OPTIONS"
+gradle releaseBeta "${OPTIONS[@]}"
 # Handle Beta releases
 log_info "==== run tests for testing Beta release ===="
-gradle runAcceptanceAndSmokeTests "$OPTIONS" -Pstage=BETA
+gradle runAcceptanceAndSmokeTests "${OPTIONS[@]}" -Pstage=BETA
 log_info "==== set RC release on success ===="
-gradle releaseCandidate "$OPTIONS"
+gradle releaseCandidate "${OPTIONS[@]}"
 # Handle RC releases
 log_info "==== run RC tests if any ===="
-gradle runAcceptanceAndSmokeTests "$OPTIONS" -Pstage=RC
+gradle runAcceptanceAndSmokeTests "${OPTIONS[@]}" -Pstage=RC
 # Clean up and release the new version
 log_info "==== clean up deployed image and test env ===="
 #Need to find out how
 log_info "==== Release the next version ===="
-gradle releaseVersion "$OPTIONS"
+gradle releaseVersion "${OPTIONS[@]}"
 
 exit 0;
