@@ -1,9 +1,6 @@
 #!/bin/bash -e
 #
 DEBUG=0
-DEBUG_OPTION="--debug"
-STACKTRACE=0
-STACKTRACE_OPTION="--stacktrace"
 LOCAL=0
 GRADLE_PROPS=""		#$SHIPPABLE_REPO_DIR/bas/resources/gradle/gradle.properties
 OPTIONS="--info"
@@ -27,13 +24,13 @@ key="$1"
 case $key in
     -d|--debug)
     set -o xtrace
-    OPTIONS="$DEBUG_OPTION"
+    OPTIONS="--debug"
     OPTIONS+=" "
     shift # past argument
     #shift # past value
     ;;
     -s|--stacktrace)
-	OPTIONS+="$STACKTRACE_OPTION"
+	OPTIONS+="--stacktrace"
     OPTIONS+=" "
     shift # past argument
     #shift # past value
