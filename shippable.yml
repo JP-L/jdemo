@@ -410,6 +410,12 @@ jobs:
             script:
               - docker pull $CI_CONTAINER:$CI_CONTAINER_VERSION
         - TASK:
+            name: checkoutBranch
+            script:
+              - pushd $SCRIPTSFROMSRCREPO_STATE
+              - git checkout $SCRIPTSFROMSRCREPO_BRANCH
+              - popd
+        - TASK:
             name: runQATests
             runtime:                  # optional
               options:
