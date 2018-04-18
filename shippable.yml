@@ -443,13 +443,15 @@ jobs:
       on_start:
         - NOTIFY: Slack
       steps:
-        - IN: jdemoManifest
-          switch: off
+        - IN: RunMode
+        - IN: jdemoImg
+        - IN: CI_CONTAINER
+        - IN: CI_CONTAINER_VERSION
         - IN: aws-cliConfig
           scopes:
             - ecr
         - TASK:
-            name: pullCustomImage
+            name: pullPrivateImage
             script:
               - docker pull $CI_CONTAINER:$CI_CONTAINER_VERSION
         - TASK:
