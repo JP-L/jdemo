@@ -65,7 +65,8 @@ build:
       else
            echo "==== Unknown branch ====";
       fi
-    #- echo "==== Kill any old containers which might be running ====" && docker ps -a | grep -v 'reqProc' | cut -d ' ' -f1 #| xargs docker stop"
+    - echo "==== Kill and remove any old containers which might be running ====" &&
+      docker stop jdemo-container || true && docker rm jdemo-container || true
     #- echo "==== DEBUG List all environment variables ====" && printenv
 
   pre_ci_boot:
@@ -409,6 +410,12 @@ jobs:
             script:
               - docker pull $CI_CONTAINER:$CI_CONTAINER_VERSION
         - TASK:
+            name: checkoutBranch
+            script:
+              - pushd $SCRIPTSFROMSRCREPO_STATE
+              - git checkout $SCRIPTSFROMSRCREPO_BRANCH
+              - popd
+        - TASK:
             name: runQATests
             runtime:                  # optional
               options:
@@ -426,6 +433,7 @@ jobs:
               - cd $SCRIPTSFROMSRCREPO_STATE
               - $SCRIPTSFROMSRCREPO_STATE/bas/scripts/shippable/approval.sh
                    $DEBUG
+                   $STACKTRACE
       on_failure:
         - NOTIFY: Slack
 
