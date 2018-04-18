@@ -444,7 +444,7 @@ jobs:
         - NOTIFY: Slack
       steps:
         - IN: RunMode
-        - IN: jdemoImg
+        - IN: jdemoManifest
         - IN: CI_CONTAINER
         - IN: CI_CONTAINER_VERSION
         - IN: aws-cliConfig
