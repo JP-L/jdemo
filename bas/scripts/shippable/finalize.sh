@@ -1,12 +1,26 @@
 #!/bin/bash -e
 #
 DEBUG=0
-DEBUG_OPTION="--info"
+LOCAL=0
+GRADLE_PROPS=""		#$SHIPPABLE_REPO_DIR/bas/resources/gradle/gradle.properties
+OPTIONS=()
+
 POST_CI=0
 SUCCESS=0
 FAILURE=0
 RESOURCE=""
 
+# Some helper functions
+function log_debug () {
+    if [[ "$DEBUG" -eq 1 ]]; then
+        echo "$@"
+    fi
+}
+function log_info () {
+    echo "$@"
+}
+
+# Reading the commandline arguments
 POSITIONAL=()
 while [[ $# -gt 0 ]]
 do
@@ -14,22 +28,32 @@ key="$1"
 
 case $key in
     -d|--debug)
-    DEBUG=1
-    DEBUG_OPTION="--debug"
+    set -o xtrace
+    OPTIONS+=("--debug")
     shift # past argument
     #shift # past value
     ;;
-    -p|--post)
+    -s|--stacktrace)
+	OPTIONS+=("--stacktrace")
+    shift # past argument
+    #shift # past value
+    ;;
+    -l|--local)
+    LOCAL=1
+    shift # past argument
+    #shift # past value
+    ;;
+    --postCI)
     POST_CI=1
     shift # past argument
     #shift # past value
     ;;
-    -s|--success)
+    --success)
     SUCCESS=1
     shift # past argument
     #shift # past value
     ;;
-    -f|--failure)
+    --failure)
     FAILURE=1
     shift # past argument
     #shift # past value
@@ -51,40 +75,32 @@ esac
 done
 set -- "${POSITIONAL[@]}" # restore positional parameters
 
-if [[ "$DEBUG" -eq 1 ]]; then
-	set -o xtrace
-fi
-
 if [ "$POST_CI" -eq 1 ]; then
-	echo "==== Post CI tasks ==== ";
-    if [ "$BRANCH" == "releases" ]; then
-    	echo "==== Set $IMAGE_REPOSITORY with $IMAGE_VERSION for $BUILDNUMBER ==== ";
-    	shipctl put_resource_state "$RESOURCE" sourceName "$IMAGE_REPOSITORY";
-    	shipctl put_resource_state "$RESOURCE" versionName "$IMAGE_VERSION";
-    	shipctl put_resource_state "$RESOURCE" buildNumber "$BUILD_NUMBER";
-    elif [ "$BRANCH" == "master" ]; then
-    	shipctl put_resource_state "$RESOURCE" sourceName "$IMAGE_REPOSITORY";
-    	shipctl put_resource_state "$RESOURCE" versionName "$IMAGE_VERSION";
-    	shipctl put_resource_state "$RESOURCE" buildNumber "$BUILD_NUMBER";
-    else
-    	echo "==== No Post CI tasks required ====";
-    fi
-   
+	log_info "==== Set $IMAGE_REPOSITORY with $IMAGE_VERSION for $BUILDNUMBER on branch $BRANCH  for resource $RESOURCE ==== ";
+	if [ "$LOCAL" -eq 0 ]; then
+   		shipctl put_resource_state "$RESOURCE" sourceName "$IMAGE_REPOSITORY";
+   		shipctl put_resource_state "$RESOURCE" versionName "$IMAGE_VERSION";
+   		shipctl put_resource_state "$RESOURCE" buildNumber "$BUILD_NUMBER";
+   	else
+   		log_info "==== Running local. Skipping shipctl commands ====";
+   	fi
+ 
 elif [ "$SUCCESS" -eq 1 ]; then
 	if [ "$BRANCH" == "development" ]; then
-		echo "==== Release the code for Acceptance and Smoke testing ====";
-		gradle releaseDevelopment "$DEBUG_OPTION";
+		log_info "==== Release the code for Acceptance and Smoke testing ====";
+		gradle releaseDevelopment "${OPTIONS[@]}";
 	elif [ "$BRANCH" == "releases" ]; then
-		echo "==== Tag as alpha release ====";
-		gradle releaseAlpha "$DEBUG_OPTION";
+		log_info "==== Tag as alpha release ====";
+		gradle releaseAlpha "${OPTIONS[@]}";
 	elif [ "$BRANCH" == "master" ]; then
-		echo "==== Publish the next Release ====";
-		gradle publishRelease "$DEBUG_OPTION";
+		log_info "==== Publish the next Release ====";
+		gradle publishRelease "${OPTIONS[@]}";
 	else
-		echo "==== Unknown branch ====";
+		log_info "==== Unknown branch ====";
 	fi
+
 elif [ "$FAILURE" -eq 1 ]; then
-	echo "==== Build failed ===="
+	log_info "==== Build failed ===="
 fi
 
 exit 0;

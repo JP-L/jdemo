@@ -87,13 +87,20 @@ build:
     - echo "==== CI completed. Move to post CI ===="
 
   post_ci:
-    - $SHIPPABLE_REPO_DIR/bas/scripts/shippable/finalize.sh -p -r jdemoImgQA
+    - echo "==== Post CI tasks ==== ";
+    - if [ "$BRANCH" == "releases" ]; then
+           $SHIPPABLE_REPO_DIR/bas/scripts/shippable/finalize.sh --postCI -r jdemoImgQA $DEBUG;
+      elif [ "$BRANCH" == "master" ]; then
+           $SHIPPABLE_REPO_DIR/bas/scripts/shippable/finalize.sh --postCI -r jdemoImg $DEBUG;
+      else
+           echo "==== No Post CI tasks required ====";
+      fi
 
   on_success:
-    - $SHIPPABLE_REPO_DIR/bas/scripts/shippable/finalize.sh -s
+    - $SHIPPABLE_REPO_DIR/bas/scripts/shippable/finalize.sh --success $DEBUG
 
   on_failure:
-    - $SHIPPABLE_REPO_DIR/bas/scripts/shippable/finalize.sh -f
+    - $SHIPPABLE_REPO_DIR/bas/scripts/shippable/finalize.sh --failure $DEBUG
     
   cache: false
 
